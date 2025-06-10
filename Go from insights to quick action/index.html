@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Insights to Action</title>
-  <link href="css/header_style.css" rel="stylesheet"/>
-  <link href="css/embed_area_style.css" rel="stylesheet"/>
+
+  <!-- Your CSS -->
+  <link href="css/header_style.css"       rel="stylesheet"/>
+  <link href="css/embed_area_style.css"   rel="stylesheet"/>
 </head>
-<body>
+<body id="insight-to-action">
   <header id="contoso-header">
     <img src="img/contoso.svg" id="contoso" alt="Contoso logo"/>
   </header>
@@ -18,10 +20,69 @@
 
   <div id="report-container" style="height:90vh;"></div>
 
-  <!-- Power BI client -->
-  <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+  <!-- 1) Power BI client from Cloudflare CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-  <!-- Our embed logic -->
-  <script src="js/index.js"></script>
+  <!-- 2) Embed logic -->
+  <script>
+  (async function() {
+    const overlay = document.getElementById("overlay");
+    const container = document.getElementById("report-container");
+
+    // 1. Determine which report to load
+    const params = new URLSearchParams(window.location.search);
+    const reportName = params.get("report") || null;
+
+    // 2. Fetch your JSON
+    let list;
+    try {
+      const res = await fetch("reportList.json");
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      list = await res.json();
+    } catch (e) {
+      overlay.innerHTML = `<div style="color:red;padding:20px;">JSON load error:<br>${e.message}</div>`;
+      return;
+    }
+
+    // 3. Pick matching or default
+    let entry = reportName && list.find(r => r.name === reportName);
+    if (!entry) entry = list[0];
+    if (!entry || !entry.embedUrl) {
+      overlay.innerHTML = `<div style="color:red;padding:20px;">No report found</div>`;
+      return;
+    }
+
+    // 4. Embed public report
+    const models = window["powerbi-client"].models;
+    const config = {
+      type:      "report",
+      tokenType: models.TokenType.Embed,
+      accessToken: "", // not needed for public embed
+      embedUrl:  entry.embedUrl,
+      settings: {
+        panes: {
+          filters:        { visible: false },
+          pageNavigation: { visible: false }
+        },
+        background: models.BackgroundType.Transparent
+      }
+    };
+
+    try {
+      const report = powerbi.embed(container, config);
+      report.on("loaded", () => {
+        overlay.style.display = "none";
+        console.log("✅ Loaded:", entry.name);
+      });
+      report.on("error", e => {
+        console.error(e);
+        overlay.innerHTML = `<div style="color:red;padding:20px;">Embed error</div>`;
+      });
+    } catch (e) {
+      console.error(e);
+      overlay.innerHTML = `<div style="color:red;padding:20px;">Embed failed: ${e.message}</div>`;
+    }
+  })();
+  </script>
 </body>
 </html>
