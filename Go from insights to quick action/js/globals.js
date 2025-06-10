@@ -1,7 +1,7 @@
 // globals.js
 // ----------------------------------------------------------------------------
 // Custom Globals for "Go from insights to quick action"
-// - Dynamically loads embedUrl & reportId from reportList.json
+// Dynamically loads embedUrl & reportId from reportList.json
 // ----------------------------------------------------------------------------
 
 // 1) reportConfig will hold the values for index.js to use when embedding
@@ -47,13 +47,25 @@ let tableVisual;
 
 const base64Icon = "data:image/png;base64,..."; // your existing icon data
 
-// 4) Load reportList.json and populate reportConfig
+// ----------------------------------------------------------------------------
+// Step: Compute the current folder path and fetch reportList.json
+// ----------------------------------------------------------------------------
 ;(function loadReportList() {
+  // Determine base path (folder containing this index.html)
+  let path = window.location.pathname;             // e.g. "/UHCapp/Go%20from%20insights%20to%20quick%20action/"
+  if (path.endsWith("index.html")) {
+    path = path.substring(0, path.lastIndexOf("index.html"));
+  }
+  if (!path.endsWith("/")) {
+    path += "/";
+  }
+  const jsonUrl = path + "reportList.json";
+
   // Read ?report=Name if present
   const params     = new URLSearchParams(window.location.search);
   const reportName = params.get("report") || null;
 
-  fetch("./reportList.json")
+  fetch(jsonUrl)
     .then(response => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
@@ -68,7 +80,7 @@ const base64Icon = "data:image/png;base64,..."; // your existing icon data
 
       // Populate config
       reportConfig.embedUrl = entry.embedUrl;
-      // Extract reportId query param
+      // Extract reportId query param from embedUrl
       const url = new URL(entry.embedUrl);
       reportConfig.reportId = url.searchParams.get("reportId");
 
@@ -78,10 +90,10 @@ const base64Icon = "data:image/png;base64,..."; // your existing icon data
     .catch(err => {
       console.error("reportList.json error:", err);
       overlay.innerHTML = `
-        <div style="color:red; padding:20px;">
+        <div style="color:red; padding:20px; font-size:16px;">
           Failed to load report list:<br>${err.message}
         </div>`;
-      // Still resolve so index.js can proceed (and show its own errors)
+      // Resolve anyway so index.js can proceed
       configReadyResolve();
     });
 })();
