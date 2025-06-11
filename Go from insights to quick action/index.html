@@ -5,95 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Insights to Action</title>
 
-  <!-- Your existing CSS -->
-  <link href="css/header_style.css"       rel="stylesheet"/>
-  <link href="css/embed_area_style.css"   rel="stylesheet"/>
-  <link href="css/dialog_send_coupon.css" rel="stylesheet"/>
-  <link href="css/dialog_success.css"     rel="stylesheet"/>
+  <!-- your existing CSS -->
+  <link href="css/header_style.css"        rel="stylesheet"/>
+  <link href="css/embed_area_style.css"    rel="stylesheet"/>
+  <link href="css/dialog_send_coupon.css"  rel="stylesheet"/>
+  <link href="css/dialog_success.css"      rel="stylesheet"/>
   <link href="css/dialog_campaign_list.css" rel="stylesheet"/>
 </head>
 <body id="insight-to-action">
-  <!-- Header -->
   <header id="contoso-header">
     <img src="img/contoso.svg" id="contoso" alt="Contoso logo" />
   </header>
 
-  <!-- Spinner overlay -->
   <div id="overlay">
     <img src="img/spinner.svg" id="spinner" alt="Loading report" />
   </div>
 
-  <!-- Container for the embedded report -->
-  <div id="report-container" style="height:90vh;"></div>
+  <div id="report-container" style="height: 90vh;"></div>
 
-  <!-- Power BI client library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
-
-  <!-- Inline embed logic -->
+  <!-- Inline script: fetch JSON, pick report, render as iframe -->
   <script>
   (async function() {
     const overlay   = document.getElementById("overlay");
     const container = document.getElementById("report-container");
 
-    // 1) Determine ?report=Name
+    // 1. Which report? (?report=ProjectSummary)
     const params     = new URLSearchParams(window.location.search);
     const reportName = params.get("report");
 
-    // 2) Load your reportList.json from the same folder
+    // 2. Load the JSON list
     let list;
     try {
-      const res = await fetch("reportList.json");
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      list = await res.json();
+      const resp = await fetch("reportList.json");
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      list = await resp.json();
     } catch (err) {
-      overlay.innerHTML = '<div style="color:red;padding:20px;">Failed to load report list:<br>' 
-                          + err.message + '</div>';
+      overlay.innerHTML = `<div style="color:red;padding:20px;">
+        Failed to load report list:<br>${err.message}
+      </div>`;
       return;
     }
 
-    // 3) Pick the entry matching ?report= or default to first
+    // 3. Pick the matching entry or default to the first
     let entry = reportName && list.find(r => r.name === reportName);
     if (!entry) entry = list[0];
     if (!entry || !entry.embedUrl) {
-      overlay.innerHTML = '<div style="color:red;padding:20px;">No report found to embed</div>';
+      overlay.innerHTML = `<div style="color:red;padding:20px;">
+        No report found to embed
+      </div>`;
       return;
     }
 
-    // 4) Configure embed
-    const models = window["powerbi-client"].models;
-    const config = {
-      type:      "report",
-      tokenType: models.TokenType.Embed,
-      accessToken: "",        // not needed for Publish-to-web embeds
-      embedUrl:  entry.embedUrl,
-      settings: {
-        panes: {
-          filters:        { visible: false },
-          pageNavigation: { visible: false }
-        },
-        background: models.BackgroundType.Transparent
-      }
-    };
-
-    // 5) Embed and hook events
-    try {
-      const report = powerbi.embed(container, config);
-
-      report.on("loaded", () => {
-        overlay.style.display = "none";
-        console.log("✅ Embedded report:", entry.name);
-      });
-
-      report.on("error", event => {
-        console.error(event.detail);
-        overlay.innerHTML = '<div style="color:red;padding:20px;">Embed error, check console</div>';
-      });
-    }
-    catch (ex) {
-      console.error(ex);
-      overlay.innerHTML = '<div style="color:red;padding:20px;">Embed failed:<br>' +
-                          ex.message + '</div>';
-    }
+    // 4. Inject an iframe for the Publish-to-web URL
+    const iframe = document.createElement("iframe");
+    iframe.src            = entry.embedUrl;
+    iframe.width          = "100%";
+    iframe.height         = "100%";
+    iframe.frameBorder    = "0";
+    iframe.allowFullscreen= true;
+    container.innerHTML   = "";         // clear spinner
+    container.appendChild(iframe);
+    overlay.style.display = "none";
   })();
   </script>
 </body>
