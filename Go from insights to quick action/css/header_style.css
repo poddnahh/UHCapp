@@ -1,55 +1,70 @@
 /* Copyright (c) Microsoft Corporation.
-Licensed under the MIT license. */
+   Licensed under the MIT license. */
 
+/* Reset body margin so header sits flush */
 body {
-    height: 100%;
-    scrollbar-color: #A0AEB2 #FFF;
-    scrollbar-width: thin;
+  margin: 0;
+  height: 100%;
+  scrollbar-color: #A0AEB2 #FFF;
+  scrollbar-width: thin;
 }
 
-/* Change custom scrollbar appearance */
+/* Custom scrollbar styling */
 body::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: transparent;
+  border-radius: 10px;
+  background-color: transparent;
 }
 
 body::-webkit-scrollbar {
-    background-color: transparent;
-    height: 10px;
-    width: 8px;
+  background-color: transparent;
+  height: 10px;
+  width: 8px;
 }
 
 body::-webkit-scrollbar-thumb {
-    background-color: #A0AEB2;
-    border-radius: 10px;
-    height: 30px;
+  background-color: #A0AEB2;
+  border-radius: 10px;
+  height: 30px;
 }
 
+/* Wrapper stays full-width */
 #wrapper {
-    margin: 0 auto;
-    min-width: 838px;
-    width: 100%;
+  margin: 0 auto;
+  min-width: 838px;
+  width: 100%;
 }
 
+/* Header bar */
 #contoso-header {
-    background: #094624;
-    display: flex;
-    align-items: center;
-    height: 44px;
-    margin: 0;
-    min-width: 850px;
+  background-color: #ffffff; /* white background */
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 60px;              /* adjust if you need more/less */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
 }
 
-.fixed-top {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 1030;
+/* UHC logo sizing */
+#uhc-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 12px;
 }
 
-#contoso {
-    height: 41px;
-    margin-left: 24px;
-    width: 74px;
+/* UHC text styling */
+#uhc-title {
+  font-family: "Segoe UI", sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: #004b8d; /* United Healthcare blue */
+}
+
+/* Push main content down below fixed header */
+main, #report-container {
+  margin-top: 60px; /* same as header height */
 }
