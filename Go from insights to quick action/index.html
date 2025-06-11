@@ -5,59 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Insights to Action</title>
 
-  <!-- Your CSS -->
+  <!-- Your existing CSS -->
   <link href="css/header_style.css"       rel="stylesheet"/>
   <link href="css/embed_area_style.css"   rel="stylesheet"/>
+  <link href="css/dialog_send_coupon.css" rel="stylesheet"/>
+  <link href="css/dialog_success.css"     rel="stylesheet"/>
+  <link href="css/dialog_campaign_list.css" rel="stylesheet"/>
 </head>
 <body id="insight-to-action">
+  <!-- Header -->
   <header id="contoso-header">
-    <img src="img/contoso.svg" id="contoso" alt="Contoso logo"/>
+    <img src="img/contoso.svg" id="contoso" alt="Contoso logo" />
   </header>
 
+  <!-- Spinner overlay -->
   <div id="overlay">
-    <img src="img/spinner.svg" id="spinner" alt="Loading report"/>
+    <img src="img/spinner.svg" id="spinner" alt="Loading report" />
   </div>
 
+  <!-- Container for the embedded report -->
   <div id="report-container" style="height:90vh;"></div>
 
-  <!-- 1) Power BI client from Cloudflare CDN -->
+  <!-- Power BI client library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-  <!-- 2) Embed logic -->
+  <!-- Inline embed logic -->
   <script>
   (async function() {
-    const overlay = document.getElementById("overlay");
+    const overlay   = document.getElementById("overlay");
     const container = document.getElementById("report-container");
 
-    // 1. Determine which report to load
-    const params = new URLSearchParams(window.location.search);
-    const reportName = params.get("report") || null;
+    // 1) Determine ?report=Name
+    const params     = new URLSearchParams(window.location.search);
+    const reportName = params.get("report");
 
-    // 2. Fetch your JSON
+    // 2) Load your reportList.json from the same folder
     let list;
     try {
       const res = await fetch("reportList.json");
-      if (!res.ok) throw new Error(`Status ${res.status}`);
+      if (!res.ok) throw new Error("HTTP " + res.status);
       list = await res.json();
-    } catch (e) {
-      overlay.innerHTML = `<div style="color:red;padding:20px;">JSON load error:<br>${e.message}</div>`;
+    } catch (err) {
+      overlay.innerHTML = '<div style="color:red;padding:20px;">Failed to load report list:<br>' 
+                          + err.message + '</div>';
       return;
     }
 
-    // 3. Pick matching or default
+    // 3) Pick the entry matching ?report= or default to first
     let entry = reportName && list.find(r => r.name === reportName);
     if (!entry) entry = list[0];
     if (!entry || !entry.embedUrl) {
-      overlay.innerHTML = `<div style="color:red;padding:20px;">No report found</div>`;
+      overlay.innerHTML = '<div style="color:red;padding:20px;">No report found to embed</div>';
       return;
     }
 
-    // 4. Embed public report
+    // 4) Configure embed
     const models = window["powerbi-client"].models;
     const config = {
       type:      "report",
       tokenType: models.TokenType.Embed,
-      accessToken: "", // not needed for public embed
+      accessToken: "",        // not needed for Publish-to-web embeds
       embedUrl:  entry.embedUrl,
       settings: {
         panes: {
@@ -68,19 +75,24 @@
       }
     };
 
+    // 5) Embed and hook events
     try {
       const report = powerbi.embed(container, config);
+
       report.on("loaded", () => {
         overlay.style.display = "none";
-        console.log("✅ Loaded:", entry.name);
+        console.log("✅ Embedded report:", entry.name);
       });
-      report.on("error", e => {
-        console.error(e);
-        overlay.innerHTML = `<div style="color:red;padding:20px;">Embed error</div>`;
+
+      report.on("error", event => {
+        console.error(event.detail);
+        overlay.innerHTML = '<div style="color:red;padding:20px;">Embed error, check console</div>';
       });
-    } catch (e) {
-      console.error(e);
-      overlay.innerHTML = `<div style="color:red;padding:20px;">Embed failed: ${e.message}</div>`;
+    }
+    catch (ex) {
+      console.error(ex);
+      overlay.innerHTML = '<div style="color:red;padding:20px;">Embed failed:<br>' +
+                          ex.message + '</div>';
     }
   })();
   </script>
