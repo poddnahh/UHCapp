@@ -2,8 +2,9 @@
 /* Copyright (c) Microsoft Corporation.
    Licensed under the MIT license. */
 
-/* Reset body background & scrollbar (keep your dark-mode override below) */
+/* Reset body background & scrollbar (keep dark-mode below) */
 body {
+  margin: 0;
   background: #FAF9F8;
   height: 100%;
   scrollbar-color: #A0AEB2 transparent;
@@ -35,7 +36,7 @@ body::-webkit-scrollbar-thumb {
   top: 0;
   left: 0;
   right: 0;
-  height: 56px;              /* a bit taller for UHC branding */
+  height: 56px;              /* adjust for UHC bar height */
   background: #FFFFFF;       /* white background */
   display: flex;
   align-items: center;
@@ -46,7 +47,8 @@ body::-webkit-scrollbar-thumb {
 
 /* UHC logo */
 .header .contoso {
-  content: url("../img/UHClogo.png");  /* point at your UHC logo file */
+  /* swap in your logo file */
+  content: url("../img/UHClogo.png");
   height: 40px;
   width: auto;
 }
@@ -56,11 +58,12 @@ body::-webkit-scrollbar-thumb {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 18px;
   font-weight: 600;
-  color: #00467F;    /* UHC blue */
+  color: #00467F;    /* UHC brand color */
   margin-left: 12px;
 }
 
-/* push the rest of the page down below the header */
-.content, .report-container {
-  margin-top: 56px;
+/* push content down below header */
+.content,
+.report-container {
+  margin-top: 56px;  /* same as .header height */
 }
