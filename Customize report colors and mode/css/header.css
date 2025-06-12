@@ -1,50 +1,66 @@
+/* css/header.css */
 /* Copyright (c) Microsoft Corporation.
-Licensed under the MIT license. */
+   Licensed under the MIT license. */
 
+/* Reset body background & scrollbar (keep your dark-mode override below) */
 body {
-    background: #FAF9F8;
-    height: 100%;
-    scrollbar-color: #A0AEB2 transparent;
-    scrollbar-width: thin;
+  background: #FAF9F8;
+  height: 100%;
+  scrollbar-color: #A0AEB2 transparent;
+  scrollbar-width: thin;
 }
-
 body.dark {
-    background: #3B3A39;
+  background: #3B3A39;
 }
 
-/* Change custom scrollbar appearance */
+/* Scrollbar styling */
 body::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: transparent;
+  border-radius: 10px;
+  background-color: transparent;
 }
-
 body::-webkit-scrollbar {
-    background-color: transparent;
-    height: 10px;
-    width: 8px;
+  background-color: transparent;
+  height: 10px;
+  width: 8px;
 }
-
 body::-webkit-scrollbar-thumb {
-    background-color: #A0AEB2;
-    border-radius: 10px;
-    height: 30px;
+  background-color: #A0AEB2;
+  border-radius: 10px;
+  height: 30px;
 }
 
-.wrapper {
-    margin: 0 auto;
-    width: 100%;
-}
-
+/* Header bar */
 .header {
-    align-items: center;
-    background: #69797E;
-    display: flex;
-    height: 44px;
-    margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;              /* a bit taller for UHC branding */
+  background: #FFFFFF;       /* white background */
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1030;
 }
 
-.contoso {
-    height: 41px;
-    margin-left: 24px;
-    width: 74px;
+/* UHC logo */
+.header .contoso {
+  content: url("../img/UHClogo.png");  /* point at your UHC logo file */
+  height: 40px;
+  width: auto;
+}
+
+/* UHC title text */
+.header .uhc-title {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #00467F;    /* UHC blue */
+  margin-left: 12px;
+}
+
+/* push the rest of the page down below the header */
+.content, .report-container {
+  margin-top: 56px;
 }
