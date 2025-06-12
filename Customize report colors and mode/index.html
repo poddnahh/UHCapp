@@ -1,114 +1,81 @@
-<!-- Copyright (c) Microsoft Corporation.
-     Licensed under the MIT license. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Customize report colors and theme</title>
-
-  <!-- Bootstrap for layout & dropdown -->
-  <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-  />
-
-  <!-- Your custom CSS -->
-  <link rel="stylesheet" href="css/header.css">
-  <link rel="stylesheet" href="css/container.css">
-  <link rel="stylesheet" href="css/dropdown.css">
-  <link rel="stylesheet" href="css/report.css">
-
-  <!-- Preload Segoe UI fonts if needed -->
-  <link
-    rel="preload" as="font"
-    href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff"
-    type="font/woff" crossorigin="anonymous"
-  >
-  <link
-    rel="preload" as="font"
-    href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff"
-    type="font/woff" crossorigin="anonymous"
-  >
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Minimal Embed Test</title>
+  <style>
+    body, html { margin:0; height:100%; }
+    #overlay {
+      position:fixed; top:0; left:0; right:0; bottom:0;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,0.8); z-index:100;
+    }
+    #report-container { width:100%; height:100%; }
+  </style>
 </head>
-
 <body>
-  <div class="wrapper">
-    <!-- HEADER -->
-    <header class="header">
-      <img
-        src="img/UHClogo.png"
-        class="contoso"
-        alt="United Healthcare logo"
-        aria-label="United Healthcare logo"
-      >
-      <span class="uhc-title">United Healthcare</span>
-    </header>
-
-    <!-- SPINNER OVERLAY -->
-    <div id="overlay">
-      <img
-        src="img/spinner.svg"
-        class="rotate"
-        id="spinner"
-        alt="Loading report"
-        aria-label="Loading report"
-      />
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <main class="content">
-      <!-- THEME DROPDOWN -->
-      <div class="dropdown fixed-top">
-        <button
-          class="btn btn-theme"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <!-- paint bucket icon -->
-          <svg
-            role="presentation"
-            class="bucket-theme"
-            width="16" height="16"
-            viewBox="0 0 16 16"
-            fill="#4A565A"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <!-- path omitted for brevity -->
-            <path d="M13.2031 7.5L6.5 14.2031L0.796875..." />
-          </svg>
-          <label class="theme-selector-label">Choose theme</label>
-        </button>
-        <ul
-          role="menu"
-          class="dropdown-menu checkbox-menu allow-focus theme-container"
-          id="theme-dropdown"
-          aria-label="Data colors"
-        ></ul>
-      </div>
-
-      <!-- HORIZONTAL RULE -->
-      <div role="separator" class="horizontal-rule fixed-top"></div>
-
-      <!-- EMBED CONTAINER -->
-      <div class="report-container"></div>
-    </main>
+  <div id="overlay">
+    <img src="../Go%20from%20insights%20to%20quick%20action/img/spinner.svg" alt="Loading…" />
   </div>
+  <div id="report-container"></div>
 
-  <!-- JS DEPENDENCIES -->
-  <script src="js/error_listener.js?v=06012021"></script>
-  <script src="https://playground.powerbi.com/app/jquery.js?v=06012021"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  <script src="https://playground.powerbi.com/app/powerbi.min.js?v=06012021"></script>
+  <!-- 1) Power BI client -->
+  <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-  <!-- YOUR EMBED + THEME LOGIC -->
-  <script src="js/themes.js?v=10022021"></script>
-  <script src="js/globals.js?v=05022021"></script>
-  <script src="js/session_utils.js?v=25012021"></script>
-  <script src="js/index.js?v=05022021"></script>
+  <!-- 2) Minimal embed logic -->
+  <script>
+  (async function(){
+    const overlay = document.getElementById("overlay");
+    const container = document.getElementById("report-container");
+
+    let list;
+    try {
+      const res = await fetch("reportList.json");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      list = await res.json();
+    } catch(e) {
+      overlay.innerHTML = "<div style='color:red'>reportList.json load error:<br>" + 
+                           e.message + "</div>";
+      return;
+    }
+
+    if (!list.length) {
+      overlay.innerHTML = "<div style='color:red'>Empty reportList.json</div>";
+      return;
+    }
+    // Always pick the first entry for now
+    const entry = list[0];
+
+    const models = window["powerbi-client"].models;
+    const config = {
+      type: "report",
+      tokenType: models.TokenType.Embed,
+      accessToken: "",            // public embed
+      embedUrl: entry.embedUrl,
+      settings: {
+        panes: { filters:{visible:false}, pageNavigation:{visible:false} },
+        background: models.BackgroundType.Transparent
+      }
+    };
+
+    try {
+      const report = powerbi.embed(container, config);
+      report.on("loaded", () => {
+        overlay.style.display = "none";
+        console.log("✅ Embedded:", entry.name);
+      });
+      report.on("error", err => {
+        console.error(err);
+        overlay.innerHTML = "<div style='color:red'>Embed error:<br>" + 
+                             err.message + "</div>";
+      });
+    } catch(err) {
+      console.error(err);
+      overlay.innerHTML = "<div style='color:red'>Embed exception:<br>" + 
+                           err.message + "</div>";
+    }
+  })();
+  </script>
 </body>
 </html>
