@@ -1,57 +1,52 @@
-<!-- Customize report colors and theme -->
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT license. -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Customize report colors and theme</title>
 
-  <!-- Bootstrap -->
+  <!-- Bootstrap for layout & dropdown -->
   <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
   />
 
-  <!-- Global styles -->
-  <link rel="stylesheet" href="css/header.css" />
-  <link rel="stylesheet" href="css/container.css" />
-  <link rel="stylesheet" href="css/dropdown.css" />
-  <link rel="stylesheet" href="css/report.css" />
+  <!-- Your custom CSS -->
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/container.css">
+  <link rel="stylesheet" href="css/dropdown.css">
+  <link rel="stylesheet" href="css/report.css">
 
-  <!-- Preload Segoe UI fonts -->
+  <!-- Preload Segoe UI fonts if needed -->
   <link
-    rel="preload"
-    as="font"
+    rel="preload" as="font"
     href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff"
-    type="font/woff"
-    crossorigin="anonymous"
-  />
+    type="font/woff" crossorigin="anonymous"
+  >
   <link
-    rel="preload"
-    as="font"
+    rel="preload" as="font"
     href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff"
-    type="font/woff"
-    crossorigin="anonymous"
-  />
+    type="font/woff" crossorigin="anonymous"
+  >
 </head>
 
 <body>
   <div class="wrapper">
-    <!-- White UHC header -->
+    <!-- HEADER -->
     <header class="header">
       <img
         src="img/UHClogo.png"
         class="contoso"
         alt="United Healthcare logo"
         aria-label="United Healthcare logo"
-      />
+      >
       <span class="uhc-title">United Healthcare</span>
     </header>
 
-    <!-- Spinner overlay -->
+    <!-- SPINNER OVERLAY -->
     <div id="overlay">
       <img
         src="img/spinner.svg"
@@ -62,8 +57,9 @@
       />
     </div>
 
+    <!-- MAIN CONTENT -->
     <main class="content">
-      <!-- Theme dropdown -->
+      <!-- THEME DROPDOWN -->
       <div class="dropdown fixed-top">
         <button
           class="btn btn-theme"
@@ -72,17 +68,17 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
+          <!-- paint bucket icon -->
           <svg
             role="presentation"
-            id="bucket"
             class="bucket-theme"
-            width="16"
-            height="16"
+            width="16" height="16"
             viewBox="0 0 16 16"
             fill="#4A565A"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <!-- SVG path omitted for brevity -->
+            <!-- path omitted for brevity -->
+            <path d="M13.2031 7.5L6.5 14.2031L0.796875..." />
           </svg>
           <label class="theme-selector-label">Choose theme</label>
         </button>
@@ -94,27 +90,22 @@
         ></ul>
       </div>
 
+      <!-- HORIZONTAL RULE -->
       <div role="separator" class="horizontal-rule fixed-top"></div>
 
-      <!-- Power BI report container -->
+      <!-- EMBED CONTAINER -->
       <div class="report-container"></div>
     </main>
   </div>
 
-  <!-- Scripts -->
+  <!-- JS DEPENDENCIES -->
   <script src="js/error_listener.js?v=06012021"></script>
-
   <script src="https://playground.powerbi.com/app/jquery.js?v=06012021"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-  ></script>
-  <script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-  ></script>
-  <script
-    src="https://playground.powerbi.com/app/powerbi.min.js?v=06012021"
-  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://playground.powerbi.com/app/powerbi.min.js?v=06012021"></script>
 
+  <!-- YOUR EMBED + THEME LOGIC -->
   <script src="js/themes.js?v=10022021"></script>
   <script src="js/globals.js?v=05022021"></script>
   <script src="js/session_utils.js?v=25012021"></script>
