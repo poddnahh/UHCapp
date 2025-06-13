@@ -5,10 +5,10 @@
 // ----------------------------------------------------------------------------
 
 $(document).ready(async function() {
-  // 1) Load the report list JSON (must live alongside index.html & this script)
+  // 1) Load the report list JSON from the Go from insights to quick action folder
   let list;
   try {
-    const resp = await fetch('./reportList.json');
+    const resp = await fetch('../Go%20from%20insights%20to%20quick%20action/reportList.json');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     list = await resp.json();
   } catch (err) {
@@ -34,19 +34,19 @@ $(document).ready(async function() {
   }
 
   // 3) Extract reportId from the embedUrl
-  const url = new URL(entry.embedUrl);
+  const url      = new URL(entry.embedUrl);
   const reportId = url.searchParams.get('reportId');
 
   // 4) Bootstrap the Power BI container
   powerbi.bootstrap(embedContainer, { type: 'report' });
 
-  // 5) Hide any dialogs you have
+  // 5) Hide your dialogs initially
   distributionDialog.hide();
   dialogMask.hide();
   sendDialog.hide();
   successDialog.hide();
 
-  // 6) Build the theme picker UI
+  // 6) Build the theme-picker UI
   buildThemePalette();
 
   // 7) Perform the embed
@@ -67,13 +67,13 @@ $(document).ready(async function() {
       customLayout: { displayOption: models.DisplayOption.FitToPage },
       background:   models.BackgroundType.Transparent
     },
-    // apply your initial theme/colors
+    // initial theme/colors
     theme: { themeJson: Object.assign({}, jsonDataColors[0], themes[0]) }
   };
 
   const report = powerbi.embed(embedContainer, config);
 
-  // 8) When loaded, hide spinner & show content
+  // 8) On load, hide spinner & show content
   report.on('loaded', () => {
     $('#overlay').hide();
     $('.content').show();
@@ -81,7 +81,7 @@ $(document).ready(async function() {
     console.log('✅ Report loaded:', entry.name);
   });
 
-  // 9) On errors, show message
+  // 9) On error, show message
   report.on('error', event => {
     console.error('Embed error:', event.detail || event);
     $('#overlay').html(
@@ -91,20 +91,15 @@ $(document).ready(async function() {
     );
   });
 
-  // 10) Wire up your dropdown focus handlers
-  $('#theme-slider').on('keydown', e => {
-    if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
+  // 10) Dropdown focus handlers
+  dropdownDiv.on('hidden.bs.dropdown', () => themeButton.focus());
+  dropdownDiv.on('shown.bs.dropdown', () => $('#theme-slider').focus());
+  $(document).on('keydown', '#theme-slider', e => {
+    if (e.shiftKey && (e.key===Keys.TAB || e.keyCode===KEYCODE_TAB)) {
       dropdownDiv.removeClass('show');
       themesList.removeClass('show');
       themeButton.attr('aria-expanded','false');
     }
   });
-  dropdownDiv.on('hidden.bs.dropdown', ()=> themeButton.focus());
-  dropdownDiv.on('shown.bs.dropdown', ()=> $('#theme-slider').focus());
   $(document).on('click', '.allow-focus', e => e.stopPropagation());
 });
-
-// **All** of your existing helper functions—
-// buildThemePalette, buildThemeSwitcher, buildSeparator,
-// buildDataColorElement, applyTheme, toggleTheme,
-// toggleDarkThemeOnElements—remain exactly as they were.
