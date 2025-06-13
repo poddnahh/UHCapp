@@ -8,7 +8,7 @@ $(document).ready(async function() {
   // 1) Load the report list JSON from the Go from insights to quick action folder
   let list;
   try {
-    const resp = await fetch('../Go%20from%20insights%20to%20quick%20action/reportList.json');
+    const resp = await fetch('./reportList.json');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     list = await resp.json();
   } catch (err) {
