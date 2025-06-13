@@ -2,53 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Minimal Embed Test</title>
-  <style>
-    body, html { margin:0; height:100%; }
-    #overlay {
-      position:fixed; top:0; left:0; right:0; bottom:0;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,0.8); z-index:100;
-    }
-    #report-container { width:100%; height:100%; }
-  </style>
+  <link rel="stylesheet" href="css/header.css">
 </head>
 <body>
+  <header class="header">
+    <img src="img/UHClogo.png" class="contoso" alt="United Healthcare logo"/>
+    <span class="uhc-title">United Healthcare</span>
+  </header>
+
   <div id="overlay">
-    <img src="../Go%20from%20insights%20to%20quick%20action/img/spinner.svg" alt="Loading…" />
+    <img src="img/spinner.svg" class="rotate" alt="Loading report"/>
   </div>
-  <div id="report-container"></div>
 
-  <!-- 1) Power BI client -->
-  <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+  <div class="report-container" style="margin-top:56px; height:calc(100vh - 56px);"></div>
 
-  <!-- 2) Minimal embed logic -->
- <script>
-(async function() {
-  const overlay = document.getElementById("overlay");
-  const container = document.getElementById("report-container");
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+  <script>
+    (async () => {
+      // load reportList.json
+      let list;
+      try {
+        const res = await fetch("reportList.json");
+        list = await res.json();
+      } catch (e) {
+        document.getElementById("overlay").innerHTML =
+          `<div style="color:red;padding:20px;">JSON load error:<br>${e.message}</div>`;
+        return;
+      }
 
-  // 1. Determine which report to load
-  const params     = new URLSearchParams(window.location.search);
-  const reportName = params.get("report") || null;
+      // pick first entry
+      const entry = list[0];
+      if (!entry || !entry.embedUrl) {
+        document.getElementById("overlay").innerHTML =
+          `<div style="color:red;padding:20px;">No report found</div>`;
+        return;
+      }
 
-  // 2. Fetch your JSON from the other folder
-  let list;
-  try {
-    const res = await fetch(
-      "../Go%20from%20insights%20to%20quick%20action/reportList.json"
-    );
-    if (!res.ok) throw new Error(`Status ${res.status}`);
-    list = await res.json();
-  } catch (e) {
-    overlay.innerHTML = `<div style="color:red;padding:20px;">JSON load error:<br>${e.message}</div>`;
-    return;
-  }
+      // embed
+      powerbi.bootstrap(document.querySelector(".report-container"), { type: "report" });
+      const report = powerbi.embed(document.querySelector(".report-container"), {
+        type: "report",
+        tokenType: window["powerbi-client"].models.TokenType.Embed,
+        accessToken: "",
+        embedUrl: entry.embedUrl,
+        settings: { panes: { filters: { visible: false }, pageNavigation: { visible: false } } }
+      });
 
-  // …the rest of your embed code stays exactly the same
-})();
-</script>
-
+      report.on("loaded", () => {
+        document.getElementById("overlay").style.display = "none";
+      });
+      report.on("error", err => {
+        document.getElementById("overlay").innerHTML =
+          `<div style="color:red;padding:20px;">Embed error:<br>${err.message}</div>`;
+      });
+    })();
+  </script>
 </body>
 </html>
