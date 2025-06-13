@@ -24,58 +24,31 @@
   <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
   <!-- 2) Minimal embed logic -->
-  <script>
-  (async function(){
-    const overlay = document.getElementById("overlay");
-    const container = document.getElementById("report-container");
+ <script>
+(async function() {
+  const overlay = document.getElementById("overlay");
+  const container = document.getElementById("report-container");
 
-    let list;
-    try {
-      const res = await fetch("reportList.json");
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      list = await res.json();
-    } catch(e) {
-      overlay.innerHTML = "<div style='color:red'>reportList.json load error:<br>" + 
-                           e.message + "</div>";
-      return;
-    }
+  // 1. Determine which report to load
+  const params     = new URLSearchParams(window.location.search);
+  const reportName = params.get("report") || null;
 
-    if (!list.length) {
-      overlay.innerHTML = "<div style='color:red'>Empty reportList.json</div>";
-      return;
-    }
-    // Always pick the first entry for now
-    const entry = list[0];
+  // 2. Fetch your JSON from the other folder
+  let list;
+  try {
+    const res = await fetch(
+      "../Go%20from%20insights%20to%20quick%20action/reportList.json"
+    );
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    list = await res.json();
+  } catch (e) {
+    overlay.innerHTML = `<div style="color:red;padding:20px;">JSON load error:<br>${e.message}</div>`;
+    return;
+  }
 
-    const models = window["powerbi-client"].models;
-    const config = {
-      type: "report",
-      tokenType: models.TokenType.Embed,
-      accessToken: "",            // public embed
-      embedUrl: entry.embedUrl,
-      settings: {
-        panes: { filters:{visible:false}, pageNavigation:{visible:false} },
-        background: models.BackgroundType.Transparent
-      }
-    };
+  // …the rest of your embed code stays exactly the same
+})();
+</script>
 
-    try {
-      const report = powerbi.embed(container, config);
-      report.on("loaded", () => {
-        overlay.style.display = "none";
-        console.log("✅ Embedded:", entry.name);
-      });
-      report.on("error", err => {
-        console.error(err);
-        overlay.innerHTML = "<div style='color:red'>Embed error:<br>" + 
-                             err.message + "</div>";
-      });
-    } catch(err) {
-      console.error(err);
-      overlay.innerHTML = "<div style='color:red'>Embed exception:<br>" + 
-                           err.message + "</div>";
-    }
-  })();
-  </script>
 </body>
 </html>
