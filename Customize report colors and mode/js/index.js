@@ -1,105 +1,114 @@
-// js/index.js
+// index.js
 // ----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Embeds the report & builds the theme‐picker UI
 // ----------------------------------------------------------------------------
 
-$(document).ready(async function() {
-  // 1) Load the report list JSON from the Go from insights to quick action folder
-  let list;
-  try {
-    const resp = await fetch('./reportList.json');
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    list = await resp.json();
-  } catch (err) {
-    console.error('Failed to load reportList.json:', err);
-    $('#overlay').html(
-      `<div style="color:red;padding:20px;">
-         Failed to load report list:<br>${err.message}
-       </div>`
-    );
-    return;
-  }
+let themeSlider, dataColorNameElements, themeSwitchLabel,
+    horizontalSeparator, sliderCheckbox, allUIElements;
 
-  // 2) Pick ?report=Name or default to first entry
-  const params = new URLSearchParams(window.location.search);
-  const want   = params.get('report');
-  let entry    = want && list.find(r=>r.name===want);
-  if (!entry) entry = list[0];
-  if (!entry || !entry.embedUrl) {
-    $('#overlay').html(
-      `<div style="color:red;padding:20px;">No valid report found</div>`
-    );
-    return;
-  }
+// cache your DOM
+const bodyElement    = $('body');
+const overlay        = $('#overlay');
+const dropdownDiv    = $('.dropdown');
+const themesList     = $('#theme-dropdown');
+const contentElement = $('.content');
+const themeContainer = $('.theme-container');
+const horizontalRule = $('.horizontal-rule');
+const themeButton    = $('.btn-theme');
+const themeBucket    = $('.bucket-theme');
+const embedContainer = $('.report-container').get(0);
 
-  // 3) Extract reportId from the embedUrl
-  const url      = new URL(entry.embedUrl);
-  const reportId = url.searchParams.get('reportId');
+// key constants
+const KEYCODE_TAB = 9;
+const Keys = Object.freeze({ TAB:'Tab' });
 
-  // 4) Bootstrap the Power BI container
+(async function startup() {
+  // wait for your globals.js to finish
+  await configReady;
+
+  // bootstrap PowerBI
   powerbi.bootstrap(embedContainer, { type: 'report' });
 
-  // 5) Hide your dialogs initially
-  distributionDialog.hide();
-  dialogMask.hide();
-  sendDialog.hide();
-  successDialog.hide();
-
-  // 6) Build the theme-picker UI
+  // kick off embed + build UI
+  await embedThemesReport();
   buildThemePalette();
 
-  // 7) Perform the embed
-  const models = window['powerbi-client'].models;
+  // cache UI controls for focus/toggle
+  themeSlider           = $('#theme-slider');
+  dataColorNameElements = $('.data-color-name');
+  themeSwitchLabel      = $('.theme-switch-label');
+  horizontalSeparator   = $('.dropdown-separator');
+  sliderCheckbox        = $('.slider');
+  allUIElements = [
+    bodyElement, contentElement, dropdownDiv,
+    themeContainer, themeSwitchLabel, horizontalSeparator,
+    horizontalRule, sliderCheckbox, themeButton,
+    themeBucket, dataColorNameElements
+  ];
+
+  // restore focus when dropdown opens/closes
+  dropdownDiv
+    .on('hidden.bs.dropdown', ()=> themeButton.focus())
+    .on('shown.bs.dropdown', ()=> themeSlider.focus());
+})();
+
+// prevent BS4 dropdown auto‐closing inside custom controls
+$(document).on('click', '.allow-focus', e => e.stopPropagation());
+
+// trap Shift+Tab inside theme slider
+$(document).on('keydown', '#theme-slider', e => {
+  if (e.shiftKey && (e.key===Keys.TAB||e.keyCode===KEYCODE_TAB)) {
+    dropdownDiv.removeClass('show');
+    themesList.removeClass('show');
+    themeButton.attr('aria-expanded','false');
+  }
+});
+
+async function embedThemesReport() {
+  // load your token/url/reportId
+  await loadThemesShowcaseReportIntoSession();
+
+  const models        = window['powerbi-client'].models;
+  const accessToken   = reportConfig.accessToken;
+  const embedUrl      = reportConfig.embedUrl;
+  const embedReportId = reportConfig.reportId;
+  const permissions   = models.Permissions.View;
+
+  // default theme + first data‐color
+  let newTheme = {};
+  $.extend(newTheme, jsonDataColors[0], themes[0]);
+
   const config = {
     type:       'report',
     tokenType:  models.TokenType.Embed,
-    accessToken:'',                  // public embed
-    embedUrl:   entry.embedUrl,
-    id:         reportId,
-    permissions: models.Permissions.View,
+    accessToken,
+    embedUrl,
+    id:         embedReportId,
+    permissions,
     settings: {
-      panes: {
-        filters:        { visible: false, expanded: false },
-        pageNavigation: { visible: false }
-      },
-      layoutType: models.LayoutType.Custom,
-      customLayout: { displayOption: models.DisplayOption.FitToPage },
-      background:   models.BackgroundType.Transparent
+      panes:           { filters: { visible:false }, pageNavigation:{ visible:false } },
+      layoutType:      models.LayoutType.Custom,
+      customLayout:    { displayOption: models.DisplayOption.FitToPage },
+      background:      models.BackgroundType.Transparent
     },
-    // initial theme/colors
-    theme: { themeJson: Object.assign({}, jsonDataColors[0], themes[0]) }
+    theme: { themeJson: newTheme }
   };
 
   const report = powerbi.embed(embedContainer, config);
 
-  // 8) On load, hide spinner & show content
+  report.off('loaded');
   report.on('loaded', () => {
-    $('#overlay').hide();
-    $('.content').show();
-    $('#theme-dropdown #datacolor0').prop('checked', true);
-    console.log('✅ Report loaded:', entry.name);
+    overlay.hide();
+    contentElement.show();
+    themesList.find('#datacolor0').prop('checked', true);
   });
 
-  // 9) On error, show message
-  report.on('error', event => {
-    console.error('Embed error:', event.detail || event);
-    $('#overlay').html(
-      `<div style="color:red;padding:20px;">
-         Power BI embed failed<br>${event.detail?.message||event}
-       </div>`
-    );
+  report.off('rendered');
+  report.on('rendered', () => {
+    console.log('Customize Colors report rendered');
   });
 
-  // 10) Dropdown focus handlers
-  dropdownDiv.on('hidden.bs.dropdown', () => themeButton.focus());
-  dropdownDiv.on('shown.bs.dropdown', () => $('#theme-slider').focus());
-  $(document).on('keydown', '#theme-slider', e => {
-    if (e.shiftKey && (e.key===Keys.TAB || e.keyCode===KEYCODE_TAB)) {
-      dropdownDiv.removeClass('show');
-      themesList.removeClass('show');
-      themeButton.attr('aria-expanded','false');
-    }
-  });
-  $(document).on('click', '.allow-focus', e => e.stopPropagation());
-});
+  // optionally set a11y props
+  report.setComponentTitle('Customize report colors & mode');
+  report.setComponentTabIndex(0);
+}
