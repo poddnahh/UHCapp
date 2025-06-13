@@ -4,25 +4,32 @@
 // Licensed under the MIT license.
 // ----------------------------------------------------------------------------
 
-// Wait for the globals.js loader to finish reading reportList.json
-// and populating `reportConfig`
-let indexReadyResolve;
-const indexReady = new Promise(res => { indexReadyResolve = res; });
+// Prevent dropdown from closing when clicking inside custom controls
+$(document).on("click", ".allow-focus", e => e.stopPropagation());
+
+// Close the dropdown when Shift+Tab leaves the slider
+$(document).on("keydown", "#theme-slider", function (e) {
+  if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
+    dropdownDiv.removeClass("show");
+    themesList.removeClass("show");
+    themeButton.attr("aria-expanded", "false");
+  }
+});
 
 (async function () {
-  // 1) First, block until globals.js finishes loading reportConfig
+  // 1) Wait for globals.js to finish loading reportConfig
   await configReady;
 
-  // 2) Bootstrap the Power BI container
+  // 2) Bootstrap the Power BI embed container
   powerbi.bootstrap(embedContainer, { type: "report" });
 
-  // 3) Embed the report now that reportConfig.embedUrl & reportConfig.reportId are set
-  embedThemesReport();
+  // 3) Embed the report now that reportConfig is set
+  await embedThemesReport();
 
-  // 4) Build your theme palette (light/dark toggle + data-color radios)
+  // 4) Build the theme palette (light/dark toggle + data-color radios)
   buildThemePalette();
 
-  // 5) Cache your dynamic UI elements for focus & toggling
+  // 5) Cache UI elements for focus & dark-mode toggling
   themeSlider           = $("#theme-slider");
   dataColorNameElements = $(".data-color-name");
   themeSwitchLabel      = $(".theme-switch-label");
@@ -36,35 +43,21 @@ const indexReady = new Promise(res => { indexReadyResolve = res; });
     themeBucket, dataColorNameElements
   ];
 
-  // 6) When the dropdown closes, return focus to the “Choose theme” button
+  // 6) Restore focus to the button when the dropdown closes
   dropdownDiv.on("hidden.bs.dropdown", () => {
     themeButton.focus();
   });
 
-  // 7) When it opens, push focus into the slider
+  // 7) Move focus into the slider when it opens
   dropdownDiv.on("shown.bs.dropdown", () => {
     themeSlider.focus();
   });
-
-  // Signal that index.js has finished startup (if anyone cares)
-  indexReadyResolve();
 })();
 
-// Prevent dropdown from closing when clicking inside custom controls
-$(document).on("click", ".allow-focus", e => e.stopPropagation());
 
-// Close the dropdown when Shift+Tab leaves the slider
-$(document).on("keydown", "#theme-slider", function (e) {
-  if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
-    dropdownDiv.removeClass("show");
-    themesList.removeClass("show");
-    themeButton.attr("aria-expanded", "false");
-  }
-});
-
-// Embed the report and wire up loaded/rendered callbacks
+// Embed the report and hook up loaded/rendered callbacks
 async function embedThemesReport() {
-  // Pull in workspace/app token, embedUrl, reportId via session_utils
+  // Pull in accessToken & embedUrl & reportId from session (session_utils.js)
   await loadThemesShowcaseReportIntoSession();
 
   const models        = window["powerbi-client"].models;
@@ -73,7 +66,7 @@ async function embedThemesReport() {
   const embedReportId = reportConfig.reportId;
   const permissions   = models.Permissions.View;
 
-  // Merge your default light theme and first data-color set
+  // Merge the default light theme + first data-color set
   let newTheme = {};
   $.extend(newTheme, jsonDataColors[0], themes[0]);
 
@@ -96,28 +89,27 @@ async function embedThemesReport() {
     theme: { themeJson: newTheme }
   };
 
-  // Perform the actual embedding
+  // Actually perform the embed
   themesShowcaseState.themesReport = powerbi.embed(embedContainer, config);
 
-  // Accessibility props
+  // Once loaded, hide spinner & reveal UI
   themesShowcaseState.themesReport.off("loaded");
   themesShowcaseState.themesReport.on("loaded", () => {
-    // Hide spinner & show your UI
     overlay.hide();
     $(".content").show();
-    // Pre-check the first data-color radio
     themesList.find("#datacolor0").prop("checked", true);
   });
 
+  // Once rendered, log to parent playground
   themesShowcaseState.themesReport.off("rendered");
   themesShowcaseState.themesReport.on("rendered", () => {
     console.log("Customize Colors report rendered");
     try {
       window.parent.playground.logShowcaseDoneRendering("CustomizeColors");
-    } catch { /* ignore */ }
+    } catch { /* ignore if not in playground */ }
   });
 }
 
-// The rest of your buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
-// buildDataColorElement(), applyTheme(), toggleTheme(), toggleDarkThemeOnElements()
-// remain exactly the same as you had them.
+// All of your buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
+// buildDataColorElement(), applyTheme(), toggleTheme(), and toggleDarkThemeOnElements()
+// remain exactly as you already have them.
