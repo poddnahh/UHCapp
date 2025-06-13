@@ -4,85 +4,107 @@
 // Licensed under the MIT license.
 // ----------------------------------------------------------------------------
 
-// We assume globals.js has already defined:
-//   reportConfig = { accessToken:null, embedUrl:null, reportId:null };
-//   configReady  (we’ll ignore that and drive our own loading here)
-//   embedContainer, overlay, distributionDialog, dialogMask, sendDialog, successDialog,
-//   closeBtn1, closeBtn2, sendCouponBtn, sendDiscountBtn, sendMessageBtn, successCross,
-//   bodyElement, contentElement, dropdownDiv, themesList, themeContainer, horizontalRule,
-//   themeButton, themeBucket, allUIElements, etc.
-// And functions: buildThemePalette(), embedThemesReport(), setReportAccessibilityProps(), etc.
-
 $(document).ready(async function() {
-  // 1) Load your reportList.json
+  // 1) Load the report list JSON (must live alongside index.html & this script)
   let list;
   try {
-    const resp = await fetch('reportList.json');
+    const resp = await fetch('./reportList.json');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     list = await resp.json();
   } catch (err) {
     console.error('Failed to load reportList.json:', err);
-    overlay.innerHTML = `<div style="color:red;padding:20px;">
-      Failed to load report list:<br>${err.message}
-    </div>`;
+    $('#overlay').html(
+      `<div style="color:red;padding:20px;">
+         Failed to load report list:<br>${err.message}
+       </div>`
+    );
     return;
   }
 
-  // 2) Pick either ?report=Name or default to first
-  const params     = new URLSearchParams(window.location.search);
-  const want       = params.get('report');
-  let entry        = want && list.find(r=>r.name===want);
+  // 2) Pick ?report=Name or default to first entry
+  const params = new URLSearchParams(window.location.search);
+  const want   = params.get('report');
+  let entry    = want && list.find(r=>r.name===want);
   if (!entry) entry = list[0];
   if (!entry || !entry.embedUrl) {
-    overlay.innerHTML = `<div style="color:red;padding:20px;">No valid report found.</div>`;
+    $('#overlay').html(
+      `<div style="color:red;padding:20px;">No valid report found</div>`
+    );
     return;
   }
 
-  // 3) Populate your global reportConfig
-  reportConfig.embedUrl  = entry.embedUrl;
-  reportConfig.reportId  = new URL(entry.embedUrl).searchParams.get('reportId');
+  // 3) Extract reportId from the embedUrl
+  const url = new URL(entry.embedUrl);
+  const reportId = url.searchParams.get('reportId');
 
-  // 4) Bootstrap PowerBI & hide all dialogs initially
-  powerbi.bootstrap(embedContainer, { type: "report" });
+  // 4) Bootstrap the Power BI container
+  powerbi.bootstrap(embedContainer, { type: 'report' });
+
+  // 5) Hide any dialogs you have
   distributionDialog.hide();
   dialogMask.hide();
   sendDialog.hide();
   successDialog.hide();
 
-  // 5) Embed and build UI
-  embedThemesReport();
+  // 6) Build the theme picker UI
   buildThemePalette();
 
-  // 6) Cache dynamic controls for keyboard handling
-  themeSlider           = $("#theme-slider");
-  dataColorNameElements = $(".data-color-name");
-  themeSwitchLabel      = $(".theme-switch-label");
-  horizontalSeparator   = $(".dropdown-separator");
-  sliderCheckbox        = $(".slider");
+  // 7) Perform the embed
+  const models = window['powerbi-client'].models;
+  const config = {
+    type:       'report',
+    tokenType:  models.TokenType.Embed,
+    accessToken:'',                  // public embed
+    embedUrl:   entry.embedUrl,
+    id:         reportId,
+    permissions: models.Permissions.View,
+    settings: {
+      panes: {
+        filters:        { visible: false, expanded: false },
+        pageNavigation: { visible: false }
+      },
+      layoutType: models.LayoutType.Custom,
+      customLayout: { displayOption: models.DisplayOption.FitToPage },
+      background:   models.BackgroundType.Transparent
+    },
+    // apply your initial theme/colors
+    theme: { themeJson: Object.assign({}, jsonDataColors[0], themes[0]) }
+  };
 
-  allUIElements = [
-    bodyElement, contentElement, dropdownDiv,
-    themeContainer, themeSwitchLabel, horizontalSeparator,
-    horizontalRule, sliderCheckbox, themeButton,
-    themeBucket, dataColorNameElements
-  ];
+  const report = powerbi.embed(embedContainer, config);
 
-  // 7) Restore focus when dropdown opens/closes
-  dropdownDiv.on("hidden.bs.dropdown", ()=> themeButton.focus());
-  dropdownDiv.on("shown.bs.dropdown", ()=> themeSlider.focus());
+  // 8) When loaded, hide spinner & show content
+  report.on('loaded', () => {
+    $('#overlay').hide();
+    $('.content').show();
+    $('#theme-dropdown #datacolor0').prop('checked', true);
+    console.log('✅ Report loaded:', entry.name);
+  });
+
+  // 9) On errors, show message
+  report.on('error', event => {
+    console.error('Embed error:', event.detail || event);
+    $('#overlay').html(
+      `<div style="color:red;padding:20px;">
+         Power BI embed failed<br>${event.detail?.message||event}
+       </div>`
+    );
+  });
+
+  // 10) Wire up your dropdown focus handlers
+  $('#theme-slider').on('keydown', e => {
+    if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
+      dropdownDiv.removeClass('show');
+      themesList.removeClass('show');
+      themeButton.attr('aria-expanded','false');
+    }
+  });
+  dropdownDiv.on('hidden.bs.dropdown', ()=> themeButton.focus());
+  dropdownDiv.on('shown.bs.dropdown', ()=> $('#theme-slider').focus());
+  $(document).on('click', '.allow-focus', e => e.stopPropagation());
 });
 
-// Prevent the dropdown from accidentally closing when interacting
-$(document).on("click", ".allow-focus", e => e.stopPropagation());
-
-// Handle Shift+Tab inside the slider to close the menu
-$(document).on("keydown", "#theme-slider", function(e) {
-  if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
-    dropdownDiv.removeClass("show");
-    themesList.removeClass("show");
-    themeButton.attr("aria-expanded","false");
-  }
-});
-
-// Your existing embedThemesReport(), applyTheme(), toggleTheme(), etc.
-// remain completely untouched and will now pick up reportConfig.embedUrl/reportId
+// **All** of your existing helper functions—
+// buildThemePalette, buildThemeSwitcher, buildSeparator,
+// buildDataColorElement, applyTheme, toggleTheme,
+// toggleDarkThemeOnElements—remain exactly as they were.
