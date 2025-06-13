@@ -1,59 +1,52 @@
+// js/globals.js
 // ----------------------------------------------------------------------------
 // Custom Globals for "Customize report colors and mode"
-// Dynamically loads embedUrl & reportId from the same reportList.json
-// used by the Go from insights to quick action sample.
+// - Re‐uses the shared reportList.json from the Go from insights… folder
 // ----------------------------------------------------------------------------
 
-// 1) reportConfig will hold the embedUrl & reportId
+// 1) reportConfig holds your embedUrl & reportId
 const reportConfig = { accessToken: null, embedUrl: null, reportId: null };
 
-// 2) A Promise that we will resolve once reportConfig is ready
+// 2) A Promise that signals when reportConfig is ready
 let _configReadyResolve;
 const configReady = new Promise(res => { _configReadyResolve = res; });
 
-// 3) State & DOM caches — DO NOT REMOVE
-const themesShowcaseState = { themesArray: null, themesReport: null };
-const bodyElement    = $("body");
+// 3) Your existing DOM & state caches (do not alter)
+const themesShowcaseState = { themesReport: null };
 const overlay        = $("#overlay");
-const dropdownDiv    = $(".dropdown");
-const themesList     = $("#theme-dropdown");
-const contentElement = $(".content");
-const themeContainer = $(".theme-container");
-const horizontalRule = $(".horizontal-rule");
-const themeButton    = $(".btn-theme");
-const themeBucket    = $(".bucket-theme");
 const embedContainer = $(".report-container").get(0);
 
-// Key and enum
-const KEYCODE_TAB = 9;
-const Keys = Object.freeze({ TAB: "Tab", ESCAPE: "Escape" });
-
-// ----------------------------------------------------------------------------
-// Immediately fetch the JSON from the *other* folder and populate reportConfig
-// ----------------------------------------------------------------------------
+// 4) Immediately fetch the JSON from the sibling folder
 ;(function loadReportConfig() {
-  // build the URL to the Go from insights to quick action folder
-  const base = window.location.pathname.replace(/\/Customize%20report.*$/,"");
+  // Derive the base folder (strip “/Customize report colors…”)
+  const base = window.location.pathname.replace(
+    /\/Customize%20report%20colors%20and%20mode\/.*$/,
+    ""
+  );
+
+  // Point at the Go from insights… folder
   const jsonUrl = base + "/Go%20from%20insights%20to%20quick%20action/reportList.json";
 
-  // read ?report=Name
+  // Optionally read ?report=name
   const params     = new URLSearchParams(window.location.search);
-  const reportName = params.get("report") || null;
+  const reportName = params.get("report");
 
   fetch(jsonUrl)
-    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(list => {
-      let entry = reportName && list.find(r => r.name===reportName) || list[0];
-      if (!entry || !entry.embedUrl) throw new Error("No report found");
+      // Pick by name or default to first
+      const entry = (reportName && list.find(r=>r.name===reportName)) || list[0];
+      if (!entry?.embedUrl) throw new Error("No report entry found");
       reportConfig.embedUrl  = entry.embedUrl;
       reportConfig.reportId  = new URL(entry.embedUrl).searchParams.get("reportId");
     })
     .catch(err => {
       console.error("reportList.json load failed:", err);
-      overlay.html(`<div style="color:red;padding:20px;">Failed to load report list:<br>${err.message}</div>`);
+      overlay.html(`
+        <div style="color:red;padding:20px;">
+          Failed to load report list:<br>${err}
+        </div>
+      `);
     })
-    .finally(() => {
-      // whatever happened, let index.js proceed (it will error if config is bad)
-      _configReadyResolve();
-    });
+    .finally(() => _configReadyResolve());
 })();
