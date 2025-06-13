@@ -1,63 +1,59 @@
+<!-- Customize report colors and mode/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Minimal Embed Test</title>
-  <link rel="stylesheet" href="css/header.css">
+  <title>Customize report colors & mode</title>
+
+  <!-- Bootstrap + your CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="css/header.css"   rel="stylesheet"/>
+  <link href="css/container.css" rel="stylesheet"/>
+  <link href="css/dropdown.css"  rel="stylesheet"/>
+  <link href="css/report.css"    rel="stylesheet"/>
 </head>
 <body>
+  <!-- HEADER -->
   <header class="header">
     <img src="img/UHClogo.png" class="contoso" alt="United Healthcare logo"/>
     <span class="uhc-title">United Healthcare</span>
   </header>
 
+  <!-- LOADER OVERLAY -->
   <div id="overlay">
-    <img src="img/spinner.svg" class="rotate" alt="Loading report"/>
+    <img src="img/spinner.svg" class="rotate" alt="Loading…" />
   </div>
 
-  <div class="report-container" style="margin-top:56px; height:calc(100vh - 56px);"></div>
+  <!-- THEME DROPDOWN + REPORT -->
+  <main class="content">
+    <div class="dropdown">
+      <button class="btn btn-theme" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <svg class="bucket-theme" width="16" height="16" viewBox="0 0 16 16" fill="#4A565A">
+          <!-- bucket icon path here -->
+        </svg>
+        <span class="theme-selector-label">Choose theme</span>
+      </button>
+      <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container" role="menu"></ul>
+    </div>
+    <div class="horizontal-rule" role="separator"></div>
+    <div class="report-container"></div>
+  </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
-  <script>
-    (async () => {
-      // load reportList.json
-      let list;
-      try {
-        const res = await fetch("reportList.json");
-        list = await res.json();
-      } catch (e) {
-        document.getElementById("overlay").innerHTML =
-          `<div style="color:red;padding:20px;">JSON load error:<br>${e.message}</div>`;
-        return;
-      }
+  <!-- SCRIPTS -->
+  <script src="js/error_listener.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-      // pick first entry
-      const entry = list[0];
-      if (!entry || !entry.embedUrl) {
-        document.getElementById("overlay").innerHTML =
-          `<div style="color:red;padding:20px;">No report found</div>`;
-        return;
-      }
+  <!-- your theme logic -->
+  <script src="js/themes.js"></script>
 
-      // embed
-      powerbi.bootstrap(document.querySelector(".report-container"), { type: "report" });
-      const report = powerbi.embed(document.querySelector(".report-container"), {
-        type: "report",
-        tokenType: window["powerbi-client"].models.TokenType.Embed,
-        accessToken: "",
-        embedUrl: entry.embedUrl,
-        settings: { panes: { filters: { visible: false }, pageNavigation: { visible: false } } }
-      });
-
-      report.on("loaded", () => {
-        document.getElementById("overlay").style.display = "none";
-      });
-      report.on("error", err => {
-        document.getElementById("overlay").innerHTML =
-          `<div style="color:red;padding:20px;">Embed error:<br>${err.message}</div>`;
-      });
-    })();
-  </script>
+  <!-- globals must run *before* index.js -->
+  <script src="js/globals.js"></script>
+  <!-- session_utils & main embed + theme-picker wiring -->
+  <script src="js/session_utils.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>
