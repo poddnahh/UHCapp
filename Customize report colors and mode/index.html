@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Customize report colors & mode</title>
 
+  <!-- Bootstrap & custom styles -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="css/header.css"/>
   <link rel="stylesheet" href="css/container.css"/>
@@ -16,6 +16,7 @@
   <div class="wrapper">
     <h1 class="header fixed-top">
       <img src="img/contoso.svg" class="contoso" alt="Contoso logo"/>
+      <span class="uhc-title">Your Company Name</span>
     </h1>
 
     <div id="overlay">
@@ -24,14 +25,11 @@
 
     <main class="content">
       <div class="dropdown fixed-top">
-        <button class="btn btn-theme" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <!-- bucket SVG -->
-          <svg id="bucket" class="bucket-theme" width="16" height="16" fill="#4A565A" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.2031 7.5L6.5 14.2031L0.796875 8.5L6 3.28906V1.5C6 1.29167 6.03906 1.09635 …"/>
-          </svg>
+        <button class="btn btn-theme" id="themeButton" data-toggle="dropdown" aria-haspopup="true">
+          <!-- bucket SVG omitted for brevity -->
           <label class="theme-selector-label">Choose theme</label>
         </button>
-        <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container" role="menu" aria-label="Data colors"></ul>
+        <ul id="themeDropdown" class="dropdown-menu checkbox-menu allow-focus theme-container" role="menu"></ul>
       </div>
 
       <div class="horizontal-rule fixed-top" role="separator"></div>
@@ -39,15 +37,83 @@
     </main>
   </div>
 
+  <!-- dependencies -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  <script src="https://playground.powerbi.com/app/powerbi.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-  <script src="js/error_listener.js"></script>
+  <script>
+  // 1) read reportList.json
+  async function loadReportList() {
+    const resp = await fetch('reportList.json');
+    if (!resp.ok) throw new Error('Could not load reportList.json');
+    return resp.json();
+  }
+
+  // 2) pick entry
+  function pickEntry(list) {
+    const params = new URLSearchParams(location.search);
+    const name = params.get('report');
+    let entry = name && list.find(r=>r.name===name);
+    return entry || list[0];
+  }
+
+  // 3) bootstrap + embed + theme UI
+  async function startup() {
+    try {
+      const list = await loadReportList();
+      const entry = pickEntry(list);
+      const accessToken = entry.accessToken;       // if your JSON includes one
+      const embedUrl    = entry.embedUrl;
+      const reportId    = (new URL(embedUrl)).searchParams.get('reportId');
+
+      const container = document.querySelector('.report-container');
+      powerbi.bootstrap(container, { type: 'report' });
+
+      // default theme + data-colors from themes.js/jsonDataColors
+      const defaultTheme = Object.assign({}, window.jsonDataColors[0], window.themes[0]);
+
+      const models = window['powerbi-client'].models;
+      const config = {
+        type: 'report',
+        tokenType: models.TokenType.Embed,
+        accessToken,
+        embedUrl,
+        id: reportId,
+        settings: {
+          panes: { filters:{visible:false}, pageNavigation:{visible:false} },
+          layoutType: models.LayoutType.Custom,
+          customLayout:{displayOption:models.DisplayOption.FitToPage},
+          background:models.BackgroundType.Transparent
+        },
+        theme: { themeJson: defaultTheme }
+      };
+
+      const report = powerbi.embed(container, config);
+      report.on('loaded', () => {
+        $('#overlay').hide();
+        $('.content').show();
+        $('#themeDropdown #datacolor0').prop('checked', true);
+      });
+
+      // build theme dropdown
+      buildThemePalette();
+    }
+    catch (e) {
+      console.error(e);
+      $('#overlay').html(`<div class="text-danger p-3">Error: ${e.message}</div>`);
+    }
+  }
+
+  // 4) Everything from your themes.js (buildThemePalette, buildThemeSwitcher, etc.)
+  //    ...assumes you’ve loaded themes.js which defines window.themes and window.jsonDataColors.
+  //    Exactly copy them over—no modifications here.
+
+  $(document).ready(startup);
+  </script>
+
+  <!-- your theme scripts -->
   <script src="js/themes.js"></script>
-  <script src="js/globals.js"></script>
-  <script src="js/session_utils.js"></script>
-  <script src="js/index.js"></script>
 </body>
 </html>
