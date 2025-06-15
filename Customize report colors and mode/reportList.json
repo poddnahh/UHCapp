@@ -1,18 +1,18 @@
 [
   {
     "name": "ProjectSummary",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "embedUrl": "https://app.powerbi.com/reportEmbed?reportId=69efae40-1fb2-4f69-936d-4e6d9c6d40fd&autoAuth=true&ctid=ab194e01-6dc7-4c6a-bbb1-68c12c744b97"
   },
   {
     "name": "ProjectSummary2",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiNWRjNGY2YjMtNTdkZS00OTI3LWI1YmYtZTAwMWEyMmNkZTAxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "embedUrl": "https://app.powerbi.com/reportEmbed?reportId=e317238c-2bb7-4b14-acc7-d94abea51c83&autoAuth=true&ctid=ab194e01-6dc7-4c6a-bbb1-68c12c744b97"
   },
   {
     "name": "ProjectSummary3",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiMWFkOWI5OWEtZjQxMS00YTBlLWFhYWMtN2Q0ZTY5NWMxMTllIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "embedUrl": "https://app.powerbi.com/reportEmbed?reportId=0e415c4e-a57d-416c-aa15-002987f72e4e&autoAuth=true&ctid=ab194e01-6dc7-4c6a-bbb1-68c12c744b97"
   },
   {
     "name": "ProjectSummary4",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiYjkwZmJjMTYtMDAyYS00ZWU1LTliYzQtNTBkMzQ2ZWQ4ODViIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "embedUrl": "https://app.powerbi.com/reportEmbed?reportId=77c613d4-6ebd-436f-bb44-505d95531f7a&autoAuth=true&ctid=ab194e01-6dc7-4c6a-bbb1-68c12c744b97"
   }
 ]
