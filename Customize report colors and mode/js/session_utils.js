@@ -1,60 +1,46 @@
 // js/session_utils.js
 // ----------------------------------------------------------------------------
-// Playground-style embed token refresh.  You can leave this untouched.
+// This file runs *after* globals.js and waits for configReady
+// to populate reportConfig before requesting tokens/etc.
 
-// API Endpoint to get the JSON response of Embed URL, Embed Token and reportId
 const reportEndpoint = "https://aka.ms/ThemeReportEmbedConfig";
-const minutesToRefreshBeforeExpiration = 2;
 let tokenExpiration;
 
-function handleNewEmbedConfig(cfg, updateToken) {
-  reportConfig.accessToken = cfg.EmbedToken.Token || cfg.EmbedToken?.token;
-  reportConfig.embedUrl    = cfg.EmbedUrl || cfg.embedUrl;
-  reportConfig.reportId    = cfg.Id || cfg.id;
+// Populate token/embedUrl/reportId into reportConfig
+function handleNewEmbedConfig(embedConfig, updateToken) {
+  // set from REST or parent window
+  reportConfig.accessToken = embedConfig.EmbedToken.Token;
+  // embedUrl/reportId were set by globals.js already
 
+  tokenExpiration = embedConfig.MinutesToExpiration * 60 * 1000;
+  scheduleTokenRefresh();
   if (updateToken) {
     const container = document.querySelector(".report-container");
-    const embedded = powerbi.get(container);
-    embedded?.setAccessToken(reportConfig.accessToken);
+    const report    = powerbi.get(container);
+    report.setAccessToken(embedConfig.EmbedToken.Token);
   }
-
-  tokenExpiration = (cfg.MinutesToExpiration||cfg.minutesToExpiration) * 60 * 1000;
-  setTokenExpirationListener();
 }
 
-function populateEmbedConfigIntoCurrentSession(updateToken) {
+async function fetchEmbedConfig(updateToken) {
   try {
-    const p = window.parent.showcases.personalizeReportDesign;
-    if (p) {
-      const diffMs   = new Date(p.expiration) - new Date();
-      const diffMin  = Math.round(((diffMs%86400000)%3600000)/60000);
-      handleNewEmbedConfig({
-        EmbedToken: { Token: p.token },
-        EmbedUrl: p.embedUrl,
-        Id: p.id,
-        MinutesToExpiration: diffMin
-      }, updateToken);
-      return Promise.resolve();
-    }
-  } catch (_) {}
-
-  return $.getJSON(reportEndpoint, cfg => handleNewEmbedConfig(cfg, updateToken));
-}
-
-function setTokenExpirationListener() {
-  const safety = minutesToRefreshBeforeExpiration * 60 * 1000;
-  const timeout = tokenExpiration - safety;
-  if (timeout <= 0) {
-    populateEmbedConfigIntoCurrentSession(true);
-  } else {
-    setTimeout(() => populateEmbedConfigIntoCurrentSession(true), timeout);
+    const payload = await $.getJSON(reportEndpoint);
+    handleNewEmbedConfig(payload, updateToken);
+  } catch (e) {
+    console.error("session_utils:", e);
   }
 }
 
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) setTokenExpirationListener();
-});
+// initial call
+window.configReady.then(() => fetchEmbedConfig(false));
 
-export function loadThemesShowcaseReportIntoSession() {
-  return populateEmbedConfigIntoCurrentSession(false);
+function scheduleTokenRefresh() {
+  const safety = 2 * 60 * 1000; // 2 minutes
+  const timeout = tokenExpiration - safety;
+  if (timeout <= 0) return fetchEmbedConfig(true);
+  setTimeout(() => fetchEmbedConfig(true), timeout);
 }
+
+// refresh on visibility
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) scheduleTokenRefresh();
+});
