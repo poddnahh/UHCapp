@@ -3,14 +3,18 @@
 // Load your local reportList.json and pluck out the first entry
 // (or report matching ?report=Name).
 
-const reportConfig = { accessToken: null, embedUrl: null, reportId: null };
+const reportConfig = { accessToken:null, embedUrl:null, reportId:null };
 let _configReady;
 const configReady = new Promise(res => { _configReady = res; });
 
 (async function loadReportConfig() {
   try {
-    // reportList.json is right next to index.html
-    const r = await fetch("reportList.json");
+    // ensure we load from the same folder as index.html
+    const base    = window.location.pathname.replace(/\/[^/]*$/, "");
+    const jsonUrl = `${window.location.origin}${base}/reportList.json`;
+
+    const r = await fetch(jsonUrl, { cache: "no-cache" });
+    if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
     const list = await r.json();
 
     // allow ?report=Name override
@@ -21,7 +25,7 @@ const configReady = new Promise(res => { _configReady = res; });
       : list[0];
 
     if (!entry || !entry.embedUrl) {
-      throw new Error("No valid report entry");
+      throw new Error("No valid report entry in reportList.json");
     }
 
     reportConfig.embedUrl = entry.embedUrl;
