@@ -1,34 +1,39 @@
 // js/index.js
 // ----------------------------------------------------------------------------
-// “Customize report colors & mode” page logic
+// Wrap everything in configReady to guarantee reportConfig is present
 
-import { reportConfig, configReady } from "./globals.js";
-import { loadThemesShowcaseReportIntoSession } from "./session_utils.js";
-
-const bodyElement    = $("body");
-const dropdownDiv    = $(".dropdown");
-const themesList     = $("#theme-dropdown");
-const overlayEl      = $("#overlay");
-const contentElement = $(".content");
-const embedContainer = $(".report-container").get(0);
-
-configReady.then(startup);
+window.configReady.then(startup);
 
 function startup() {
-  const models = window["powerbi-client"].models;
-  powerbi.bootstrap(embedContainer, { type: "report" });
+  // cache DOM
+  const container     = document.querySelector(".report-container");
+  const overlayEl     = $("#overlay");
+  const contentEl     = $(".content");
+  const dropdownDiv   = $(".dropdown");
+  const themesList    = $("#theme-dropdown");
 
-  embedThemesReport();
+  // 1) bootstrap the empty container
+  powerbi.bootstrap(container, { type: "report" });
+
+  // 2) embed the report
+  embedThemesReport().catch(console.error);
+
+  // 3) build your theme‐chooser UI
   buildThemePalette();
 
-  dropdownDiv.on("hidden.bs.dropdown",  () => $(".btn-theme").focus());
-  dropdownDiv.on("shown.bs.dropdown",   () => $("#theme-slider").focus());
+  // 4) focus management
+  dropdownDiv.on("hidden.bs.dropdown", () => $(".btn-theme").focus());
+  dropdownDiv.on("shown.bs.dropdown", () => $("#theme-slider").focus());
+
+  // prevent auto‐close on inner clicks
+  $(document).on("click", ".allow-focus", e => e.stopPropagation());
 }
 
 async function embedThemesReport() {
+  // ensure tokens are loaded
   await loadThemesShowcaseReportIntoSession();
 
-  const models        = window["powerbi-client"].models;
+  const models = window["powerbi-client"].models;
   const config = {
     type:       "report",
     tokenType:  models.TokenType.Embed,
@@ -36,10 +41,7 @@ async function embedThemesReport() {
     embedUrl:   reportConfig.embedUrl,
     id:         reportConfig.reportId,
     settings: {
-      panes: {
-        filters:        { visible: false },
-        pageNavigation: { visible: false }
-      },
+      panes: { filters:{visible:false}, pageNavigation:{visible:false} },
       layoutType:   models.LayoutType.Custom,
       customLayout: { displayOption: models.DisplayOption.FitToPage },
       background:   models.BackgroundType.Transparent
@@ -47,18 +49,21 @@ async function embedThemesReport() {
     theme: { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
   };
 
-  const embedded = powerbi.embed(embedContainer, config);
-  embedded.on("loaded", () => {
-    overlayEl.hide();
-    contentElement.show();
-    themesList.find("#datacolor0").prop("checked", true);
-  });
-  embedded.on("rendered", () => {
-    console.log("Theme report rendered");
-    try { window.parent.playground.logShowcaseDoneRendering("CustomizeColors"); } catch {}
-  });
-}
+  const report = powerbi.embed(
+    document.querySelector(".report-container"),
+    config
+  );
 
-// buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
-// buildDataColorElement(), onDataColorWrapperClicked(), applyTheme(),
-// toggleTheme(), toggleDarkThemeOnElements()  — come **unchanged** from your existing themes.js
+  report.on("loaded", () => {
+    $("#overlay").hide();
+    $(".content").show();
+    $("#theme-dropdown #datacolor0").prop("checked", true);
+  });
+
+  report.on("rendered", () => {
+    console.log("report rendered");
+  });
+
+  // store for later theme switching
+  window.themesShowcaseState = { themesReport: report };
+}
