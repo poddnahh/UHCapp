@@ -1,67 +1,77 @@
 // js/index.js
-// ----------------------------------------------------------------------------
-// Wait until reportConfig (from reportList.json) is loaded
-window.configReady.then(startup);
+// --------------------------------------------------------------------
+// Simplified embed: hard-code the token you generated via PowerShell,
+// then immediately embed the report from reportList.json.
 
-function startup() {
-  // Cache DOM elements
-  const container   = document.querySelector(".report-container");
-  const overlay     = document.getElementById("overlay");
-  const content     = document.querySelector(".content");
-  const dropdownDiv = document.querySelector(".dropdown");
-
-  // 1) Bootstrap the empty container for Power BI
-  powerbi.bootstrap(container, { type: "report" });
-
-  // 2) Embed the report using reportConfig from globals.js
-  const models = window["powerbi-client"].models;
-  const config = {
-    type:       "report",
-    tokenType:  models.TokenType.Embed,
-    accessToken:null,                         // Publish-to-web doesn't require a token
-    embedUrl:   window.reportConfig.embedUrl, // set in globals.js
-    id:         window.reportConfig.reportId, // set in globals.js
-    settings: {
-      panes: {
-        filters:       { visible: false },
-        pageNavigation:{ visible: false }
-      },
-      layoutType:   models.LayoutType.Custom,
-      customLayout: { displayOption: models.DisplayOption.FitToPage },
-      background:   models.BackgroundType.Transparent
-    },
-    theme: {
-      // apply the first (Default) palette on load
-      themeJson: Object.assign({}, jsonDataColors[0], themes[0])
-    }
-  };
-
-  const report = powerbi.embed(container, config);
-
-  report.on("loaded", () => {
-    overlay.style.display = "none";
-    content.style.display = "";
-    // pre-select the first palette radio
-    document.querySelector("#datacolor0").checked = true;
-  });
-
-  report.on("rendered", () => console.log("Report rendered"));
-
-  // 3) Build the “Choose theme” palette
-  buildThemePalette();
-
-  // 4) Accessibility / focus management for dropdown
-  dropdownDiv.addEventListener("shown.bs.dropdown", () => {
-    document.getElementById("theme-slider").focus();
-  });
-  dropdownDiv.addEventListener("hidden.bs.dropdown", () => {
-    document.querySelector(".btn-theme").focus();
-  });
-  // prevent dropdown from closing when interacting inside
-  document.addEventListener("click", e => {
-    if (e.target.closest(".allow-focus")) e.stopPropagation();
-  });
-
-  // keep a reference if needed later for theme switching
-  window.themesShowcaseState = { report };
+// 1) Load the list
+async function loadReportConfig() {
+  const resp = await fetch("./reportList.json");
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const list = await resp.json();
+  const name = new URLSearchParams(location.search).get("report");
+  const entry = name
+    ? list.find(r => r.name === name)
+    : list[0];
+  if (!entry) throw new Error("No matching report in reportList.json");
+  return entry;
 }
+
+// 2) Bootstrap & embed
+(async function() {
+  try {
+    const entry = await loadReportConfig();
+
+    // your long-lived embed token
+    const accessToken = "<YOUR_TOKEN>";
+
+    // pull the reportId out of the URL (or you could hard-code that too)
+    const reportId = new URL(entry.embedUrl)
+                        .searchParams.get("reportId");
+
+    // prepare the container
+    const container = document.querySelector(".report-container");
+    powerbi.bootstrap(container, { type: "report" });
+
+    // build the embed config
+    const models = window["powerbi-client"].models;
+    const config = {
+      type:       "report",
+      tokenType:  models.TokenType.Embed,
+      accessToken,
+      embedUrl:   entry.embedUrl,
+      id:         reportId,
+      settings: {
+        panes: {
+          filters:        { visible: false },
+          pageNavigation: { visible: false }
+        },
+        layoutType:   models.LayoutType.Custom,
+        customLayout: { displayOption: models.DisplayOption.FitToPage },
+        background:   models.BackgroundType.Transparent
+      },
+      // use your existing theme arrays
+      theme: { themeJson: Object.assign({}, jsonDataColors[0], themes[0]) }
+    };
+
+    // actually embed
+    const report = powerbi.embed(container, config);
+
+    // when loaded, hide spinner and wire up the radio buttons
+    report.on("loaded", () => {
+      document.getElementById("overlay").style.display = "none";
+      document.querySelector(".content").style.display = "block";
+      document.querySelector("#theme-dropdown #datacolor0").checked = true;
+    });
+
+    // wire your dropdown UI (you already have buildThemePalette)
+    buildThemePalette();
+
+  } catch (err) {
+    document.getElementById("overlay").innerHTML = `
+      <div style="color:red;padding:20px;">
+        Error embedding report:<br>${err.message}
+      </div>
+    `;
+    console.error(err);
+  }
+})();
