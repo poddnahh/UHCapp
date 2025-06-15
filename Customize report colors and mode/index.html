@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Customize report colors & mode</title>
 
-  <!-- Bootstrap + custom CSS -->
+  <!-- Bootstrap + your CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="css/header.css"/>
   <link rel="stylesheet" href="css/container.css"/>
@@ -24,22 +24,15 @@
 
     <main class="content">
       <div class="dropdown fixed-top">
-        <button class="btn btn-theme"
-                type="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false">
-          <!-- bucket icon SVG -->
+        <button class="btn btn-theme" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <!-- bucket SVG -->
           <svg id="bucket" class="bucket-theme" width="16" height="16" fill="#4A565A" xmlns="http://www.w3.org/2000/svg">
-            <!-- …your path here… -->
+            <path d="M13.2031 7.5L6.5 14.2031L0.796875 8.5L6 …"/>
           </svg>
           <label class="theme-selector-label">Choose theme</label>
         </button>
-        <ul id="theme-dropdown"
-            class="dropdown-menu checkbox-menu allow-focus theme-container"
-            role="menu"
-            aria-label="Data colors">
-        </ul>
+        <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container"
+            role="menu" aria-label="Data colors"></ul>
       </div>
 
       <div class="horizontal-rule fixed-top" role="separator"></div>
@@ -47,21 +40,21 @@
     </main>
   </div>
 
-  <!-- 1) jQuery, Popper, Bootstrap, PowerBI client -->
+  <!-- Dependencies -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
 
-  <!-- 2) theme UI definitions -->
-  <script src="js/themes.js"></script>
-  <!-- 3) load reportList.json → reportConfig -->
-  <script src="js/globals.js"></script>
-  <!-- 4) map reportConfig → token/embedUrl/reportId -->
-  <script src="js/session_utils.js"></script>
-  <!-- 5) optional playground error bubbler -->
+  <!-- Playground integration (error logging) -->
   <script src="js/error_listener.js"></script>
-  <!-- 6) embed + wire up the chooser -->
+  <!-- 1) palette UI + logic -->
+  <script src="js/themes.js"></script>
+  <!-- 2) load your reportList.json → reportConfig -->
+  <script src="js/globals.js"></script>
+  <!-- 3) refresh/embed-token logic -->
+  <script src="js/session_utils.js"></script>
+  <!-- 4) wire it all up -->
   <script src="js/index.js"></script>
 </body>
 </html>
