@@ -1,9 +1,8 @@
 // ----------------------------------------------------------------------------
 // js/globals.js
-// Load your local reportList.json and pluck out the first entry
-// (or the one matching ?report=Name).
 // ----------------------------------------------------------------------------
 
+// This holds the embed values we’ll use in index.js
 const reportConfig = { accessToken: null, embedUrl: null, reportId: null };
 
 let _configReady;
@@ -11,9 +10,9 @@ export const configReady = new Promise(res => { _configReady = res; });
 
 ;(async function loadReportConfig() {
   try {
-    // reportList.json is next to index.html
+    // reportList.json must be alongside index.html
     const resp = await fetch("reportList.json");
-    if (!resp.ok) throw new Error(`${resp.status}`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const list = await resp.json();
 
     // allow override via ?report=Name
@@ -27,17 +26,21 @@ export const configReady = new Promise(res => { _configReady = res; });
       throw new Error("No valid report entry");
     }
 
-    reportConfig.embedUrl = entry.embedUrl;
-    reportConfig.reportId = new URL(entry.embedUrl).searchParams.get("reportId");
+    reportConfig.embedUrl  = entry.embedUrl;
+    reportConfig.reportId  = new URL(entry.embedUrl)
+                              .searchParams
+                              .get("reportId");
   }
-  catch (err) {
-    console.error("Could not load reportList.json:", err);
+  catch (e) {
+    console.error("Could not load reportList.json:", e);
+    // show the message in the spinner overlay
     document.getElementById("overlay").innerHTML = `
       <div style="color:red;padding:20px;">
-        Failed to load reports:<br>${err.message}
+        Failed to load reports:<br>${e.message}
       </div>`;
   }
   finally {
+    // let session_utils and index.js proceed
     _configReady();
   }
 })();
