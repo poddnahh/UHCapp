@@ -2,50 +2,96 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Customize report colors &amp; mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customize report colors & mode</title>
 
-  <!-- Bootstrap & your CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="css/header.css" rel="stylesheet"/>
-  <link href="css/container.css" rel="stylesheet"/>
-  <link href="css/dropdown.css" rel="stylesheet"/>
-  <link href="css/report.css" rel="stylesheet"/>
+  <!-- UHC header CSS (your existing header.css) -->
+  <link rel="stylesheet" href="css/header.css" />
+
+  <!-- (You can keep container.css / dropdown.css / report.css for your styling) -->
+  <link rel="stylesheet" href="css/container.css" />
+  <link rel="stylesheet" href="css/dropdown.css" />
+  <link rel="stylesheet" href="css/report.css" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <img class="contoso" src="img/UHClogo.png" alt="United Healthcare logo"/>
+
+  <!-- YOUR UHC header -->
+  <header class="header fixed-top">
+    <img src="img/UHClogo.png" class="contoso" alt="United Healthcare logo" />
     <span class="uhc-title">United Healthcare</span>
   </header>
 
-  <!-- Spinner -->
+  <!-- overlay spinner -->
   <div id="overlay">
-    <img id="spinner" class="rotate" src="img/spinner.svg" alt="Loading report"/>
+    <img src="img/spinner.svg" id="spinner" alt="Loading report" />
   </div>
 
-  <!-- Theme dropdown + separator + embed container -->
-  <main class="content">
-    <div class="dropdown">
-      <button class="btn btn-theme" type="button" data-toggle="dropdown">
-        <img class="bucket-theme" src="img/bucket.svg" alt=""/>
-        <span class="theme-selector-label">Choose theme</span>
-      </button>
-      <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container"></ul>
-    </div>
-    <div class="horizontal-rule"></div>
-    <div class="report-container"></div>
-  </main>
+  <!-- where the report will go -->
+  <div class="report-container" style="margin-top:56px; height:calc(100vh-56px);"></div>
 
-  <!-- Scripts -->
+  <!-- 1) jQuery + Bootstrap + PowerBI client -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-  <script src="js/globals.js"></script>
-  <script src="js/index.js"></script>
-  <script src="js/themes.js"></script>
-  <script src="js/session_utils.js"></script>
+  <!-- 2) Minimal embed logic -->
+  <script>
+    (async function() {
+      const overlay   = document.getElementById("overlay");
+      const container = document.querySelector(".report-container");
+
+      // Fetch the JSON list
+      let list;
+      try {
+        const res = await fetch("./reportList.json");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        list = await res.json();
+      } catch (err) {
+        overlay.innerHTML = `<div style="color:red;padding:20px;">Failed to load report list:<br>${err.message}</div>`;
+        return;
+      }
+
+      // Pick the named report or default to the first
+      const params     = new URLSearchParams(window.location.search);
+      const reportName = params.get("report");
+      let entry = reportName && list.find(r => r.name === reportName);
+      if (!entry) entry = list[0];
+      if (!entry || !entry.embedUrl) {
+        overlay.innerHTML = `<div style="color:red;padding:20px;">No report found</div>`;
+        return;
+      }
+
+      // Extract reportId from the embedUrl
+      const url      = new URL(entry.embedUrl);
+      const reportId = url.searchParams.get("reportId");
+
+      // Bootstrap & embed
+      const models = window["powerbi-client"].models;
+      powerbi.bootstrap(container, { type: "report" });
+      const report = powerbi.embed(container, {
+        type:       "report",
+        tokenType:  models.TokenType.Embed,
+        embedUrl:   entry.embedUrl,
+        id:         reportId,
+        settings: {
+          panes: {
+            filters:        { visible: false },
+            pageNavigation: { visible: false }
+          },
+          background: models.BackgroundType.Transparent
+        }
+      });
+
+      report.on("loaded", () => {
+        overlay.style.display = "none";
+      });
+      report.on("error", e => {
+        console.error(e);
+        overlay.innerHTML = `<div style="color:red;padding:20px;">Embed error:<br>${e.message}</div>`;
+      });
+    })();
+  </script>
+
 </body>
 </html>
