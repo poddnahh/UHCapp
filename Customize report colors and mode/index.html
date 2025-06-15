@@ -3,177 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Minimal Power BI Embed</title>
+  <title>Customize report colors &amp; mode</title>
   <style>
-    body { margin:0; height:100vh; }
+    body { margin:0; font-family:Segoe UI,sans-serif; }
+    header {
+      position:fixed; top:0; left:0; right:0;
+      height:56px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.1);
+      display:flex; align-items:center; padding:0 24px; z-index:10;
+    }
+    header img { height:32px; margin-right:12px }
+    main { padding-top:56px; }
     #overlay {
-      position:absolute; top:0; left:0; right:0; bottom:0;
+      position:absolute; top:56px; left:0; right:0; bottom:0;
       display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,0.8); z-index:10;
+      background:rgba(255,255,255,0.8); z-index:5;
     }
-    #spinner {
-      width:40px; height:40px; animation:spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform:rotate(360deg) } }<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Minimal Power BI Embed</title>
-  <style>
-    body { margin:0; height:100vh; font-family:sans-serif }
-    header { padding:8px 16px; background:#00467F; color:white; }
-    #overlay {
-      position:absolute; top:0; left:0; right:0; bottom:0;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,0.8); z-index:10;
-    }
-    #spinner {
-      width:40px; height:40px; animation:spin 1s linear infinite;
-    }
+    #spinner { width:40px; height:40px; animation:spin 1s linear infinite }
     @keyframes spin { to { transform:rotate(360deg) } }
-    .report-container { width:100%; height:calc(100% - 40px); }
+    .report-frame {
+      width:100%; height:calc(100vh - 56px); border:0;
+    }
   </style>
 </head>
 <body>
 
-  <!-- simple header to verify page loaded -->
-  <header>Minimal Embed Test</header>
+  <header>
+    <img src="../img/UHClogo.png" alt="United Healthcare"/>
+    <span style="font-size:1.1rem; font-weight:600; color:#00467F">
+      Customize Report Colors &amp; Mode
+    </span>
+  </header>
 
-  <!-- spinner overlay -->
-  <div id="overlay">
-    <img id="spinner" src="img/spinner.svg" alt="Loading…" />
-  </div>
+  <main>
+    <div id="overlay">
+      <img id="spinner" src="../img/spinner.svg" alt="Loading…" />
+    </div>
 
-  <!-- container for the embedded report -->
-  <div class="report-container"></div>
-
-  <!-- libs -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+    <!-- We will inject our iframe here via JS -->
+    <div id="embedContainer"></div>
+  </main>
 
   <script>
-    (async function() {
+    (async function(){
       const overlay = document.getElementById("overlay");
-      const container = document.querySelector(".report-container");
+      const container = document.getElementById("embedContainer");
 
-      // 1) fetch your reportList.json
+      // 1) fetch reportList.json
       let list;
       try {
         const res = await fetch("./reportList.json");
         if (!res.ok) throw new Error(res.status);
         list = await res.json();
       } catch (e) {
-        overlay.innerHTML = `<pre style="color:red">Failed to load reportList.json:\n${e}</pre>`;
+        overlay.innerHTML = `<pre style="color:red">Failed to load report list:\n${e}</pre>`;
         return;
       }
 
-      // 2) pick the first report
+      // 2) pick the first entry
       const entry = list[0];
       if (!entry || !entry.embedUrl) {
         overlay.innerHTML = `<pre style="color:red">reportList.json is empty or invalid</pre>`;
         return;
       }
 
-      // 3) extract reportId from embedUrl
-      const url = new URL(entry.embedUrl);
-      const reportId = url.searchParams.get("reportId");
+      // 3) build the embed iframe
+      // We append &autoAuth=true&embeddedDemo=true to get the public embed keys
+      const src = entry.embedUrl
+        + (entry.embedUrl.includes('?') ? '&' : '?')
+        + 'autoAuth=true&embeddedDemo=true';
 
-      // 4) bootstrap + embed
-      const models = window["powerbi-client"].models;
-      powerbi.bootstrap(container, { type: "report" });
+      const iframe = document.createElement('iframe');
+      iframe.className = 'report-frame';
+      iframe.src       = src;
+      iframe.allowFullscreen = true;
 
-      const config = {
-        type:       "report",
-        tokenType:  models.TokenType.Embed,
-        accessToken:"",               // <— for “public” embed
-        embedUrl:   entry.embedUrl,
-        id:         reportId,
-        settings:   {
-          panes: { filters: { visible: false }, pageNavigation: { visible: false } },
-          background: models.BackgroundType.Transparent
-        }
-      };
+      container.appendChild(iframe);
 
-      const report = powerbi.embed(container, config);
-
-      report.on("loaded", () => {
-        overlay.style.display = "none";
-        console.log("✅ Embed loaded");
-      });
-      report.on("error", err => {
-        overlay.innerHTML = `<pre style="color:red">Embed error:\n${err.message}</pre>`;
-        console.error(err);
-      });
+      // 4) once the iframe has loaded, hide the spinner
+      iframe.onload = () => overlay.style.display = 'none';
     })();
   </script>
-</body>
-</html>
 
-    .report-container { width:100%; height:100%; }
-  </style>
-</head>
-<body>
-
-  <!-- Quick header so we see it loaded -->
-  <header style="padding:8px 16px; background:#00467F; color:white;">
-    Minimal Embed Test
-  </header>
-
-  <!-- Spinner overlay -->
-  <div id="overlay">
-    <img id="spinner" src="img/spinner.svg" alt="loading"/>
-  </div>
-
-  <!-- Container for the embedded report -->
-  <div class="report-container"></div>
-
-  <!-- Scripts -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
-  <script>
-    (async function() {
-      const overlay = document.getElementById("overlay");
-      const container = document.querySelector(".report-container");
-
-      // 1) Fetch reportList.json from same folder
-      let list;
-      try {
-        const res = await fetch("./reportList.json");
-        if (!res.ok) throw new Error(res.status);
-        list = await res.json();
-      } catch (e) {
-        overlay.innerHTML = `<pre style="color:red">Failed to load reportList.json:\n${e.message}</pre>`;
-        return;
-      }
-
-      // 2) Pick first entry
-      const entry = list[0];
-      if (!entry || !entry.embedUrl) {
-        overlay.innerHTML = `<pre style="color:red">No valid entry in reportList.json</pre>`;
-        return;
-      }
-
-      // 3) Extract reportId
-      const url = new URL(entry.embedUrl);
-      const reportId = url.searchParams.get("reportId");
-
-      // 4) Bootstrap & embed
-      const models = window["powerbi-client"].models;
-      powerbi.bootstrap(container, { type: "report" });
-      const report = powerbi.embed(container, {
-        type:       "report",
-        tokenType:  models.TokenType.Embed,
-        embedUrl:   entry.embedUrl,
-        id:         reportId,
-        settings:   { panes:{filters:{visible:false}}, background: models.BackgroundType.Transparent }
-      });
-
-      report.on("loaded", () => overlay.style.display = "none");
-      report.on("error", e => {
-        overlay.innerHTML = `<pre style="color:red">Embed error:\n${e.message}</pre>`;
-      });
-    })();
-  </script>
 </body>
 </html>
