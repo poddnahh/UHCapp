@@ -46,15 +46,13 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
 
-  <!-- Playground integration (error logging) -->
-  <script src="js/error_listener.js"></script>
-  <!-- 1) palette UI + logic -->
+  <!-- theme definitions -->
   <script src="js/themes.js"></script>
-  <!-- 2) load your reportList.json → reportConfig -->
+  <!-- fetch reportList.json into reportConfig -->
   <script src="js/globals.js"></script>
-  <!-- 3) refresh/embed-token logic -->
+  <!-- map reportConfig → embedUrl/tokenId -->
   <script src="js/session_utils.js"></script>
-  <!-- 4) wire it all up -->
+  <!-- finally, do the PowerBI embed + build the theme chooser -->
   <script src="js/index.js"></script>
 </body>
 </html>
