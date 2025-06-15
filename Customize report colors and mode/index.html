@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="css/dropdown.css"/>
   <link rel="stylesheet" href="css/report.css"/>
 </head>
-
 <body>
   <div class="wrapper">
     <h1 class="header fixed-top">
@@ -24,10 +23,10 @@
       <img id="spinner" class="rotate" src="img/spinner.svg" alt="Loading…"/>
     </div>
 
-    <main class="content">
+    <main class="content" style="display:none">
       <div class="dropdown fixed-top">
         <button class="btn btn-theme" type="button" data-toggle="dropdown">
-          <!-- bucket SVG omitted for brevity -->
+          <!-- bucket SVG -->
           <label class="theme-selector-label">Choose theme</label>
         </button>
         <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container"></ul>
@@ -38,25 +37,22 @@
     </main>
   </div>
 
-  <!-- 1) dependencies (must come before any of your scripts) -->
+  <!-- 1) dependencies -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
 
-  <!-- 2) your themes & UI‐builder definitions -->
+  <!-- 2) themes + UI builder -->
   <script src="js/themes.js"></script>
 
-  <!-- 3) loadReportConfig → fetch reportList.json -->
+  <!-- 3) fetch reportList.json into window.reportConfig -->
   <script src="js/globals.js"></script>
 
-  <!-- 4) session_utils (uses window.configReady) -->
-  <script src="js/session_utils.js"></script>
-
-  <!-- 5) error listener (optional) -->
+  <!-- 4) error listener (optional) -->
   <script src="js/error_listener.js"></script>
 
-  <!-- 6) final embed + dropdown wiring -->
+  <!-- 5) final embed + dropdown wiring -->
   <script src="js/index.js"></script>
 </body>
 </html>
