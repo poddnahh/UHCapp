@@ -2,7 +2,7 @@
 
 // 1) Hard-coded embed token:
 window.reportConfig = {
-  accessToken: "<YOUR_TOKEN>",
+  accessToken: window.reportConfig.accessToken,
   embedUrl:    null,
   reportId:    null
 };
