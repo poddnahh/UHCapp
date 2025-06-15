@@ -1,114 +1,85 @@
-// index.js
 // ----------------------------------------------------------------------------
-// Embeds the report & builds the theme‐picker UI
+// index.js for "Customize report colors & mode"
 // ----------------------------------------------------------------------------
 
-let themeSlider, dataColorNameElements, themeSwitchLabel,
-    horizontalSeparator, sliderCheckbox, allUIElements;
-
-// cache your DOM
-const bodyElement    = $('body');
-const overlay        = $('#overlay');
-const dropdownDiv    = $('.dropdown');
-const themesList     = $('#theme-dropdown');
-const contentElement = $('.content');
-const themeContainer = $('.theme-container');
-const horizontalRule = $('.horizontal-rule');
-const themeButton    = $('.btn-theme');
-const themeBucket    = $('.bucket-theme');
-const embedContainer = $('.report-container').get(0);
-
-// key constants
+// State & keys
+const themesShowcaseState = { themesReport: null };
 const KEYCODE_TAB = 9;
-const Keys = Object.freeze({ TAB:'Tab' });
+const Keys = { TAB: "Tab" };
 
-(async function startup() {
-  // wait for your globals.js to finish
-  await configReady;
+// Cache common elements
+const bodyElement    = $("body");
+const dropdownDiv    = $(".dropdown");
+const themesList     = $("#theme-dropdown");
+const overlay        = $("#overlay");
+const contentElement = $(".content");
+const embedContainer = $(".report-container").get(0);
 
-  // bootstrap PowerBI
-  powerbi.bootstrap(embedContainer, { type: 'report' });
+// Wait for globals.js
+configReady.then(startup);
 
-  // kick off embed + build UI
-  await embedThemesReport();
+function startup() {
+  // 1) Bootstrap
+  powerbi.bootstrap(embedContainer, { type: "report" });
+
+  // 2) Kick off embedding
+  embedThemesReport();
+
+  // 3) Build initial palette UI
   buildThemePalette();
 
-  // cache UI controls for focus/toggle
-  themeSlider           = $('#theme-slider');
-  dataColorNameElements = $('.data-color-name');
-  themeSwitchLabel      = $('.theme-switch-label');
-  horizontalSeparator   = $('.dropdown-separator');
-  sliderCheckbox        = $('.slider');
-  allUIElements = [
-    bodyElement, contentElement, dropdownDiv,
-    themeContainer, themeSwitchLabel, horizontalSeparator,
-    horizontalRule, sliderCheckbox, themeButton,
-    themeBucket, dataColorNameElements
-  ];
+  // 4) Dropdown focus handling
+  dropdownDiv.on("hidden.bs.dropdown", () => $(".btn-theme").focus());
+  dropdownDiv.on("shown.bs.dropdown", () => $("#theme-slider").focus());
+}
 
-  // restore focus when dropdown opens/closes
-  dropdownDiv
-    .on('hidden.bs.dropdown', ()=> themeButton.focus())
-    .on('shown.bs.dropdown', ()=> themeSlider.focus());
-})();
+// Prevent dropdown from auto-closing on inner clicks
+$(document).on("click", ".allow-focus", e => e.stopPropagation());
 
-// prevent BS4 dropdown auto‐closing inside custom controls
-$(document).on('click', '.allow-focus', e => e.stopPropagation());
-
-// trap Shift+Tab inside theme slider
-$(document).on('keydown', '#theme-slider', e => {
+// Handle Shift+Tab off the slider
+$(document).on("keydown", "#theme-slider", e => {
   if (e.shiftKey && (e.key===Keys.TAB||e.keyCode===KEYCODE_TAB)) {
-    dropdownDiv.removeClass('show');
-    themesList.removeClass('show');
-    themeButton.attr('aria-expanded','false');
+    dropdownDiv.removeClass("show");
+    themesList.removeClass("show");
+    $(".btn-theme").attr("aria-expanded","false");
   }
 });
 
+// Embed + show/hide logic
 async function embedThemesReport() {
-  // load your token/url/reportId
+  // 1) Get your embed parameters from session_utils()
   await loadThemesShowcaseReportIntoSession();
 
-  const models        = window['powerbi-client'].models;
-  const accessToken   = reportConfig.accessToken;
-  const embedUrl      = reportConfig.embedUrl;
-  const embedReportId = reportConfig.reportId;
-  const permissions   = models.Permissions.View;
-
-  // default theme + first data‐color
-  let newTheme = {};
-  $.extend(newTheme, jsonDataColors[0], themes[0]);
-
+  const models      = window["powerbi-client"].models;
   const config = {
-    type:       'report',
-    tokenType:  models.TokenType.Embed,
-    accessToken,
-    embedUrl,
-    id:         embedReportId,
-    permissions,
+    type:      "report",
+    tokenType: models.TokenType.Embed,
+    accessToken: reportConfig.accessToken,
+    embedUrl:  reportConfig.embedUrl,
+    id:        reportConfig.reportId,
     settings: {
-      panes:           { filters: { visible:false }, pageNavigation:{ visible:false } },
-      layoutType:      models.LayoutType.Custom,
-      customLayout:    { displayOption: models.DisplayOption.FitToPage },
-      background:      models.BackgroundType.Transparent
+      panes: { filters:{visible:false}, pageNavigation:{visible:false} },
+      layoutType: models.LayoutType.Custom,
+      customLayout:{displayOption: models.DisplayOption.FitToPage},
+      background: models.BackgroundType.Transparent
     },
-    theme: { themeJson: newTheme }
+    theme: { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
   };
 
-  const report = powerbi.embed(embedContainer, config);
+  themesShowcaseState.themesReport = powerbi.embed(embedContainer, config);
 
-  report.off('loaded');
-  report.on('loaded', () => {
+  themesShowcaseState.themesReport.on("loaded", () => {
     overlay.hide();
     contentElement.show();
-    themesList.find('#datacolor0').prop('checked', true);
+    themesList.find("#datacolor0").prop("checked",true);
   });
 
-  report.off('rendered');
-  report.on('rendered', () => {
-    console.log('Customize Colors report rendered');
+  themesShowcaseState.themesReport.on("rendered", () => {
+    console.log("Customize Colors report rendered");
+    try { window.parent.playground.logShowcaseDoneRendering("CustomizeColors"); } catch {}
   });
-
-  // optionally set a11y props
-  report.setComponentTitle('Customize report colors & mode');
-  report.setComponentTabIndex(0);
 }
+
+// (buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
+//  buildDataColorElement(), applyTheme(), toggleTheme(),
+//  toggleDarkThemeOnElements() — all remain exactly as you already have them in themes.js)
