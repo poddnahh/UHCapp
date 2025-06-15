@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------
 
 const reportConfig = {
-  accessToken: null,
+  accessToken: null,   // you can wire this up later if you need tokens
   embedUrl:    null,
   reportId:    null
 };
@@ -14,7 +14,7 @@ let _configReadyResolve;
 const configReady = new Promise(res => { _configReadyResolve = res; });
 
 ;(function loadReportList() {
-  // **Point at this folder’s reportList.json**
+  // *** NOTE: this must point at YOUR reportList.json in the same folder ***
   fetch("./reportList.json")
     .then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -28,8 +28,9 @@ const configReady = new Promise(res => { _configReadyResolve = res; });
       if (!entry || !entry.embedUrl) {
         throw new Error("Report not found");
       }
-      reportConfig.embedUrl  = entry.embedUrl;
-      reportConfig.reportId  = new URL(entry.embedUrl).searchParams.get("reportId");
+      reportConfig.embedUrl = entry.embedUrl;
+      // extract the reportId query param from the embedUrl
+      reportConfig.reportId = new URL(entry.embedUrl).searchParams.get("reportId");
     })
     .catch(err => {
       console.error("reportList.json load failed:", err);
@@ -39,6 +40,7 @@ const configReady = new Promise(res => { _configReadyResolve = res; });
         </div>`;
     })
     .finally(() => {
+      // once we’ve tried, let index.js go ahead (it will error if config is bad)
       _configReadyResolve();
     });
 })();
