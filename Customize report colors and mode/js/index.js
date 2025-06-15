@@ -1,100 +1,93 @@
-// js/index.js
+// index.js
 // ----------------------------------------------------------------------------
 // “Customize report colors & mode” page logic
 // ----------------------------------------------------------------------------
 
-// shorthand state & key constants
+// State & keys
 const themesShowcaseState = { themesReport: null };
-const KEYCODE_TAB         = 9;
-const Keys = { TAB: "Tab", ESCAPE: "Escape" };
+const KEYCODE_TAB = 9;
+const Keys = { TAB: "Tab" };
 
-// cache common DOM elements
-const bodyElement    = $("body");
-const dropdownDiv    = $(".dropdown");
-const themesList     = $("#theme-dropdown");
-const overlayEl      = $("#overlay");
-const contentElement = $(".content");
-const embedContainer = $(".report-container").get(0);
+// Cache DOM
+const dropdownDiv = $(".dropdown");
+const themesList  = $("#theme-dropdown");
+const overlay     = $("#overlay");
+const content     = $(".content");
+const embedDiv    = $(".report-container").get(0);
 
-// once globals.js has populated `reportConfig`, start up
+// Once globals.js has given us reportConfig…
 configReady.then(startup);
 
 function startup() {
-  // 1) Bootstrap the container
-  powerbi.bootstrap(embedContainer, { type: "report" });
+  // Bootstrap (no accessToken/tokenType when embedding interactive)
+  powerbi.bootstrap(embedDiv, { type: "report" });
 
-  // 2) Embed the report
+  // Embed now
   embedThemesReport();
 
-  // 3) Build the light/dark + data‐color palette UI
+  // Build the palette UI
   buildThemePalette();
 
-  // 4) Focus management for the dropdown
+  // Return focus to button when closed
   dropdownDiv.on("hidden.bs.dropdown", () => $(".btn-theme").focus());
   dropdownDiv.on("shown.bs.dropdown", () => $("#theme-slider").focus());
 }
 
-// prevent the dropdown from closing when clicking inside our custom controls
+// Prevent dropdown auto-close
 $(document).on("click", ".allow-focus", e => e.stopPropagation());
 
-// handle Shift+Tab off the slider to close the dropdown
+// Handle Shift+Tab off the slider
 $(document).on("keydown", "#theme-slider", e => {
-  if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
+  if (e.shiftKey && (e.key===Keys.TAB || e.keyCode===KEYCODE_TAB)) {
     dropdownDiv.removeClass("show");
     themesList.removeClass("show");
-    $(".btn-theme").attr("aria-expanded", "false");
+    $(".btn-theme").attr("aria-expanded","false");
   }
 });
 
 async function embedThemesReport() {
-  // get token/embedUrl/reportId via session_utils.js
+  // Wait for session_utils to fetch anything needed (mostly no-op here)
   await loadThemesShowcaseReportIntoSession();
 
-  const models        = window["powerbi-client"].models;
-  const accessToken   = reportConfig.accessToken;   // if you’re using tokens
-  const embedUrl      = reportConfig.embedUrl;
-  const embedReportId = reportConfig.reportId;
+  // Grab your interactive embed URL
+  const embedUrl = reportConfig.embedUrl;
 
-  // default to light theme + first data‐color set
+  // Merge default light theme + first data-color
   const defaultThemeJson = $.extend({}, jsonDataColors[0], themes[0]);
 
+  // Build an **interactive** embed config (no tokenType/accessToken)
   const config = {
-    type:       "report",
-    tokenType:  models.TokenType.Embed,
-    accessToken,
+    type:     "report",
     embedUrl,
-    id:         embedReportId,
     settings: {
       panes: {
         filters:        { visible: false, expanded: false },
         pageNavigation: { visible: false }
       },
-      layoutType:   models.LayoutType.Custom,
-      customLayout: { displayOption: models.DisplayOption.FitToPage },
-      background:   models.BackgroundType.Transparent
+      layoutType:   window["powerbi-client"].models.LayoutType.Custom,
+      customLayout: { displayOption: window["powerbi-client"].models.DisplayOption.FitToPage },
+      background:   window["powerbi-client"].models.BackgroundType.Transparent
     },
     theme: { themeJson: defaultThemeJson }
   };
 
-  // do the embed
-  themesShowcaseState.themesReport = powerbi.embed(embedContainer, config);
+  // Do the embed
+  themesShowcaseState.themesReport = powerbi.embed(embedDiv, config);
 
-  // once loaded, hide spinner & show UI
+  // Once loaded, hide spinner & show content
   themesShowcaseState.themesReport.on("loaded", () => {
-    overlayEl.hide();
-    contentElement.show();
+    overlay.hide();
+    content.show();
     themesList.find("#datacolor0").prop("checked", true);
   });
 
-  // for Playground integration (optional)
+  // Playground hook (optional)
   themesShowcaseState.themesReport.on("rendered", () => {
     console.log("Customize Colors report rendered");
-    try {
-      window.parent.playground.logShowcaseDoneRendering("CustomizeColors");
-    } catch { /* swallow if not present */ }
+    try { window.parent.playground.logShowcaseDoneRendering("CustomizeColors"); } catch {}
   });
 }
 
-// (All of your buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
-//  buildDataColorElement(), applyTheme(), toggleTheme(),
-//  toggleDarkThemeOnElements() remain **exactly** as you have them in themes.js)
+// buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
+// buildDataColorElement(), applyTheme(), toggleTheme(),
+// toggleDarkThemeOnElements() all live in themes.js exactly as before.
