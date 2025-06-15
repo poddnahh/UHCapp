@@ -1,13 +1,8 @@
-// ----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-// ----------------------------------------------------------------------------
-
-window.addEventListener('error', function(event) {
-    // Protection against cross-origin failure
-    try {
-        if (window.parent.playground && window.parent.playground.logShowcaseError) {
-            window.parent.playground.logShowcaseError("CustomizeColors", event);
-        }
-    } catch { }
+// js/error_listener.js
+window.addEventListener("error", function(event) {
+  try {
+    if (window.parent.playground?.logShowcaseError) {
+      window.parent.playground.logShowcaseError("CustomizeColors", event);
+    }
+  } catch {}
 });
