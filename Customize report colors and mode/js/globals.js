@@ -1,26 +1,27 @@
 // js/globals.js
 // ----------------------------------------------------------------------------
-// Load your local reportList.json and pluck out the first entry
-// (or one matching ?report=Name).
+// Load your local reportList.json (must live next to index.html)
+// and pick the first entry (or one matching ?report=Name).
 
-// This global gets filled in by the fetch below:
-const reportConfig = {
+// This is the global that our other scripts will read:
+window.reportConfig = {
   accessToken: null,
   embedUrl:    null,
-  reportId:    null
+  reportId:    null,
 };
 
-// Promise to let index.js know when we're done:
+// Promise to signal when reportConfig is ready:
 let _resolveConfig;
-const configReady = new Promise(r => { _resolveConfig = r; });
+window.configReady = new Promise(r => { _resolveConfig = r; });
 
-(async function loadReportConfig() {
+;(async function loadReportConfig() {
   try {
+    console.log("globals.js: fetching reportList.json…");
     const resp = await fetch("reportList.json");
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const list = await resp.json();
 
-    // override via ?report=Foo if desired
+    // override via ?report=Foo
     const params = new URLSearchParams(window.location.search);
     const name   = params.get("report");
     const entry  = name ? list.find(r => r.name === name) : list[0];
@@ -29,12 +30,15 @@ const configReady = new Promise(r => { _resolveConfig = r; });
       throw new Error("No valid report entry in reportList.json");
     }
 
-    reportConfig.embedUrl  = entry.embedUrl;
-    // extract the reportId query-param from the embedUrl
-    reportConfig.reportId = new URL(entry.embedUrl).searchParams.get("reportId");
+    // fill our global
+    window.reportConfig.embedUrl  = entry.embedUrl;
+    window.reportConfig.reportId = new URL(entry.embedUrl)
+      .searchParams.get("reportId");
+
+    console.log("globals.js: loaded", window.reportConfig);
   }
   catch (e) {
-    console.error("Could not load reportList.json:", e);
+    console.error("globals.js: could not load reportList.json:", e);
     document.getElementById("overlay").innerHTML = `
       <div style="color:red;padding:20px;">
         Failed to load reportList.json:<br>${e.message}
