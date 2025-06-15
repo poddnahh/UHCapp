@@ -1,59 +1,51 @@
-<!-- Customize report colors and mode/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Customize report colors & mode</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Customize report colors &amp; mode</title>
 
-  <!-- Bootstrap + your CSS -->
+  <!-- Bootstrap & your CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="css/header.css"   rel="stylesheet"/>
+  <link href="css/header.css" rel="stylesheet"/>
   <link href="css/container.css" rel="stylesheet"/>
-  <link href="css/dropdown.css"  rel="stylesheet"/>
-  <link href="css/report.css"    rel="stylesheet"/>
+  <link href="css/dropdown.css" rel="stylesheet"/>
+  <link href="css/report.css" rel="stylesheet"/>
 </head>
 <body>
-  <!-- HEADER -->
+  <!-- Header -->
   <header class="header">
-    <img src="img/UHClogo.png" class="contoso" alt="United Healthcare logo"/>
+    <img class="contoso" src="img/UHClogo.png" alt="United Healthcare logo"/>
     <span class="uhc-title">United Healthcare</span>
   </header>
 
-  <!-- LOADER OVERLAY -->
+  <!-- Spinner -->
   <div id="overlay">
-    <img src="img/spinner.svg" class="rotate" alt="Loading…" />
+    <img id="spinner" class="rotate" src="img/spinner.svg" alt="Loading report"/>
   </div>
 
-  <!-- THEME DROPDOWN + REPORT -->
+  <!-- Theme dropdown + separator + embed container -->
   <main class="content">
     <div class="dropdown">
-      <button class="btn btn-theme" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <svg class="bucket-theme" width="16" height="16" viewBox="0 0 16 16" fill="#4A565A">
-          <!-- bucket icon path here -->
-        </svg>
+      <button class="btn btn-theme" type="button" data-toggle="dropdown">
+        <img class="bucket-theme" src="img/bucket.svg" alt=""/>
         <span class="theme-selector-label">Choose theme</span>
       </button>
-      <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container" role="menu"></ul>
+      <ul id="theme-dropdown" class="dropdown-menu checkbox-menu allow-focus theme-container"></ul>
     </div>
-    <div class="horizontal-rule" role="separator"></div>
+    <div class="horizontal-rule"></div>
     <div class="report-container"></div>
   </main>
 
-  <!-- SCRIPTS -->
-  <script src="js/error_listener.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <!-- Scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  <script src="https://cdn.powerbi.com/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
-  <!-- your theme logic -->
-  <script src="js/themes.js"></script>
-
-  <!-- globals must run *before* index.js -->
   <script src="js/globals.js"></script>
-  <!-- session_utils & main embed + theme-picker wiring -->
-  <script src="js/session_utils.js"></script>
   <script src="js/index.js"></script>
+  <script src="js/themes.js"></script>
+  <script src="js/session_utils.js"></script>
 </body>
 </html>
