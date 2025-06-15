@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------
-// index.js for "Customize report colors & mode"
+// js/index.js for "Customize report colors & mode"
 // ----------------------------------------------------------------------------
 
 // 1) reportConfig is populated by globals.js
-// 2) We’ll also use this same promise to wait for our local reportList.json load
+// 2) indexReady lets us wait for that + our local reportList.json
 let _indexReadyResolve;
 const indexReady = new Promise(res => { _indexReadyResolve = res; });
 
@@ -15,12 +15,12 @@ const Keys                = { TAB: "Tab" };
 const bodyElement    = $("body");
 const dropdownDiv    = $(".dropdown");
 const themesList     = $("#theme-dropdown");
-const overlay        = $("#overlay");
+const overlayEl      = $("#overlay");
 const contentElement = $(".content");
 const embedContainer = $(".report-container").get(0);
 
 // ----------------------------------------------------------------------------
-// Immediately fetch THIS folder's reportList.json and populate reportConfig
+// Fetch this folder's reportList.json and populate reportConfig
 // ----------------------------------------------------------------------------
 ;(function loadReportList() {
   fetch("./reportList.json")
@@ -29,7 +29,6 @@ const embedContainer = $(".report-container").get(0);
       return r.json();
     })
     .then(list => {
-      // pick by ?report=Name or default to first
       const params     = new URLSearchParams(window.location.search);
       const reportName = params.get("report");
       let entry = reportName && list.find(r => r.name === reportName);
@@ -43,44 +42,44 @@ const embedContainer = $(".report-container").get(0);
     })
     .catch(err => {
       console.error("reportList.json load failed:", err);
-      overlay.html(`
+      overlayEl.html(`
         <div style="color:red; padding:20px; font-size:16px;">
           Failed to load report list:<br>${err.message}
         </div>`);
     })
     .finally(() => {
-      // allow the rest of index.js to run
+      // allow indexReady.then() to fire
       _indexReadyResolve();
     });
 })();
 
 // ----------------------------------------------------------------------------
-// Once reportConfig is ready, bootstrap, embed, build UI, wire focus handlers
+// Once reportConfig is ready, bootstrap, embed, build UI, handle focus
 // ----------------------------------------------------------------------------
 indexReady.then(() => {
-  // 1) Bootstrap
+  // 1) Bootstrap the container
   powerbi.bootstrap(embedContainer, { type: "report" });
 
-  // 2) Embed
+  // 2) Embed the report
   embedThemesReport();
 
-  // 3) Build your color/theme UI
+  // 3) Build the theme/color UI palette
   buildThemePalette();
 
-  // 4) Return focus when dropdown closes
+  // 4) Return focus to button when dropdown closes
   dropdownDiv.on("hidden.bs.dropdown", () => {
     $(".btn-theme").focus();
   });
-  // 5) Move focus into slider when opens
+  // 5) Move focus into the slider when dropdown opens
   dropdownDiv.on("shown.bs.dropdown", () => {
     $("#theme-slider").focus();
   });
 });
 
-// Prevent the dropdown from auto-closing on inner clicks
+// Prevent dropdown from auto-closing when clicking inside our controls
 $(document).on("click", ".allow-focus", e => e.stopPropagation());
 
-// Close dropdown when Shift+Tab leaves the slider
+// Close dropdown when Shift+Tab goes off the slider
 $(document).on("keydown", "#theme-slider", e => {
   if (e.shiftKey && (e.key === Keys.TAB || e.keyCode === KEYCODE_TAB)) {
     dropdownDiv.removeClass("show");
@@ -90,10 +89,10 @@ $(document).on("keydown", "#theme-slider", e => {
 });
 
 // ----------------------------------------------------------------------------
-// Embed the report and hide the spinner once loaded
+// Embed the report, then hide the spinner and show the UI
 // ----------------------------------------------------------------------------
 async function embedThemesReport() {
-  // this comes from js/session_utils.js
+  // Load token/embedUrl/reportId from session_utils.js
   await loadThemesShowcaseReportIntoSession();
 
   const models        = window["powerbi-client"].models;
@@ -101,7 +100,7 @@ async function embedThemesReport() {
   const embedUrl      = reportConfig.embedUrl;
   const embedReportId = reportConfig.reportId;
 
-  // default to light + first color set
+  // Default to light + first data-color set
   const themeJson = $.extend({}, jsonDataColors[0], themes[0]);
 
   const config = {
@@ -125,7 +124,7 @@ async function embedThemesReport() {
   themesShowcaseState.themesReport = powerbi.embed(embedContainer, config);
 
   themesShowcaseState.themesReport.on("loaded", () => {
-    overlay.hide();
+    overlayEl.hide();
     contentElement.show();
     themesList.find("#datacolor0").prop("checked", true);
   });
@@ -138,6 +137,8 @@ async function embedThemesReport() {
   });
 }
 
-// NOTE: your functions buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
-// buildDataColorElement(), applyTheme(), toggleTheme(), toggleDarkThemeOnElements()
-// all stay exactly as they are in your existing themes.js.
+// ----------------------------------------------------------------------------
+// All of your buildThemePalette(), buildThemeSwitcher(), buildSeparator(),
+// buildDataColorElement(), applyTheme(), toggleTheme(), and
+// toggleDarkThemeOnElements() still live unchanged in themes.js
+// ----------------------------------------------------------------------------
