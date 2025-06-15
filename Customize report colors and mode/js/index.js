@@ -4,7 +4,7 @@
 window.configReady
   .then(startup)
   .catch(err => {
-    console.error("Could not initialize:", err);
+    console.error("Initialization error:", err);
     document.getElementById("overlay").innerHTML = `
       <div style="color:red;padding:20px;">
         Initialization error:<br>${err.message}
@@ -12,21 +12,20 @@ window.configReady
   });
 
 function startup() {
-  // cache DOM
   const container   = document.querySelector(".report-container");
   const overlayEl   = document.getElementById("overlay");
   const contentEl   = document.querySelector(".content");
   const dropdownDiv = document.querySelector(".dropdown");
 
-  // 2) Bootstrap the container for a report
+  // Bootstrap the empty container
   powerbi.bootstrap(container, { type: "report" });
 
-  // 3) Embed the report from your reportConfig
+  // Embed the report from your reportConfig
   const models = window["powerbi-client"].models;
   const cfg = {
     type:        "report",
     tokenType:   models.TokenType.Embed,
-    accessToken: window.reportConfig.accessToken,   // probably null in your case
+    accessToken: window.reportConfig.accessToken,
     embedUrl:    window.reportConfig.embedUrl,
     id:          window.reportConfig.reportId,
     settings: {
@@ -38,7 +37,6 @@ function startup() {
       customLayout: { displayOption: models.DisplayOption.FitToPage },
       background:   models.BackgroundType.Transparent
     },
-    // apply the first theme + colors by default
     theme: { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
   };
 
@@ -47,7 +45,7 @@ function startup() {
   report.on("loaded", () => {
     overlayEl.style.display = "none";
     contentEl.style.display = "block";
-    // select the first color radio
+    // select the first color theme radio
     document.getElementById("datacolor0").checked = true;
   });
 
@@ -55,14 +53,14 @@ function startup() {
     console.log("Report rendered successfully");
   });
 
-  // 4) Build the color‐chooser UI
+  // Build the chooser UI
   buildThemePalette();
 
-  // 5) Wire up dropdown focus / click behavior
+  // Focus management
   $(dropdownDiv)
-    .on("hidden.bs.dropdown",  () => $(".btn-theme").focus())
-    .on("shown.bs.dropdown",   () => $("#theme-slider").focus());
+    .on("hidden.bs.dropdown", () => $(".btn-theme").focus())
+    .on("shown.bs.dropdown",  () => $("#theme-slider").focus());
 
-  // prevent dropdown auto‐close when clicking inside
+  // Prevent auto‐close on clicks inside
   $(document).on("click", ".allow-focus", e => e.stopPropagation());
 }
