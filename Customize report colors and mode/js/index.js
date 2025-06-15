@@ -22,16 +22,18 @@ function startup() {
 
   // Embed the report from your reportConfig
   const models = window["powerbi-client"].models;
-const cfg = {
+const config = {
   type:      "report",
-- tokenType: models.TokenType.Embed,
-- accessToken: window.reportConfig.accessToken,
-  embedUrl:  window.reportConfig.embedUrl,
-  id:        window.reportConfig.reportId,
-  settings: { /* …unchanged… */ },
-- theme: { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
-+ tokenType: models.TokenType.None,
-+ theme:    { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
+  tokenType: models.TokenType.None,     // no token
+  embedUrl:  reportConfig.embedUrl,
+  id:        reportConfig.reportId,
+  settings: {
+    panes: { filters:{visible:false}, pageNavigation:{visible:false} },
+    layoutType:   models.LayoutType.Custom,
+    customLayout: { displayOption: models.DisplayOption.FitToPage },
+    background:   models.BackgroundType.Transparent
+  },
+  theme: { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
 };
 
   const report = powerbi.embed(container, cfg);
