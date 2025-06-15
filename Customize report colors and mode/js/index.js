@@ -1,47 +1,38 @@
 // js/index.js
 // ----------------------------------------------------------------------------
-// Wrap everything in configReady to guarantee reportConfig is present
-
-window.configReady.then(startup);
+// Wait for globals.js to parse reportList.json into reportConfig
+configReady.then(startup).catch(err => {
+  console.error("Failed to load reportList.json:", err);
+  $("#overlay").html(`
+    <div style="color:red;padding:20px;">
+      Failed to load reports:<br>${err.message}
+    </div>
+  `);
+});
 
 function startup() {
-  // cache DOM
-  const container     = document.querySelector(".report-container");
-  const overlayEl     = $("#overlay");
-  const contentEl     = $(".content");
-  const dropdownDiv   = $(".dropdown");
-  const themesList    = $("#theme-dropdown");
+  // cache DOM references
+  const container   = document.querySelector(".report-container");
+  const overlayEl   = $("#overlay");
+  const contentEl   = $(".content");
+  const dropdownDiv = $(".dropdown");
 
-  // 1) bootstrap the empty container
+  // 1) Bootstrap the container
   powerbi.bootstrap(container, { type: "report" });
 
-  // 2) embed the report
-  embedThemesReport().catch(console.error);
-
-  // 3) build your theme‐chooser UI
-  buildThemePalette();
-
-  // 4) focus management
-  dropdownDiv.on("hidden.bs.dropdown", () => $(".btn-theme").focus());
-  dropdownDiv.on("shown.bs.dropdown", () => $("#theme-slider").focus());
-
-  // prevent auto‐close on inner clicks
-  $(document).on("click", ".allow-focus", e => e.stopPropagation());
-}
-
-async function embedThemesReport() {
-  // ensure tokens are loaded
-  await loadThemesShowcaseReportIntoSession();
-
-  const models = window["powerbi-client"].models;
-  const config = {
+  // 2) Embed using reportConfig from globals.js
+  const models      = window["powerbi-client"].models;
+  const embedConfig = {
     type:       "report",
     tokenType:  models.TokenType.Embed,
-    accessToken: reportConfig.accessToken,
+    accessToken: reportConfig.accessToken,   // null if no token flow
     embedUrl:   reportConfig.embedUrl,
     id:         reportConfig.reportId,
     settings: {
-      panes: { filters:{visible:false}, pageNavigation:{visible:false} },
+      panes: {
+        filters:        { visible: false, expanded: false },
+        pageNavigation: { visible: false }
+      },
       layoutType:   models.LayoutType.Custom,
       customLayout: { displayOption: models.DisplayOption.FitToPage },
       background:   models.BackgroundType.Transparent
@@ -49,21 +40,27 @@ async function embedThemesReport() {
     theme: { themeJson: $.extend({}, jsonDataColors[0], themes[0]) }
   };
 
-  const report = powerbi.embed(
-    document.querySelector(".report-container"),
-    config
-  );
+  const report = powerbi.embed(container, embedConfig);
 
   report.on("loaded", () => {
-    $("#overlay").hide();
-    $(".content").show();
-    $("#theme-dropdown #datacolor0").prop("checked", true);
+    overlayEl.hide();
+    contentEl.show();
+    // Default‐select first data‐color
+    $("#datacolor0").prop("checked", true);
   });
 
   report.on("rendered", () => {
-    console.log("report rendered");
+    console.log("Report rendered successfully");
   });
 
-  // store for later theme switching
-  window.themesShowcaseState = { themesReport: report };
+  // 3) Build your theme picker UI
+  buildThemePalette();
+
+  // 4) Dropdown focus‐management
+  dropdownDiv
+    .on("hidden.bs.dropdown", () => $(".btn-theme").focus())
+    .on("shown.bs.dropdown", () => $("#theme-slider").focus());
+
+  // 5) Prevent dropdown from auto‐closing when clicking inside
+  $(document).on("click", ".allow-focus", e => e.stopPropagation());
 }
