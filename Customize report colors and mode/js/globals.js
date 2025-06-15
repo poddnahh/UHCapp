@@ -1,31 +1,50 @@
+// js/globals.js
 // ----------------------------------------------------------------------------
 // Custom Globals for "Customize report colors & mode"
+// Dynamically loads embedUrl & reportId from this folder’s reportList.json
 // ----------------------------------------------------------------------------
 
-const reportConfig = { accessToken: null, embedUrl: null, reportId: null };
+/** Where we’ll store the embed URL & reportId */
+const reportConfig = {
+  accessToken: null,
+  embedUrl:    null,
+  reportId:    null
+};
 
+/** Promise we’ll resolve once reportConfig is populated */
 let _configReadyResolve;
 const configReady = new Promise(res => { _configReadyResolve = res; });
 
-const overlay        = $("#overlay");
-const embedContainer = $(".report-container").get(0);
-
-;(function loadReportConfig() {
-  const params     = new URLSearchParams(window.location.search);
-  const reportName = params.get("report") || null;
-
-;(function loadReportConfig() {
-  fetch("reportList.json")
-    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+;(function loadReportList() {
+  fetch("./reportList.json")
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
     .then(list => {
-      // pick list[0] etc...
+      // pick by ?report=Name or default to first
+      const params     = new URLSearchParams(window.location.search);
+      const reportName = params.get("report");
+      let entry = reportName && list.find(r => r.name === reportName);
+      if (!entry) entry = list[0];
+      if (!entry || !entry.embedUrl) {
+        throw new Error(`Report not found: ${reportName || (list[0] && list[0].name)}`);
+      }
+
       reportConfig.embedUrl = entry.embedUrl;
       reportConfig.reportId = new URL(entry.embedUrl).searchParams.get("reportId");
     })
     .catch(err => {
-      overlay.html(`<div style="color:red;padding:20px;">
-        Failed to load report list:<br>${err.message}
-      </div>`);
+      console.error("reportList.json load failed:", err);
+      // show error in your overlay
+      const overlay = document.getElementById("overlay");
+      overlay.innerHTML = `
+        <div style="color:red; padding:20px; font-size:16px;">
+          Failed to load report list:<br>${err.message}
+        </div>`;
     })
-    .finally(() => _configReadyResolve());
+    .finally(() => {
+      // whether success or error, let index.js proceed
+      _configReadyResolve();
+    });
 })();
