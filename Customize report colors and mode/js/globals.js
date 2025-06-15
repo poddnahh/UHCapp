@@ -11,7 +11,7 @@ window.reportConfig = {
 let _resolveConfig;
 window.configReady = new Promise(r => _resolveConfig = r);
 
-// 3) Immediately fetch reportList.json (must sit next to index.html)
+// 3) Immediately fetch reportList.json
 ;(async function loadReportConfig() {
   try {
     console.log("globals.js → fetching reportList.json");
@@ -25,13 +25,12 @@ window.configReady = new Promise(r => _resolveConfig = r);
       ? list.find(r => r.name === name)
       : list[0];
 
-    if (!entry || !entry.embedUrl) {
+    if (!entry || !entry.embedUrl || !entry.reportId) {
       throw new Error("No valid report entry in reportList.json");
     }
 
-    window.reportConfig.embedUrl = entry.embedUrl;
-    window.reportConfig.reportId = new URL(entry.embedUrl)
-      .searchParams.get("reportId");
+    window.reportConfig.embedUrl  = entry.embedUrl;
+    window.reportConfig.reportId  = entry.reportId;
 
     console.log("globals.js → reportConfig:", window.reportConfig);
   }
