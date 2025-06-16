@@ -62,9 +62,10 @@ body::-webkit-scrollbar-thumb {
 }
 
 #reportContainer {
-  width: 100%;
-  height: calc(100vh - 60px);
-  border: none;
+    width: 100%;
+    height: calc(100vh - 60px);
+    border: none;
+    padding-top: 64px; /* adjusts for header height */
 }
 
 #overlay {
