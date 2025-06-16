@@ -38,26 +38,27 @@ body::-webkit-scrollbar-thumb {
     z-index: 1030;
 }
 
-/* ✅ Custom United Healthcare Header Styling */
 #unitedhealthcare-header {
     background: white;
     display: flex;
     align-items: center;
-    height: 44px;
+    height: 60px;
     margin: 0;
     padding: 0 24px;
     border-bottom: 1px solid #ddd;
 }
 
 #uhc-logo {
-    height: 30px;
+    height: 40px;
     width: auto;
     margin-right: 12px;
 }
 
 #uhc-text {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: #094782;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 22px;
+    font-weight: normal;
+    color: #002f65;
+    letter-spacing: 0.5px;
 }
+
