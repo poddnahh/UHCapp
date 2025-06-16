@@ -5,54 +5,45 @@ Licensed under the MIT license. -->
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="shortcut icon" href="#" />
-    
-    <!-- External Libraries -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- Stylesheets -->
-    <link href="css/header_style.css" rel="stylesheet" />
-    <link href="css/embed_area_style.css" rel="stylesheet" />
-    <link href="css/dialog_send_coupon.css" rel="stylesheet" />
-    <link href="css/dialog_success.css" rel="stylesheet" />
-    <link href="css/dialog_campaign_list.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="#" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
+    <link href="css/header_style.css" rel="stylesheet">
+    <link href="css/embed_area_style.css" rel="stylesheet">
+    <link href="css/dialog_send_coupon.css" rel="stylesheet">
+    <link href="css/dialog_success.css" rel="stylesheet">
+    <link href="css/dialog_campaign_list.css" rel="stylesheet">
 
     <!-- Fonts -->
     <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff" type="font/woff" crossorigin="anonymous">
     <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff" type="font/woff" crossorigin="anonymous">
 
-    <!-- Page Title -->
-    <title>United Healthcare - Insights to Action</title>
+    <title>Insights to action</title>
 </head>
 
 <body id="insight-to-action">
     <div id="wrapper">
-        <!-- United Healthcare Header -->
-        <h1 class="fixed-top" id="uhc-header">
-           <h1 class="fixed-top" id="unitedhealthcare-header">
-           <img src="img/IconUnitedHealthcare.png" id="uhc-logo" alt="United Healthcare logo" aria-label="United Healthcare logo">
+        <!-- Updated United Healthcare Header -->
+        <h1 class="fixed-top" id="unitedhealthcare-header">
+            <img src="img/IconUnitedHealthcare.png" id="uhc-logo" alt="United Healthcare logo" aria-label="United Healthcare logo">
         </h1>
 
-        <!-- Spinner Loader -->
         <div id="overlay">
-            <img src="img/spinner.svg" id="spinner" class="rotate" alt="Loading report" aria-label="Loading report" />
+            <img src="img/spinner.svg" id="spinner" class="rotate" alt="loader" aria-label="Loading report">
         </div>
 
-        <!-- Report Display -->
         <main id="main-div">
             <div id="report-container"></div>
-
-            <!-- Dialog Mask for Campaign Dialogs -->
             <div id="dialog-mask">
-                <!-- Distribution Dialog -->
+                <!-- Campaign List Dialog -->
                 <div role="dialog" id="distribution-dialog" class="dialog-insight-to-action">
                     <h2 class="dialog-header">
                         <span class="text-dialog-header">Campaign distribution list</span>
                         <button id="close1" class="wrapper-close" aria-label="Close dialog">
-                            <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
+                            <img role="presentation" class="btn-close-distribution-dialog" src="img/cross.svg" alt="close">
                         </button>
                     </h2>
                     <div class="dialog-body">
@@ -69,13 +60,13 @@ Licensed under the MIT license. -->
                     <h2 class="dialog-header">
                         <span class="text-dialog-header"></span>
                         <button id="close2" class="wrapper-close" aria-label="Close dialog">
-                            <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
+                            <img role="presentation" class="btn-close-distribution-dialog" src="img/cross.svg" alt="close">
                         </button>
                     </h2>
                     <div role="form" class="dialog-body">
                         <div class="send-dialog-row">
                             <label id="send-coupon-title" for="send-title" class="send-dialog-field">Title</label>
-                            <input type="text" class="title input-content" id="send-title" name="title" />
+                            <input type="text" class="title input-content" id="send-title" name="title">
                         </div>
                         <div class="send-dialog-row">
                             <label for="message-content" class="send-dialog-field">Body</label>
@@ -91,11 +82,11 @@ Licensed under the MIT license. -->
                 <div role="dialog" id="success-dialog" class="dialog-insight-to-action-small">
                     <div class="dialog-header">
                         <button id="success-cross" class="wrapper-close" aria-label="Close dialog">
-                            <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
+                            <img role="presentation" class="btn-close-distribution-dialog" src="img/cross.svg" alt="close">
                         </button>
                     </div>
                     <div id="success-content">
-                        <img id="image-success" src="img/success.svg" alt="Success" />
+                        <img role="presentation" id="image-success" src="img/success.svg">
                         <div class="text-success">Sent successfully!</div>
                     </div>
                 </div>
