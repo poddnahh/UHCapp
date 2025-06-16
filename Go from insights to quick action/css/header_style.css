@@ -1,61 +1,41 @@
 body {
-  height: 100%;
-  scrollbar-color: #A0AEB2 #FFF;
-  scrollbar-width: thin;
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #fff;
 }
 
-/* Scrollbar */
-body::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background-color: transparent;
-}
-body::-webkit-scrollbar {
-  background-color: transparent;
-  height: 10px;
-  width: 8px;
-}
-body::-webkit-scrollbar-thumb {
-  background-color: #A0AEB2;
-  border-radius: 10px;
-  height: 30px;
-}
-
-/* Container */
-#wrapper {
-  margin: 0 auto;
-  min-width: 838px;
-  width: 100%;
-}
-
-/* Header */
-#unitedhealthcare-header {
-  background: white;
+/* White header bar */
+.header-bar {
+  background-color: white;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
-  padding-left: 24px;
-  height: 60px;
   border-bottom: 1px solid #ccc;
+  height: 60px;
 }
 
-.fixed-top {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1030;
+/* Centered logo + text container */
+.header-content {
+  display: flex;
+  align-items: center;
 }
 
-/* Logo */
-#uhc-logo {
+/* UHC Logo */
+.uhc-logo {
   height: 40px;
-  margin-right: 10px;
+  width: auto;
+  margin-right: 12px;
 }
 
-/* Company Name */
-#uhc-text {
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-size: 24px;
-  font-weight: bold;
-  color: #002f65;
-  letter-spacing: 0.3px;
+/* UHC Text */
+.uhc-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #002D72; /* UnitedHealthcare blue */
+}
+
+/* Report container fills screen */
+.report-container {
+  height: calc(100vh - 60px); /* full height minus header */
+  width: 100%;
 }
