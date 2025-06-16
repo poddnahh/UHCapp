@@ -1,65 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Insights to Action</title>
 
   <link rel="shortcut icon" href="#" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
   <link href="css/header_style.css" rel="stylesheet" />
+
   <style>
-    body {
+    body, html {
       margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: Arial, sans-serif;
     }
-    #sidebar {
-      width: 220px;
-      background: #094624;
-      color: white;
-      padding-top: 60px;
-      position: fixed;
+
+    #wrapper {
+      display: flex;
       height: 100vh;
+      overflow: hidden;
     }
-    #sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    #sidebar li {
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-    }
-    #sidebar a {
+
+    .sidebar {
+      width: 220px;
+      background-color: #003366;
       color: white;
-      text-decoration: none;
+      padding: 20px 10px;
+      box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+      font-size: 16px;
+      margin: 20px 0 10px;
+    }
+
+    .sidebar a {
       display: block;
-      padding: 12px;
+      color: white;
+      padding: 8px 12px;
+      text-decoration: none;
+      margin: 5px 0;
+      border-left: 4px solid transparent;
     }
-    #sidebar a:hover {
-      background-color: #0b6e3e;
-    }
-    #sidebar .active {
+
+    .sidebar a.active {
       font-weight: bold;
-      border-left: 5px solid #fff;
-      background-color: #0b6e3e;
+      border-left: 4px solid #fff;
+      background-color: rgba(255, 255, 255, 0.1);
     }
-    #main-container {
-      margin-left: 220px;
+
+    .main-content {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
+
     header#contoso-header {
-      z-index: 1000;
+      background-color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
-    #reportContainer {
-      width: 100%;
-      height: calc(100vh - 60px);
-      border: none;
-      padding-top: 64px;
+
+    #contoso {
+      height: 40px;
+      margin-right: 10px;
     }
+
+    #uhc-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 60px;
+      left: 220px;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      z-index: 10;
+    }
+
     #spinner {
-      margin: 100px auto;
       width: 40px;
       height: 40px;
       border: 5px solid #ccc;
@@ -67,40 +99,40 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    iframe#reportContainer {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: calc(100vh - 60px);
+    }
   </style>
 </head>
 
-<body id="insight-to-action">
-  <div id="wrapper" style="display: flex; height: 100vh;">
-    <!-- Sidebar -->
-    <nav id="sidebar">
-      <ul>
-        <li><a href="/UHCapp/Capture%20report%20views/">Capture report views</a></li>
-        <li><a href="/UHCapp/Customize%20report%20colors%20and%20mode/">Customize report colors and mode</a></li>
-        <li><a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/" class="active">Go from insights to quick action</a></li>
-        <li><a href="/UHCapp/Personalize%20top%20insights/">Personalize top insights</a></li>
-        <li><a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/">Quickly create and personalize visuals</a></li>
-      </ul>
-    </nav>
-
-    <!-- Main content -->
-    <div id="main-container">
-      <!-- Header -->
-      <header class="fixed-top" id="contoso-header">
+<body>
+  <div id="wrapper">
+    <div class="sidebar">
+      <a href="#">Capture report views</a>
+      <a href="#">Customize report colors and mode</a>
+      <a href="#" class="active">Go from insights to quick action</a>
+      <a href="#">Personalize top insights</a>
+      <a href="#">Quickly create and personalize visuals</a>
+    </div>
+    <div class="main-content">
+      <header id="contoso-header">
         <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
         <span id="uhc-text">United Healthcare</span>
       </header>
 
-      <!-- Spinner -->
       <div id="overlay">
         <div id="spinner" aria-label="Loading report"></div>
       </div>
 
-      <!-- Report -->
       <main id="main-div">
         <iframe id="reportContainer" allowfullscreen="true"></iframe>
       </main>
@@ -111,4 +143,5 @@
   <script src="js/powerbi.min.js"></script>
   <script src="js/index.js"></script>
 </body>
+
 </html>
