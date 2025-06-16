@@ -2,56 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+  <link rel="shortcut icon" href="#" />
+  <link href="css/header_style.css" rel="stylesheet" />
   <title>Insights to Action</title>
-
-  <!-- Power BI Client API -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.0/powerbi.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/header_style.css" />
 </head>
+
 <body>
   <!-- Header -->
-  <div id="unitedhealthcare-header">
-    <img src="img/IconUnitedHealthcare.png" id="united-logo" alt="United Healthcare Logo" />
-    <div id="united-text">United Healthcare</div>
-  </div>
+  <header class="header-bar">
+    <div class="header-content">
+      <img src="img/IconUnitedHealthcare.png" alt="UnitedHealthcare Logo" class="uhc-logo"/>
+      <span class="uhc-title">United Healthcare</span>
+    </div>
+  </header>
 
-  <!-- Report Container -->
-  <div id="report-container"></div>
+  <!-- Main Content -->
+  <main>
+    <div id="report-container" class="report-container"></div>
+  </main>
 
-  <!-- Script to load report from reportList.json -->
-  <script>
-    const container = document.getElementById("report-container");
-
-    fetch("reportList.json")
-      .then(response => response.json())
-      .then(reportList => {
-        if (!reportList || reportList.length === 0) {
-          console.error("No reports found in reportList.json");
-          return;
-        }
-
-        const firstReport = reportList[0];
-        const config = {
-          type: "report",
-          tokenType: window.powerbi.models.TokenType.Embed,
-          accessToken: null, // Public report doesn't need token
-          embedUrl: firstReport.embedUrl,
-          id: null, // Not needed for public report
-          settings: {
-            panes: {
-              filters: { visible: false },
-              pageNavigation: { visible: true }
-            }
-          }
-        };
-
-        powerbi.embed(container, config);
-      })
-      .catch(error => console.error("Error loading reportList.json:", error));
-  </script>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>
