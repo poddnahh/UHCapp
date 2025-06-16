@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Capture Report Views</title>
 
+  <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"/>
   <link rel="stylesheet" href="../css/header_style.css"/>
   <link rel="stylesheet" href="../css/modal.css"/>
@@ -81,6 +82,7 @@
       font-size: 14px;
       font-weight: 600;
       padding: 6px 12px;
+      margin-right: 10px;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
@@ -156,24 +158,25 @@
       </div>
 
       <!-- Report Container -->
-      <div id="overlay">
-        <div id="spinner"></div>
-      </div>
+      <div id="overlay"><div id="spinner"></div></div>
       <div id="report-container"></div>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="/UHCapp/js/jquery.min.js"></script>
-  <script src="/UHCapp/js/powerbi.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
   <script>
     $(document).ready(() => {
-      fetch("/UHCapp/Capture%20report%20views/reportList.json")
+      fetch("reportList.json")
         .then(res => res.json())
         .then(reports => {
-          if (!reports || reports.length === 0) return;
+          if (!reports || reports.length === 0) {
+            console.warn("No reports found in reportList.json");
+            return;
+          }
           embedReport(reports[0].embedUrl);
-        });
+        }).catch(err => console.error("Failed to load reports:", err));
     });
 
     function embedReport(embedUrl) {
@@ -181,7 +184,8 @@
       const config = {
         type: 'report',
         embedUrl: embedUrl,
-        tokenType: models.TokenType.Embed, // ✅ FIXED: use Embed for public view links
+        tokenType: models.TokenType.Aad,
+        accessToken: null,
         permissions: models.Permissions.All,
         settings: {
           panes: { filters: { visible: true } },
