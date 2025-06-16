@@ -1,64 +1,61 @@
-/* Copyright (c) Microsoft Corporation. Licensed under the MIT license. */
-
 body {
-    height: 100%;
-    scrollbar-color: #A0AEB2 #FFF;
-    scrollbar-width: thin;
+  height: 100%;
+  scrollbar-color: #A0AEB2 #FFF;
+  scrollbar-width: thin;
 }
 
-/* Scrollbar appearance */
+/* Scrollbar */
 body::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: transparent;
+  border-radius: 10px;
+  background-color: transparent;
 }
-
 body::-webkit-scrollbar {
-    background-color: transparent;
-    height: 10px;
-    width: 8px;
+  background-color: transparent;
+  height: 10px;
+  width: 8px;
 }
-
 body::-webkit-scrollbar-thumb {
-    background-color: #A0AEB2;
-    border-radius: 10px;
-    height: 30px;
+  background-color: #A0AEB2;
+  border-radius: 10px;
+  height: 30px;
 }
 
+/* Container */
 #wrapper {
-    margin: 0 auto;
-    min-width: 838px;
-    width: 100%;
+  margin: 0 auto;
+  min-width: 838px;
+  width: 100%;
+}
+
+/* Header */
+#unitedhealthcare-header {
+  background: white;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  height: 60px;
+  border-bottom: 1px solid #ccc;
 }
 
 .fixed-top {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 1030;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
 }
 
-#unitedhealthcare-header {
-    background: white;
-    display: flex;
-    align-items: center;
-    height: 60px;
-    margin: 0;
-    padding: 0 24px;
-    border-bottom: 1px solid #ddd;
-}
-
+/* Logo */
 #uhc-logo {
-    height: 40px;
-    width: auto;
-    margin-right: 12px;
+  height: 40px;
+  margin-right: 10px;
 }
 
+/* Company Name */
 #uhc-text {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 22px;
-    font-weight: normal;
-    color: #002f65;
-    letter-spacing: 0.5px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #002f65;
+  letter-spacing: 0.3px;
 }
-
