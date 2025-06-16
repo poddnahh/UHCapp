@@ -1,6 +1,7 @@
 body {
-  height: 100%;
   margin: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #wrapper {
@@ -25,14 +26,13 @@ body {
 }
 
 #contoso {
-  height: 40px;
-  margin-right: 12px;
+  height: 44px;
+  margin-right: 16px;
 }
 
 #uhc-text {
   font-size: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: bold;
-  color: #1f4e79;
+  font-weight: 600;
+  color: #002d72; /* UnitedHealthcare blue */
   line-height: 1;
 }
