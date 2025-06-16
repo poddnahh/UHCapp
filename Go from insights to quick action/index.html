@@ -2,28 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-  <link rel="shortcut icon" href="#" />
-  <link href="css/header_style.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Insights to Action</title>
+  <link rel="stylesheet" href="css/header_style.css" />
 </head>
-
 <body>
-  <!-- Header -->
-  <header class="header-bar">
-    <div class="header-content">
-      <img src="img/IconUnitedHealthcare.png" alt="UnitedHealthcare Logo" class="uhc-logo"/>
-      <span class="uhc-title">United Healthcare</span>
-    </div>
-  </header>
+  <div id="wrapper">
+    <header id="uhc-header" class="fixed-top">
+      <img src="img/IconUnitedHealthcare.png" alt="UHC Logo" id="uhc-logo" />
+      <span id="uhc-name">United Healthcare</span>
+    </header>
+    <main id="main-div">
+      <div id="report-container" style="height: calc(100vh - 60px);"></div>
+    </main>
+  </div>
 
-  <!-- Main Content -->
-  <main>
-    <div id="report-container" class="report-container"></div>
-  </main>
-
-  <!-- Scripts -->
   <script src="js/jquery.min.js"></script>
   <script src="js/powerbi.min.js"></script>
   <script src="js/index.js"></script>
