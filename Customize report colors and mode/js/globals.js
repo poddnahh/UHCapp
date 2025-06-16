@@ -1,33 +1,27 @@
 // globals.js
 
-// For public reports we don’t need accessToken
+// Global config for report
 const reportConfig = {
-    embedUrl: null,
-    reportId: null
+    embedUrl: null
 };
 
 const reportShowcaseState = {
     report: null
 };
 
-// Elements
-const embedContainer = document.getElementById("report-container");
-const overlay = document.getElementById("overlay");
-
-// Load reportList.json and set first report
+// This function loads reportList.json and sets the first report's URL
 async function loadReportIntoSession() {
     try {
-        const response = await fetch("reportList.json");
-        const reportList = await response.json();
+        const response = await fetch('reportList.json');
+        const reports = await response.json();
 
-        if (reportList.length === 0) throw new Error("No reports found in reportList.json");
-
-        const firstReport = reportList[0];
-
-        reportConfig.embedUrl = firstReport.embedUrl;
-        reportConfig.reportId = null; // Optional for public report URLs
+        if (reports && reports.length > 0) {
+            reportConfig.embedUrl = reports[0].embedUrl;
+            console.log("Loaded report URL:", reportConfig.embedUrl);
+        } else {
+            console.error("reportList.json is empty or missing.");
+        }
     } catch (error) {
-        console.error("Error loading report list:", error);
+        console.error("Failed to load reportList.json:", error);
     }
 }
-
