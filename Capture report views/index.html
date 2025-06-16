@@ -1,6 +1,3 @@
-<!-- Copyright (c) Microsoft Corporation.
-Licensed under the MIT license. -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,143 +9,63 @@ Licensed under the MIT license. -->
 
   <link rel="shortcut icon" href="#" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
-  <link href="css/header_style.css" rel="stylesheet" />
-  <link href="css/embed_area_style.css" rel="stylesheet" />
-  <link href="css/dialog_send_coupon.css" rel="stylesheet" />
-  <link href="css/dialog_success.css" rel="stylesheet" />
-  <link href="css/dialog_campaign_list.css" rel="stylesheet" />
-  <link href="css/sidebar.css" rel="stylesheet" />
+  <link href="css/header_style.css" rel="stylesheet">
+  <link href="css/embed_area_style.css" rel="stylesheet">
+  <link href="css/dialog_send_coupon.css" rel="stylesheet">
+  <link href="css/dialog_success.css" rel="stylesheet">
+  <link href="css/dialog_campaign_list.css" rel="stylesheet">
 
-  <style>
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    #spinner {
-      margin: 100px auto;
-      width: 40px;
-      height: 40px;
-      border: 5px solid #ccc;
-      border-top: 5px solid #1f4e79;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    #main-div {
-      margin-left: 220px;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 100vh;
-      background-color: #1f4e79;
-      padding-top: 60px;
-    }
-
-    .sidebar a {
-      display: block;
-      color: white;
-      padding: 12px 20px;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .sidebar a:hover {
-      background-color: #163d5c;
-    }
-
-    .sidebar a.active {
-      background-color: #163d5c;
-      border-left: 4px solid white;
-    }
-  </style>
+  <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff" type="font/woff" crossorigin="anonymous">
+  <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff" type="font/woff" crossorigin="anonymous">
 </head>
 
-<body id="insight-to-action">
-  <div class="sidebar">
-    <a href="../Go from insights to quick action/index.html">Go from insights to quick action</a>
-    <a href="index.html" class="active">Capture report views</a>
-    <a href="../Customize report colors and mode/index.html">Customize report colors and mode</a>
-    <a href="../Personalize top insights/index.html">Personalize top insights</a>
-    <a href="../Quickly create and personalize visuals/index.html">Quickly create and personalize visuals</a>
-  </div>
-
-  <div id="wrapper">
-    <h1 class="fixed-top" id="contoso-header">
-      <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
-      <span id="uhc-text">United Healthcare</span>
-    </h1>
-
-    <div id="overlay">
-      <div id="spinner" class="rotate" aria-label="Loading report"></div>
-    </div>
-
-    <main id="main-div" style="display:none;">
-      <div id="report-container" style="width:100%; height:calc(100vh - 60px);"></div>
-
-      <div id="dialog-mask">
-        <div role="dialog" id="distribution-dialog" class="dialog-insight-to-action">
-          <h2 class="dialog-header">
-            <span class="text-dialog-header">Campaign distribution list</span>
-            <button id="close1" class="wrapper-close" aria-label="Close dialog">
-              <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
-            </button>
-          </h2>
-          <div class="dialog-body">
-            <div id="dialog-table"></div>
-          </div>
-          <footer class="dialog-footer">
-            <button id="send-coupon" class="btn-dialog-insight-to-action">Send coupon</button>
-            <button id="send-discount" class="btn-dialog-insight-to-action">Send discount</button>
-          </footer>
-        </div>
-
-        <div role="dialog" id="send-dialog" class="dialog-insight-to-action-small">
-          <h2 class="dialog-header">
-            <span class="text-dialog-header"></span>
-            <button id="close2" class="wrapper-close" aria-label="Close dialog">
-              <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
-            </button>
-          </h2>
-          <div role="form" class="dialog-body">
-            <div class="send-dialog-row">
-              <label id="send-coupon-title" for="send-title" class="send-dialog-field">Title</label>
-              <input type="text" class="title input-content" id="send-title" name="title" />
-            </div>
-            <div class="send-dialog-row">
-              <label for="message-content" class="send-dialog-field">Body</label>
-              <textarea class="send-dialog-input input-content" id="message-content" name="messageBody"></textarea>
-            </div>
-          </div>
-          <footer class="dialog-footer">
-            <button id="send-message" class="btn-insight-to-action-send">Send</button>
-          </footer>
-        </div>
-
-        <div role="dialog" id="success-dialog" class="dialog-insight-to-action-small">
-          <div class="dialog-header">
-            <button id="success-cross" class="wrapper-close" aria-label="Close dialog">
-              <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
-            </button>
-          </div>
-          <div id="success-content">
-            <img id="image-success" src="img/success.svg" alt="Success">
-            <div class="text-success">Sent successfully!</div>
-          </div>
-        </div>
+<body>
+  <div id="nav-container">
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare" class="sidebar-logo">
+        <span class="sidebar-title">United Healthcare</span>
       </div>
-    </main>
+      <ul class="sidebar-nav">
+        <li><a href="../Go%20from%20insights%20to%20quick%20action/" class="nav-link">Go from Insights to Quick Action</a></li>
+        <li class="active"><a href="../Capture%20report%20views/" class="nav-link">Capture Report Views</a></li>
+        <li><a href="../Customize%20report%20colors%20and%20mode/" class="nav-link">Customize Report Colors and Mode</a></li>
+        <li><a href="../Personalize%20top%20insights/" class="nav-link">Personalize Top Insights</a></li>
+        <li><a href="../Quickly%20create%20and%20personalize%20visuals/" class="nav-link">Quickly Create and Personalize Visuals</a></li>
+      </ul>
+    </aside>
+
+    <div id="main-wrapper">
+      <header id="contoso-header">
+        <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare logo" id="contoso">
+        <span id="uhc-text">United Healthcare</span>
+      </header>
+
+      <div id="overlay">
+        <div id="spinner" class="rotate" aria-label="Loading report"></div>
+      </div>
+
+      <main id="main-div">
+        <div class="interactive-buttons fixed-top">
+          <button id="display-btn" class="btn btn-action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img class="btn-img" src="img/allviews.svg" alt="My views"> Saved Views
+          </button>
+          <button id="capture-btn" class="btn btn-action" data-toggle="modal" data-target="#modal-action">
+            <img class="btn-img" src="img/captureview.svg" alt="Capture View"> Capture View
+          </button>
+        </div>
+
+        <div id="report-container"></div>
+        <div id="dialog-mask"></div>
+      </main>
+    </div>
   </div>
 
-  <script src="js/jquery.min.js"></script>
-  <script src="js/powerbi.min.js"></script>
-  <script src="js/error_listener.js"></script>
+  <script src="../js/jquery.min.js"></script>
+  <script src="../js/powerbi.min.js"></script>
   <script src="js/globals.js"></script>
   <script src="js/session_utils.js"></script>
   <script src="js/index.js"></script>
 </body>
+
 </html>
