@@ -1,6 +1,3 @@
-<!-- Copyright (c) Microsoft Corporation.
-Licensed under the MIT license. -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,112 +5,73 @@ Licensed under the MIT license. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <link rel="shortcut icon" href="#" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/content.css">
-    <link rel="stylesheet" href="css/report.css">
-    <link rel="stylesheet" href="css/modal.css">
-
-    <!-- TODO: Change font URL in the final environment -->
-    <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff" type="font/woff" crossorigin="anonymous">
-    <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff" type="font/woff" crossorigin="anonymous">
-
     <title>Capture Report Views</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/header_style.css">
+    <link rel="stylesheet" href="../css/content.css">
+    <link rel="stylesheet" href="../css/report.css">
+    <link rel="stylesheet" href="../css/modal.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
 </head>
 
 <body>
-    <!-- Modal -->
-    <div class="modal fade" id="modal-action" role="dialog" aria-labelledby="capture-btn" aria-hidden="true">
-        <div class="vertical-alignment-helper">
-            <div class="modal-dialog vertical-align-center">
-                <div class="modal-content">
-                    <div class="d-flex flex-row-reverse">
-                        <button type="button" id="close-modal-btn" class="close" data-dismiss="modal" aria-label="Close dialog">
-                            <img role="presentation" id="btn-cross" src="img/cross.svg" alt="close">
-                        </button>
-                    </div>
-                    <div class="modal-header">
-                        <h4 class="modal-title modal-subject" id="my-modal-label">What would you like to do with this view?</h4>
-                    </div>
-                    <div class="modal-body" role="tablist">
-                        <button role="tab" id="save-view-btn" class="btn-modal btn-links btn-active" aria-controls="save-view-div">Save to 'My Views'</button>
-                        <button role="tab" id="copy-link-btn" class="btn-modal btn-links" aria-controls="capture-view-div">Copy Link</button>
-                    </div>
-                    <div id="content-div">
-                        <div role="tabpanel" id="save-view-div" aria-labelledby="save-view-btn">
-                            <form novalidate>
-                                <label class="view-label" for="viewname">Enter a name for this view:</label>
-                                <input type="text" class="modal-text" id="viewname" placeholder="Example: December 2019 Sales Profit" required>
-                                    <div class="invalid-feedback">
-                                        Please provide a valid name
-                                    </div>
-                                    <div id="save-btn-div">
-                                        <button id="save-bookmark-btn" type="button">Save</button>
-                                    </div>
-                            </form>
-                        </div>
-                        <div role="tabpanel" id="capture-view-div" aria-labelledby="copy-link-btn">
-                            <label class="capture-link-note">Use this link to share the view with colleagues</label>
-                            <input type="text" class="modal-text" id="copy-link-text" readonly>
-                            <div id="copy-link-success-msg" class="invisible">Copied successfully!</div>
-                            <div class="capture-btn-div">
-                                <button class="copy-bookmark modal-btn" id="copy-btn">
-                                    <img role="presentation" id="tick-icon" src="img/tickicon.svg" alt="tickmark">
-                                    <span id="tick-btn">Copy</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo">
+                <span>United Healthcare</span>
             </div>
-        </div>
-    </div>
+            <ul class="nav-links">
+                <li><a href="../Capture%20report%20views/index.html" class="active">Capture Report Views</a></li>
+                <li><a href="../Customize%20report%20colors%20and%20mode/index.html">Customize Report Colors and Mode</a></li>
+                <li><a href="../Go%20from%20insights%20to%20quick%20action/index.html">Go from Insights to Quick Action</a></li>
+                <li><a href="../Personalize%20top%20insights/index.html">Personalize Top Insights</a></li>
+                <li><a href="../Quickly%20create%20and%20personalize%20visuals/index.html">Quickly Create and Personalize Visuals</a></li>
+            </ul>
+        </aside>
 
-    <!-- Page content -->
-    <div id="wrapper">
-        <h1 class="fixed-top" id="contoso-header">
-            <img src="img/contoso.svg" id="contoso" alt="contoso" aria-label="Contoso logo">
-        </h1>
-        <div id="overlay">
-            <img src="img/spinner.svg" id="spinner" class="rotate" alt="loader" aria-label="Loading report">
-        </div>
-        <main id="main-div">
-            <div class="interactive-buttons fixed-top">
-                <div class="bookmarks-dropdown">
-                    <button class="btn btn-action" type="button" id="display-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img role="presentation" class="btn-img" src="img/allviews.svg" alt="My views">Saved views
-                    </button>
-                    <ul class="dropdown-menu checkbox-menu allow-focus" role="menu" id="bookmarks-list" aria-labelledby="display-btn">
-                        <label class="close-dropdown">
-                            <button id="close-btn" class="close" aria-label="Close bookmarks dropdown">
-                                <img role="presentation" id="close-list-btn" src="img/cross.svg" alt="Close">
+        <div class="main-content">
+            <div id="wrapper">
+                <div id="overlay">
+                    <img src="../img/spinner.svg" id="spinner" class="rotate" alt="Loading">
+                </div>
+
+                <main id="main-div">
+                    <div class="interactive-buttons fixed-top">
+                        <div class="bookmarks-dropdown">
+                            <button class="btn btn-action" id="display-btn" data-toggle="dropdown">
+                                <img class="btn-img" src="../img/allviews.svg"> Saved views
                             </button>
-                        </label>
-                    </ul>
-                </div>
-                <div>
-                    <button class="btn btn-action" type="button" id="capture-btn" data-toggle="modal" data-target="#modal-action" aria-haspopup="true">
-                        <img role="presentation" class="btn-img" src="img/captureview.svg" alt="Capture View">Capture view
-                    </button>
-                </div>
+                            <ul class="dropdown-menu checkbox-menu allow-focus" id="bookmarks-list">
+                                <label class="close-dropdown">
+                                    <button id="close-btn" class="close">
+                                        <img id="close-list-btn" src="../img/cross.svg">
+                                    </button>
+                                </label>
+                            </ul>
+                        </div>
+                        <div>
+                            <button class="btn btn-action" id="capture-btn" data-toggle="modal" data-target="#modal-action">
+                                <img class="btn-img" src="../img/captureview.svg"> Capture view
+                            </button>
+                        </div>
+                    </div>
+                    <div role="separator" class="line fixed-top"></div>
+                    <div id="report-container"></div>
+                </main>
             </div>
-            <div role="separator" class="line fixed-top"></div>
-            <div id="report-container"></div>
-        </main>
+        </div>
     </div>
 
-    <script src="js/error_listener.js?v=06012021"></script>
-
-    <script src="https://playground.powerbi.com/app/jquery.js?v=06012021"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script src="https://playground.powerbi.com/app/powerbi.min.js?v=06012021"></script>
-
-    <script src="js/globals.js?v=05022021"></script>
-    <script src="js/session_utils.js?v=25012021"></script>
-    <script src="js/index.js?v=11022021"></script>
+    <!-- Modal HTML would stay here -->
+    <!-- Scripts -->
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/powerbi.min.js"></script>
+    <script src="../js/error_listener.js"></script>
+    <script src="../js/globals.js"></script>
+    <script src="../js/session_utils.js"></script>
+    <script src="../js/index.js"></script>
 </body>
 
 </html>
