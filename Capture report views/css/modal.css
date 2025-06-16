@@ -5,6 +5,8 @@ Licensed under the MIT license. */
     background: #FFF;
     display: flex;
     margin-top: 44px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .btn-action {
@@ -22,12 +24,10 @@ Licensed under the MIT license. */
     background: rgba(20, 97, 248, 0.25);
 }
 
-/* For keyboard focus */
 .btn-action:focus-visible {
     box-shadow: 0 0 0 1.5px rgba(0,123,255,.5);
 }
 
-/* For mouse focus */
 .btn-action:focus:not(:focus-visible) {
     box-shadow: none;
 }
@@ -124,7 +124,6 @@ Licensed under the MIT license. */
     height: calc(100vh - 110px);
     margin: 16px 0 0 -16px;
     opacity: .98;
-    /* Show scroll for small screen */
     overflow-y: auto;
     padding-top: 0;
     position: absolute;
@@ -199,19 +198,6 @@ Licensed under the MIT license. */
     width: 50%;
 }
 
-.btn.active.focus,
-.btn.active:focus,
-.btn.focus,
-.btn.focus:active,
-.btn:active:focus,
-.btn:hover {
-    box-shadow: none;
-    color: #1461F8;
-    outline: 0;
-    outline-offset: -2px;
-    text-decoration: none;
-}
-
 .btn-active {
     border-bottom: 2px solid #1461F8;
     color: #1A1A1A;
@@ -243,37 +229,17 @@ Licensed under the MIT license. */
     padding: 0 0 8px 0;
 }
 
-.btn-links:focus-visible {
-    box-shadow: 0 0 0 2.5px rgba(0,123,255,.5);
-    outline: none;
-}
-
-.btn-links:focus:not(:focus-visible) {
-    box-shadow: none;
-    outline: none;
-}
-
-#save-bookmark-btn:focus-visible {
-    box-shadow: 0 0 0 2.5px rgba(0,123,255,.5);
-}
-
-#save-bookmark-btn:focus:not(:focus-visible) {
-    box-shadow: none;
-}
-
-.modal-btn:focus-visible {
-    box-shadow: 0 0 0 2.5px rgba(0,123,255,.5);
-}
-
-.modal-btn:focus:not(:focus-visible) {
-    box-shadow: none;
-}
-
+.btn-links:focus-visible,
+#save-bookmark-btn:focus-visible,
+.modal-btn:focus-visible,
 .close:focus-visible {
     box-shadow: 0 0 0 2.5px rgba(0,123,255,.5);
     outline: none;
 }
 
+.btn-links:focus:not(:focus-visible),
+#save-bookmark-btn:focus:not(:focus-visible),
+.modal-btn:focus:not(:focus-visible),
 .close:focus:not(:focus-visible) {
     box-shadow: none;
     outline: none;
@@ -304,19 +270,15 @@ Licensed under the MIT license. */
     color: #FFF;
 }
 
-#save-bookmark-btn:active {
-    background: rgba(20, 97, 248, 0.15);;
+#save-bookmark-btn:active,
+#copy-btn:active {
+    background: rgba(20, 97, 248, 0.15);
     color: #1461F8;
 }
 
 #copy-btn {
     outline: none;
     margin: 6px 20px 0 5px;
-}
-
-#copy-btn:active {
-    background: rgba(20, 97, 248, 0.15);;
-    color: #1461F8;
 }
 
 .modal-text {
@@ -382,7 +344,7 @@ Licensed under the MIT license. */
     width: 80%;
 }
 
-.invalid-feedback{
+.invalid-feedback {
     margin-bottom: -21px;
     margin-top: 5px;
 }
@@ -415,4 +377,34 @@ Licensed under the MIT license. */
 
 .focused {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, .5);
+}
+
+/* -------------------------------------------------- */
+/* Contoso-style outline buttons for Saved / Capture */
+/* -------------------------------------------------- */
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    background-color: white;
+    border: 1.5px solid #1461F8;
+    border-radius: 4px;
+    color: #1461F8;
+    font-family: "Segoe UI SemiBold", Tahoma, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 12px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-outline:hover {
+    background-color: #e6f0ff;
+    border-color: #003eaa;
+}
+
+.btn-outline img {
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
 }
