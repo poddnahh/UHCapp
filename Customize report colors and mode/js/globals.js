@@ -1,20 +1,33 @@
-// js/globals.js
-// ----------------------------------------------------------------------------
-// 1) Paste your Publish-to-Web embed URL here:
-const EMBED_URL = "https://app.powerbi.com/reportEmbed?reportId=69efae40-1fb2-4f69-936d-4e6d9c6d40fd&autoAuth=true&ctid=ab194e01-6dc7-4c6a-bbb1-68c12c744b97";
+// globals.js
 
-// 2) Extract reportId:
-const url    = new URL(EMBED_URL);
-const REPORT_ID = url.searchParams.get("r");
-
-// 3) Expose global config
-window.reportConfig = {
-  accessToken: null,    // P2W → no token
-  embedUrl:    EMBED_URL,
-  reportId:    REPORT_ID
+// For public reports we don’t need accessToken
+const reportConfig = {
+    embedUrl: null,
+    reportId: null
 };
 
-// 4) Immediately ready
-window.configReady = Promise.resolve();
+const reportShowcaseState = {
+    report: null
+};
 
+// Elements
+const embedContainer = document.getElementById("report-container");
+const overlay = document.getElementById("overlay");
+
+// Load reportList.json and set first report
+async function loadReportIntoSession() {
+    try {
+        const response = await fetch("reportList.json");
+        const reportList = await response.json();
+
+        if (reportList.length === 0) throw new Error("No reports found in reportList.json");
+
+        const firstReport = reportList[0];
+
+        reportConfig.embedUrl = firstReport.embedUrl;
+        reportConfig.reportId = null; // Optional for public report URLs
+    } catch (error) {
+        console.error("Error loading report list:", error);
+    }
+}
 
