@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Capture Report Views</title>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"/>
-  <link rel="stylesheet" href="../css/header_style.css"/>
-  <link rel="stylesheet" href="../css/modal.css"/>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+  <link rel="stylesheet" href="../css/header_style.css">
+  <link rel="stylesheet" href="../css/modal.css">
   <style>
     body {
       margin: 0;
@@ -68,34 +66,25 @@
       padding: 10px 20px;
       background-color: #f5f5f5;
       border-bottom: 1px solid #ddd;
-      gap: 12px;
     }
 
-    .btn-outline {
-      display: inline-flex;
-      align-items: center;
-      background-color: white;
-      border: 1.5px solid #123C66;
+    .btn-action {
+      background: transparent;
+      border: 1px solid #1461F8;
       border-radius: 4px;
-      color: #123C66;
-      font-family: "Segoe UI SemiBold", Tahoma, Arial, sans-serif;
-      font-size: 14px;
+      color: #1461F8;
       font-weight: 600;
-      padding: 6px 12px;
+      padding: 6px 16px;
       margin-right: 10px;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
     }
 
-    .btn-outline:hover {
-      background-color: #e6f0ff;
-      border-color: #003eaa;
+    .btn-action:hover {
+      background-color: rgba(20, 97, 248, 0.1);
     }
 
-    .btn-outline img {
+    .btn-action img {
       height: 16px;
-      width: 16px;
-      margin-right: 8px;
+      margin-right: 5px;
     }
 
     #report-container {
@@ -120,8 +109,13 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
@@ -130,53 +124,49 @@
   <div id="wrapper">
     <!-- Sidebar Navigation -->
     <nav id="sidebar">
-      <a href="/UHCapp/Go from insights to quick action/">Go from Insights to Quick Action</a>
-      <a href="/UHCapp/Capture report views/" class="active">Capture Report Views</a>
-      <a href="/UHCapp/Customize report colors and mode/">Customize Report Colors and Mode</a>
-      <a href="/UHCapp/Personalize top insights/">Personalize Top Insights</a>
-      <a href="/UHCapp/Quickly create and personalize visuals/">Quickly Create and Personalize Visuals</a>
+      <a href="../go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
+      <a href="../capture%20report%20views/" class="active">Capture Report Views</a>
+      <a href="../customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a>
+      <a href="../personalize%20top%20insights/">Personalize Top Insights</a>
+      <a href="../quickly%20create%20and%20personalize%20visuals/">Quickly Create and Personalize Visuals</a>
     </nav>
 
     <!-- Main Content -->
     <div id="main-section">
       <!-- Header -->
       <header id="contoso-header">
-        <img src="img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" />
+        <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare logo">
         <span style="font-size: 18px; font-weight: bold; color: #123C66">United Healthcare</span>
       </header>
 
       <!-- Toolbar -->
       <div id="report-toolbar">
-        <button class="btn-outline" id="display-btn">
-          <img src="img/allviews.svg" alt="Saved Views" />
-          Saved Views
+        <button class="btn-action" id="display-btn">
+          <img src="../img/allviews.svg" alt="">Saved Views
         </button>
-        <button class="btn-outline" id="capture-btn" data-toggle="modal" data-target="#modal-action">
-          <img src="img/captureview.svg" alt="Capture View" />
-          Capture View
+        <button class="btn-action" id="capture-btn" data-toggle="modal" data-target="#modal-action">
+          <img src="../img/captureview.svg" alt="">Capture View
         </button>
       </div>
 
       <!-- Report Container -->
-      <div id="overlay"><div id="spinner"></div></div>
+      <div id="overlay">
+        <div id="spinner"></div>
+      </div>
       <div id="report-container"></div>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
   <script>
     $(document).ready(() => {
-      fetch("reportList.json")
+      fetch("../capture%20report%20views/reportList.json")
         .then(res => res.json())
         .then(reports => {
-          if (!reports || reports.length === 0) {
-            console.warn("No reports found in reportList.json");
-            return;
-          }
+          if (!reports || reports.length === 0) return;
           embedReport(reports[0].embedUrl);
-        }).catch(err => console.error("Failed to load reports:", err));
+        });
     });
 
     function embedReport(embedUrl) {
@@ -193,10 +183,10 @@
           customLayout: { displayOption: models.DisplayOption.FitToWidth }
         }
       };
-      const reportContainer = document.getElementById('report-container');
-      powerbi.embed(reportContainer, config);
+      powerbi.embed(document.getElementById('report-container'), config);
       document.getElementById("overlay").style.display = "none";
     }
   </script>
 </body>
+
 </html>
