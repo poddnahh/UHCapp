@@ -1,77 +1,115 @@
+<!-- Copyright (c) Microsoft Corporation.
+Licensed under the MIT license. -->
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Capture Report Views</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Capture Report Views</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/header_style.css">
-    <link rel="stylesheet" href="../css/content.css">
-    <link rel="stylesheet" href="../css/report.css">
-    <link rel="stylesheet" href="../css/modal.css">
-    <link rel="stylesheet" href="../css/sidebar.css">
+  <link rel="shortcut icon" href="#" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
+  <link href="css/header_style.css" rel="stylesheet" />
+  <link href="css/embed_area_style.css" rel="stylesheet" />
+  <link href="css/dialog_send_coupon.css" rel="stylesheet" />
+  <link href="css/dialog_success.css" rel="stylesheet" />
+  <link href="css/dialog_campaign_list.css" rel="stylesheet" />
 </head>
 
-<body>
-    <div class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="../img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo">
-                <span>United Healthcare</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="../Capture%20report%20views/index.html" class="active">Capture Report Views</a></li>
-                <li><a href="../Customize%20report%20colors%20and%20mode/index.html">Customize Report Colors and Mode</a></li>
-                <li><a href="../Go%20from%20insights%20to%20quick%20action/index.html">Go from Insights to Quick Action</a></li>
-                <li><a href="../Personalize%20top%20insights/index.html">Personalize Top Insights</a></li>
-                <li><a href="../Quickly%20create%20and%20personalize%20visuals/index.html">Quickly Create and Personalize Visuals</a></li>
-            </ul>
-        </aside>
+<body id="insight-to-action">
+  <div id="wrapper">
+    <h1 class="fixed-top" id="contoso-header">
+      <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+      <span id="uhc-text">United Healthcare</span>
+    </h1>
 
-        <div class="main-content">
-            <div id="wrapper">
-                <div id="overlay">
-                    <img src="../img/spinner.svg" id="spinner" class="rotate" alt="Loading">
-                </div>
-
-                <main id="main-div">
-                    <div class="interactive-buttons fixed-top">
-                        <div class="bookmarks-dropdown">
-                            <button class="btn btn-action" id="display-btn" data-toggle="dropdown">
-                                <img class="btn-img" src="../img/allviews.svg"> Saved views
-                            </button>
-                            <ul class="dropdown-menu checkbox-menu allow-focus" id="bookmarks-list">
-                                <label class="close-dropdown">
-                                    <button id="close-btn" class="close">
-                                        <img id="close-list-btn" src="../img/cross.svg">
-                                    </button>
-                                </label>
-                            </ul>
-                        </div>
-                        <div>
-                            <button class="btn btn-action" id="capture-btn" data-toggle="modal" data-target="#modal-action">
-                                <img class="btn-img" src="../img/captureview.svg"> Capture view
-                            </button>
-                        </div>
-                    </div>
-                    <div role="separator" class="line fixed-top"></div>
-                    <div id="report-container"></div>
-                </main>
-            </div>
-        </div>
+    <div id="overlay">
+      <div id="spinner" class="rotate" aria-label="Loading report" style="margin: 80px auto; width: 40px; height: 40px; border: 5px solid #ccc; border-top: 5px solid #1f4e79; border-radius: 50%; animation: spin 1s linear infinite;"></div>
     </div>
 
-    <!-- Modal HTML would stay here -->
-    <!-- Scripts -->
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/powerbi.min.js"></script>
-    <script src="../js/error_listener.js"></script>
-    <script src="../js/globals.js"></script>
-    <script src="../js/session_utils.js"></script>
-    <script src="../js/index.js"></script>
-</body>
+    <main id="main-div" style="display:none;">
+      <div id="report-container" style="width:100%; height:calc(100vh - 60px);"></div>
 
+      <div id="dialog-mask">
+        <!-- All campaign dialogs below remain unchanged -->
+        <div role="dialog" id="distribution-dialog" class="dialog-insight-to-action">
+          <h2 class="dialog-header">
+            <span class="text-dialog-header">Campaign distribution list</span>
+            <button id="close1" class="wrapper-close" aria-label="Close dialog">
+              <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
+            </button>
+          </h2>
+          <div class="dialog-body">
+            <div id="dialog-table"></div>
+          </div>
+          <footer class="dialog-footer">
+            <button id="send-coupon" class="btn-dialog-insight-to-action">Send coupon</button>
+            <button id="send-discount" class="btn-dialog-insight-to-action">Send discount</button>
+          </footer>
+        </div>
+
+        <div role="dialog" id="send-dialog" class="dialog-insight-to-action-small">
+          <h2 class="dialog-header">
+            <span class="text-dialog-header"></span>
+            <button id="close2" class="wrapper-close" aria-label="Close dialog">
+              <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
+            </button>
+          </h2>
+          <div role="form" class="dialog-body">
+            <div class="send-dialog-row">
+              <label id="send-coupon-title" for="send-title" class="send-dialog-field">Title</label>
+              <input type="text" class="title input-content" id="send-title" name="title" />
+            </div>
+            <div class="send-dialog-row">
+              <label for="message-content" class="send-dialog-field">Body</label>
+              <textarea class="send-dialog-input input-content" id="message-content" name="messageBody"></textarea>
+            </div>
+          </div>
+          <footer class="dialog-footer">
+            <button id="send-message" class="btn-insight-to-action-send">Send</button>
+          </footer>
+        </div>
+
+        <div role="dialog" id="success-dialog" class="dialog-insight-to-action-small">
+          <div class="dialog-header">
+            <button id="success-cross" class="wrapper-close" aria-label="Close dialog">
+              <img class="btn-close-distribution-dialog" src="img/cross.svg" alt="close" />
+            </button>
+          </div>
+          <div id="success-content">
+            <img id="image-success" src="img/success.svg" alt="Success">
+            <div class="text-success">Sent successfully!</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/powerbi.min.js"></script>
+  <script src="js/error_listener.js"></script>
+  <script src="js/globals.js"></script>
+  <script src="js/session_utils.js"></script>
+  <script src="js/index.js"></script>
+
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #spinner {
+      margin: 100px auto;
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #1f4e79;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</body>
 </html>
