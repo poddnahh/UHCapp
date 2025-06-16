@@ -30,12 +30,22 @@
   <script src="js/powerbi.min.js"></script>
   <script src="js/index.js"></script>
 
-  <style>
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  #spinner {
+    margin: 100px auto;
+    width: 40px;
+    height: 40px;
+    border: 5px solid #ccc;
+    border-top: 5px solid #1f4e79;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+</style>
 </body>
 
 </html>
