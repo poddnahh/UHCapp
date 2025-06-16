@@ -1,80 +1,38 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Customize report colors & mode</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insights to Action</title>
 
-  <!-- Bootstrap CSS (for dropdown) -->
-  <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-  />
-  <style>
-    body, html { height: 100%; margin: 0; }
-    .report-container { width:100%; height:100vh; position:relative; }
-    #overlay {
-      position: absolute; top:0; left:0; right:0; bottom:0;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,0.8); z-index:10;
-    }
-    .content { display:none; }
-    .dropdown { position:absolute; top:20px; right:20px; z-index:20; }
-  </style>
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/header_style.css" />
+    <link rel="stylesheet" href="css/embed_area_style.css" />
+
+    <!-- jQuery and Power BI JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
 </head>
-<body>
 
-  <!-- Spinner overlay -->
-  <div id="overlay">
-    <div class="spinner-border text-primary" role="status"></div>
-  </div>
+<body id="insight-to-action">
+    <!-- Header -->
+    <header id="contoso-header" class="fixed-top">
+        <img src="img/IconUnitedHealthcare.png" id="contoso" alt="United Healthcare logo" />
+        <span id="company-name">United Healthcare</span>
+    </header>
 
-  <!-- Theme chooser dropdown -->
-  <div class="dropdown">
-    <button
-      class="btn btn-secondary dropdown-toggle btn-theme"
-      type="button"
-      id="themeDropdown"
-      data-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="false"
-    >
-      Choose theme
-    </button>
-    <div class="dropdown-menu allow-focus p-3" aria-labelledby="themeDropdown">
-      <div id="theme-palette"></div>
-      <div class="custom-control custom-switch mt-2">
-        <input
-          type="checkbox"
-          class="custom-control-input"
-          id="theme-slider"
-        />
-        <label class="custom-control-label" for="theme-slider">
-          Dark mode
-        </label>
-      </div>
+    <!-- Report container -->
+    <div id="overlay">
+        <div class="spinner"></div>
     </div>
-  </div>
 
-  <!-- Report container -->
-  <div class="report-container content"></div>
+    <main id="main-div" style="display: none">
+        <div id="report-container" style="height: 100vh;"></div>
+    </main>
 
-  <!-- 1) Dependencies -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
-
-  <!-- 2) Theme definitions -->
-  <script src="js/themes.js"></script>
-
-  <!-- 3) Your embed settings -->
-  <script src="js/globals.js"></script>
-
-  <!-- 4) Optional error listener -->
-  <script src="js/error_listener.js"></script>
-
-  <!-- 5) Embed + theme wiring -->
-  <script src="js/index.js"></script>
-
+    <!-- Scripts -->
+    <script src="js/globals.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>
