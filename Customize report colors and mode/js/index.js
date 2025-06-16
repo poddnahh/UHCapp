@@ -1,65 +1,71 @@
 // js/index.js
 // ----------------------------------------------------------------------------
-// Wait until window.reportConfig is ready:
 window.configReady.then(startup);
 
 function startup() {
+  // DOM refs
   const container   = document.querySelector(".report-container");
   const overlay     = document.getElementById("overlay");
   const content     = document.querySelector(".content");
   const dropdownDiv = document.querySelector(".dropdown");
 
-  // 1) Initialize the empty container
+  // Bootstrap container
   powerbi.bootstrap(container, { type: "report" });
 
-  // 2) Build the embed config from globals.js
+  // Embed config
   const models = window["powerbi-client"].models;
-  const config = {
+  const cfg = {
     type:       "report",
     tokenType:  models.TokenType.Embed,
     accessToken: window.reportConfig.accessToken,
-    embedUrl:   window.reportConfig.embedUrl,
-    id:         window.reportConfig.reportId,
-    settings: {
+    embedUrl:    window.reportConfig.embedUrl,
+    id:          window.reportConfig.reportId,
+    settings:    {
       panes: {
-        filters:       { visible: false },
-        pageNavigation:{ visible: false }
+        filters:        { visible: false },
+        pageNavigation: { visible: false }
       },
       layoutType:   models.LayoutType.Custom,
       customLayout: { displayOption: models.DisplayOption.FitToPage },
       background:   models.BackgroundType.Transparent
     },
     theme: {
-      // apply the first palette on load
+      // apply “Default / Light” on load:
       themeJson: Object.assign({}, jsonDataColors[0], themes[0])
     }
   };
 
-  // 3) Embed:
-  const report = powerbi.embed(container, config);
+  const report = powerbi.embed(container, cfg);
 
+  // hide spinner once report is loaded
   report.on("loaded", () => {
     overlay.style.display = "none";
     content.style.display = "";
-    document.querySelector("#datacolor0").checked = true;
+    document.getElementById("datacolor0").checked = true;
   });
 
-  report.on("rendered", () => console.log("Report rendered"));
-
-  // 4) Build the “Choose theme” UI:
+  // build the palette radios
   buildThemePalette();
 
-  // 5) Dropdown focus management:
-  dropdownDiv.addEventListener("shown.bs.dropdown", () => {
-    document.getElementById("theme-slider").focus();
-  });
-  dropdownDiv.addEventListener("hidden.bs.dropdown", () => {
-    document.querySelector(".btn-theme").focus();
-  });
-  document.addEventListener("click", e => {
-    if (e.target.closest(".allow-focus")) e.stopPropagation();
-  });
+  // wire up theme‐change events
+  document.getElementById("theme-slider")
+    .addEventListener("change", applyTheme);
 
-  // keep for later if needed:
-  window.themesShowcaseState = { report };
+  document.querySelectorAll("input[name=data-color]").forEach(el =>
+    el.addEventListener("change", applyTheme)
+  );
+
+  async function applyTheme() {
+    const colorId = Number(
+      document.querySelector("input[name=data-color]:checked").id.slice(-1)
+    );
+    const modeId = document.getElementById("theme-slider").checked ? 1 : 0;
+
+    // merge palette + background mode
+    const newTheme = Object.assign(
+      {}, jsonDataColors[colorId], themes[modeId]
+    );
+
+    await report.applyTheme({ themeJson: newTheme });
+  }
 }
