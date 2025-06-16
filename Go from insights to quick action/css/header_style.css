@@ -1,25 +1,38 @@
 body {
+  height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #fff;
 }
 
-#uhc-header {
+#wrapper {
+  width: 100%;
+}
+
+#contoso-header {
   background: white;
   display: flex;
   align-items: center;
-  padding: 10px 20px;
   height: 60px;
-  border-bottom: 1px solid #eee;
+  padding-left: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-#uhc-logo {
+.fixed-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+}
+
+#contoso {
   height: 40px;
   margin-right: 12px;
 }
 
-#uhc-name {
+#uhc-text {
   font-size: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: bold;
-  color: #002d72;
+  color: #1f4e79;
+  line-height: 1;
 }
