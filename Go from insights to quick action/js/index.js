@@ -1,29 +1,17 @@
-// Ensure the Power BI Client API is ready
-const models = window['powerbi-client'].models;
+// Load Power BI report from reportList.json
+$(async function () {
+  const reportContainer = document.getElementById("report-container");
+  powerbi.bootstrap(reportContainer, { type: "report" });
 
-// Get the embed container
-const embedContainer = document.getElementById("report-container");
-
-// Clear any existing reports
-powerbi.reset(embedContainer);
-
-// Load the report list and embed the first one
-fetch("reportList.json")
-  .then(response => response.json())
-  .then(reportList => {
-    if (!reportList || reportList.length === 0) {
-      console.error("No reports found in reportList.json");
-      return;
-    }
-
-    const firstReport = reportList[0];
+  try {
+    const response = await fetch("reportList.json");
+    const reportList = await response.json();
+    const report = reportList[0];
 
     const config = {
       type: "report",
-      tokenType: models.TokenType.Embed, // Use Embed type for public links
-      accessToken: null,                 // Public links don't need a token
-      embedUrl: firstReport.embedUrl,
-      id: null, // Not required for public view links
+      tokenType: models.TokenType.Embed, // works for public reports too
+      embedUrl: report.embedUrl,
       settings: {
         panes: {
           filters: { visible: false },
@@ -36,8 +24,8 @@ fetch("reportList.json")
       }
     };
 
-    powerbi.embed(embedContainer, config);
-  })
-  .catch(error => {
-    console.error("Failed to load reportList.json or embed report:", error);
-  });
+    powerbi.embed(reportContainer, config);
+  } catch (error) {
+    console.error("Error loading report:", error);
+  }
+});
