@@ -9,7 +9,7 @@
 
   <link rel="shortcut icon" href="#" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
-  <link href="css/header_style.css" rel="stylesheet" />
+  <link href="/UHCapp/css/header_style.css" rel="stylesheet" />
 
   <style>
     body, html {
@@ -25,20 +25,17 @@
       overflow: hidden;
     }
 
-    .sidebar {
+    nav#sidebar {
       width: 220px;
       background-color: #003366;
       color: white;
       padding: 20px 10px;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
-    .sidebar h2 {
-      font-size: 16px;
-      margin: 20px 0 10px;
-    }
-
-    .sidebar a {
+    nav#sidebar a {
       display: block;
       color: white;
       padding: 8px 12px;
@@ -47,7 +44,7 @@
       border-left: 4px solid transparent;
     }
 
-    .sidebar a.active {
+    nav#sidebar a.active {
       font-weight: bold;
       border-left: 4px solid #fff;
       background-color: rgba(255, 255, 255, 0.1);
@@ -118,16 +115,16 @@
   <div id="wrapper">
     <!-- Sidebar Navigation -->
     <nav id="sidebar">
-      <a href="../Go from insights to quick action/" class="active">Go from Insights to Quick Action</a>
-      <a href="../Capture report views/" >Capture Report Views</a>
-      <a href="../Customize report colors and mode/">Customize Report Colors and Mode</a>
-      <a href="../Personalize top insights/">Personalize Top Insights</a>
-      <a href="../Quickly create and personalize visuals/">Quickly Create and Personalize Visuals</a>
+      <a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/" class="active">Go from Insights to Quick Action</a>
+      <a href="/UHCapp/Capture%20report%20views/">Capture Report Views</a>
+      <a href="/UHCapp/Customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a>
+      <a href="/UHCapp/Personalize%20top%20insights/">Personalize Top Insights</a>
+      <a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/">Quickly Create and Personalize Visuals</a>
     </nav>
-    
+
     <div class="main-content">
       <header id="contoso-header">
-        <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+        <img src="/UHCapp/img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
         <span id="uhc-text">United Healthcare</span>
       </header>
 
@@ -141,9 +138,9 @@
     </div>
   </div>
 
-  <script src="js/jquery.min.js"></script>
-  <script src="js/powerbi.min.js"></script>
-  <script src="js/index.js"></script>
+  <script src="/UHCapp/js/jquery.min.js"></script>
+  <script src="/UHCapp/js/powerbi.min.js"></script>
+  <script src="/UHCapp/js/index.js"></script>
 </body>
 
 </html>
