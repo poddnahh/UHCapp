@@ -9,22 +9,102 @@
   <link rel="shortcut icon" href="#" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
   <link href="css/header_style.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #sidebar {
+      width: 220px;
+      background: #094624;
+      color: white;
+      padding-top: 60px;
+      position: fixed;
+      height: 100vh;
+    }
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    #sidebar li {
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 12px;
+    }
+    #sidebar a:hover {
+      background-color: #0b6e3e;
+    }
+    #sidebar .active {
+      font-weight: bold;
+      border-left: 5px solid #fff;
+      background-color: #0b6e3e;
+    }
+    #main-container {
+      margin-left: 220px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header#contoso-header {
+      z-index: 1000;
+    }
+    #reportContainer {
+      width: 100%;
+      height: calc(100vh - 60px);
+      border: none;
+      padding-top: 64px;
+    }
+    #spinner {
+      margin: 100px auto;
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #1f4e79;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 
 <body id="insight-to-action">
-  <div id="wrapper">
-    <header class="fixed-top" id="contoso-header">
-      <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
-      <span id="uhc-text">United Healthcare</span>
-    </header>
+  <div id="wrapper" style="display: flex; height: 100vh;">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <ul>
+        <li><a href="/UHCapp/Capture%20report%20views/">Capture report views</a></li>
+        <li><a href="/UHCapp/Customize%20report%20colors%20and%20mode/">Customize report colors and mode</a></li>
+        <li><a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/" class="active">Go from insights to quick action</a></li>
+        <li><a href="/UHCapp/Personalize%20top%20insights/">Personalize top insights</a></li>
+        <li><a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/">Quickly create and personalize visuals</a></li>
+      </ul>
+    </nav>
 
-    <div id="overlay">
-      <div id="spinner" aria-label="Loading report"></div>
+    <!-- Main content -->
+    <div id="main-container">
+      <!-- Header -->
+      <header class="fixed-top" id="contoso-header">
+        <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+        <span id="uhc-text">United Healthcare</span>
+      </header>
+
+      <!-- Spinner -->
+      <div id="overlay">
+        <div id="spinner" aria-label="Loading report"></div>
+      </div>
+
+      <!-- Report -->
+      <main id="main-div">
+        <iframe id="reportContainer" allowfullscreen="true"></iframe>
+      </main>
     </div>
-
-    <main id="main-div">
-      <iframe id="reportContainer" allowfullscreen="true" style="width:100%; height:calc(100vh - 60px); border:none; padding-top:64px;"></iframe>
-    </main>
   </div>
 
   <script src="js/jquery.min.js"></script>
