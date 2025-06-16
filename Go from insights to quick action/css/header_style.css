@@ -4,38 +4,33 @@ body {
   background-color: #fff;
 }
 
-/* White header bar */
 .header-bar {
   background-color: white;
-  padding: 10px 20px;
+  height: 64px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #ccc;
-  height: 60px;
+  padding: 0 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-/* Centered logo + text container */
 .header-content {
   display: flex;
   align-items: center;
 }
 
-/* UHC Logo */
 .uhc-logo {
   height: 40px;
   width: auto;
   margin-right: 12px;
 }
 
-/* UHC Text */
 .uhc-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   color: #002D72; /* UnitedHealthcare blue */
 }
 
-/* Report container fills screen */
 .report-container {
-  height: calc(100vh - 60px); /* full height minus header */
   width: 100%;
+  height: calc(100vh - 64px); /* fill screen minus header */
 }
