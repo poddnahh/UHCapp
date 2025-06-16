@@ -1,20 +1,43 @@
+/* Copyright (c) Microsoft Corporation. Licensed under the MIT license. */
+
 body {
-  margin: 0;
   height: 100%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  scrollbar-color: #A0AEB2 #FFF;
+  scrollbar-width: thin;
+}
+
+body::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+body::-webkit-scrollbar {
+  background-color: transparent;
+  height: 10px;
+  width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #A0AEB2;
+  border-radius: 10px;
+  height: 30px;
 }
 
 #wrapper {
+  margin: 0 auto;
+  min-width: 838px;
   width: 100%;
 }
 
 #contoso-header {
-  background: white;
+  background: #ffffff;
   display: flex;
   align-items: center;
   height: 60px;
   padding-left: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #ddd;
 }
 
 .fixed-top {
@@ -26,13 +49,47 @@ body {
 }
 
 #contoso {
-  height: 44px;
+  height: 40px;
+  width: auto;
   margin-right: 16px;
 }
 
 #uhc-text {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: bold;
   color: #002d72; /* UnitedHealthcare blue */
-  line-height: 1;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+
+#reportContainer {
+  width: 100%;
+  height: calc(100vh - 60px);
+  border: none;
+}
+
+#overlay {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  height: calc(100vh - 60px);
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#spinner {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #ccc;
+  border-top: 5px solid #1f4e79;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
