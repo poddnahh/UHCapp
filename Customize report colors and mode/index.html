@@ -2,64 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Customize report colors & mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- 1) Bootstrap CSS -->
+  <!-- Bootstrap CSS (for dropdown) -->
   <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
   />
-  <!-- 2) Your custom CSS -->
-  <link rel="stylesheet" href="css/header.css"/>
-  <link rel="stylesheet" href="css/container.css"/>
-  <link rel="stylesheet" href="css/dropdown.css"/>
-  <link rel="stylesheet" href="css/report.css"/>
+  <style>
+    body, html { height: 100%; margin: 0; }
+    .report-container { width:100%; height:100vh; position:relative; }
+    #overlay {
+      position: absolute; top:0; left:0; right:0; bottom:0;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,0.8); z-index:10;
+    }
+    .content { display:none; }
+    .dropdown { position:absolute; top:20px; right:20px; z-index:20; }
+  </style>
 </head>
-
 <body>
-  <div class="wrapper">
-    <h1 class="header fixed-top">
-      <img src="img/contoso.svg" class="contoso" alt="Contoso logo"/>
-    </h1>
 
-    <div id="overlay">
-      <img id="spinner" class="rotate" src="img/spinner.svg" alt="Loading…"/>
-    </div>
-
-    <main class="content" style="display:none;">
-      <div class="dropdown fixed-top">
-        <button class="btn btn-theme" type="button" data-toggle="dropdown">
-          <!-- bucket SVG here -->
-          <label class="theme-selector-label">Choose theme</label>
-        </button>
-        <ul
-          id="theme-dropdown"
-          class="dropdown-menu checkbox-menu allow-focus theme-container"
-        ></ul>
-      </div>
-
-      <div class="horizontal-rule fixed-top" role="separator"></div>
-      <div class="report-container"></div>
-    </main>
+  <!-- Spinner overlay -->
+  <div id="overlay">
+    <div class="spinner-border text-primary" role="status"></div>
   </div>
+
+  <!-- Theme chooser dropdown -->
+  <div class="dropdown">
+    <button
+      class="btn btn-secondary dropdown-toggle btn-theme"
+      type="button"
+      id="themeDropdown"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      Choose theme
+    </button>
+    <div class="dropdown-menu allow-focus p-3" aria-labelledby="themeDropdown">
+      <div id="theme-palette"></div>
+      <div class="custom-control custom-switch mt-2">
+        <input
+          type="checkbox"
+          class="custom-control-input"
+          id="theme-slider"
+        />
+        <label class="custom-control-label" for="theme-slider">
+          Dark mode
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report container -->
+  <div class="report-container content"></div>
 
   <!-- 1) Dependencies -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
 
-  <!-- 2) Theme definitions & UI builder -->
+  <!-- 2) Theme definitions -->
   <script src="js/themes.js"></script>
 
-  <!-- 3) Fetch reportList.json & populate window.reportConfig -->
+  <!-- 3) Your embed settings -->
   <script src="js/globals.js"></script>
 
-  <!-- 4) Error listener (optional) -->
+  <!-- 4) Optional error listener -->
   <script src="js/error_listener.js"></script>
 
-  <!-- 5) Final embed + dropdown wiring -->
+  <!-- 5) Embed + theme wiring -->
   <script src="js/index.js"></script>
+
 </body>
 </html>
