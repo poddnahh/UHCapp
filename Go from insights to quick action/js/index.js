@@ -1,50 +1,43 @@
-// index.js
+// Ensure the Power BI Client API is ready
+const models = window['powerbi-client'].models;
 
-$(document).ready(function () {
-    powerbi.bootstrap(embedContainer, { "type": "report" });
+// Get the embed container
+const embedContainer = document.getElementById("report-container");
 
-    // Hide all dialog boxes if they exist (safe even if not used)
-    $("#dialog-mask, #distribution-dialog, #send-dialog, #success-dialog").hide();
+// Clear any existing reports
+powerbi.reset(embedContainer);
 
-    // Load and embed report
-    embedReport();
-});
-
-async function embedReport() {
-    await loadReportIntoSession();
-
-    if (!reportConfig.embedUrl) {
-        console.error("No embedUrl found in reportConfig.");
-        return;
+// Load the report list and embed the first one
+fetch("reportList.json")
+  .then(response => response.json())
+  .then(reportList => {
+    if (!reportList || reportList.length === 0) {
+      console.error("No reports found in reportList.json");
+      return;
     }
 
-    const models = window["powerbi-client"].models;
+    const firstReport = reportList[0];
 
     const config = {
-        type: "report",
-        tokenType: models.TokenType.Aad, // No token needed for public
-        accessToken: null,
-        embedUrl: reportConfig.embedUrl,
-        settings: {
-            panes: {
-                filters: { visible: false },
-                pageNavigation: { visible: false }
-            },
-            layoutType: models.LayoutType.Custom,
-            customLayout: {
-                displayOption: models.DisplayOption.FitToWidth
-            }
+      type: "report",
+      tokenType: models.TokenType.Embed, // Use Embed type for public links
+      accessToken: null,                 // Public links don't need a token
+      embedUrl: firstReport.embedUrl,
+      id: null, // Not required for public view links
+      settings: {
+        panes: {
+          filters: { visible: false },
+          pageNavigation: { visible: true }
+        },
+        layoutType: models.LayoutType.Custom,
+        customLayout: {
+          displayOption: models.DisplayOption.FitToWidth
         }
+      }
     };
 
-    try {
-        reportShowcaseState.report = powerbi.embed(embedContainer, config);
-        reportShowcaseState.report.on("loaded", () => {
-            $("#overlay").hide();
-            $("#main-div").show();
-            console.log("Public report embedded successfully.");
-        });
-    } catch (error) {
-        console.error("Failed to embed report:", error);
-    }
-}
+    powerbi.embed(embedContainer, config);
+  })
+  .catch(error => {
+    console.error("Failed to load reportList.json or embed report:", error);
+  });
