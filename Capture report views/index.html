@@ -2,70 +2,170 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Capture Report Views</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+  <link rel="stylesheet" href="../css/header_style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-  <link rel="shortcut icon" href="#" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
-  <link href="css/header_style.css" rel="stylesheet">
-  <link href="css/embed_area_style.css" rel="stylesheet">
-  <link href="css/dialog_send_coupon.css" rel="stylesheet">
-  <link href="css/dialog_success.css" rel="stylesheet">
-  <link href="css/dialog_campaign_list.css" rel="stylesheet">
+    #wrapper {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-  <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff" type="font/woff" crossorigin="anonymous">
-  <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff" type="font/woff" crossorigin="anonymous">
+    #sidebar {
+      width: 220px;
+      background-color: #123C66;
+      color: white;
+      padding: 20px 10px;
+    }
+
+    #sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      margin-bottom: 5px;
+    }
+
+    #sidebar a.active {
+      background-color: #0A2C4A;
+      border-left: 5px solid #00A3E0;
+      font-weight: bold;
+    }
+
+    #main-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #contoso-header {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 10px 20px;
+      height: 60px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #contoso-header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    #report-toolbar {
+      display: flex;
+      padding: 10px 20px;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #report-toolbar button {
+      margin-right: 10px;
+    }
+
+    #report-container {
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #spinner {
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #1f4e79;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 
 <body>
-  <div id="nav-container">
-    <aside id="sidebar">
-      <div class="sidebar-header">
-        <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare" class="sidebar-logo">
-        <span class="sidebar-title">United Healthcare</span>
-      </div>
-      <ul class="sidebar-nav">
-        <li><a href="../Go%20from%20insights%20to%20quick%20action/" class="nav-link">Go from Insights to Quick Action</a></li>
-        <li class="active"><a href="../Capture%20report%20views/" class="nav-link">Capture Report Views</a></li>
-        <li><a href="../Customize%20report%20colors%20and%20mode/" class="nav-link">Customize Report Colors and Mode</a></li>
-        <li><a href="../Personalize%20top%20insights/" class="nav-link">Personalize Top Insights</a></li>
-        <li><a href="../Quickly%20create%20and%20personalize%20visuals/" class="nav-link">Quickly Create and Personalize Visuals</a></li>
-      </ul>
-    </aside>
+  <div id="wrapper">
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+      <a href="../go from insights to quick action/" >Go from Insights to Quick Action</a>
+      <a href="../capture report views/" class="active">Capture Report Views</a>
+      <a href="../customize report colors and mode/">Customize Report Colors and Mode</a>
+      <a href="../personalize top insights/">Personalize Top Insights</a>
+      <a href="../quickly create and personalize visuals/">Quickly Create and Personalize Visuals</a>
+    </nav>
 
-    <div id="main-wrapper">
+    <!-- Main Content -->
+    <div id="main-section">
+      <!-- Header -->
       <header id="contoso-header">
-        <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare logo" id="contoso">
-        <span id="uhc-text">United Healthcare</span>
+        <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare logo">
+        <span style="font-size: 18px; font-weight: bold; color: #123C66">United Healthcare</span>
       </header>
 
-      <div id="overlay">
-        <div id="spinner" class="rotate" aria-label="Loading report"></div>
+      <!-- Toolbar -->
+      <div id="report-toolbar">
+        <button class="btn btn-primary" id="display-btn">
+          <img src="../img/allviews.svg" alt="" style="height: 16px; margin-right: 5px;">Saved Views
+        </button>
+        <button class="btn btn-outline-primary" id="capture-btn" data-toggle="modal" data-target="#modal-action">
+          <img src="../img/captureview.svg" alt="" style="height: 16px; margin-right: 5px;">Capture View
+        </button>
       </div>
 
-      <main id="main-div">
-        <div class="interactive-buttons fixed-top">
-          <button id="display-btn" class="btn btn-action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img class="btn-img" src="img/allviews.svg" alt="My views"> Saved Views
-          </button>
-          <button id="capture-btn" class="btn btn-action" data-toggle="modal" data-target="#modal-action">
-            <img class="btn-img" src="img/captureview.svg" alt="Capture View"> Capture View
-          </button>
-        </div>
-
-        <div id="report-container"></div>
-        <div id="dialog-mask"></div>
-      </main>
+      <!-- Report Container -->
+      <div id="overlay">
+        <div id="spinner"></div>
+      </div>
+      <div id="report-container"></div>
     </div>
   </div>
 
   <script src="../js/jquery.min.js"></script>
   <script src="../js/powerbi.min.js"></script>
-  <script src="js/globals.js"></script>
-  <script src="js/session_utils.js"></script>
-  <script src="js/index.js"></script>
+  <script>
+    $(document).ready(() => {
+      fetch("../capture report views/reportList.json")
+        .then(res => res.json())
+        .then(reports => {
+          if (!reports || reports.length === 0) return;
+          embedReport(reports[0].embedUrl);
+        });
+    });
+
+    function embedReport(embedUrl) {
+      const models = window['powerbi-client'].models;
+      const config = {
+        type: 'report',
+        embedUrl: embedUrl,
+        tokenType: models.TokenType.Aad,
+        accessToken: null,
+        permissions: models.Permissions.All,
+        settings: {
+          panes: { filters: { visible: true } },
+          layoutType: models.LayoutType.Custom,
+          customLayout: { displayOption: models.DisplayOption.FitToWidth }
+        }
+      };
+      powerbi.embed(document.getElementById('report-container'), config);
+      document.getElementById("overlay").style.display = "none";
+    }
+  </script>
 </body>
 
 </html>
