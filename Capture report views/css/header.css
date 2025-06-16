@@ -1,46 +1,89 @@
-/* Copyright (c) Microsoft Corporation.
-Licensed under the MIT license. */
+/* Copyright (c) Microsoft Corporation. Licensed under the MIT license. */
 
 body {
-    height: 100%;
-    scrollbar-color: #A0AEB2 transparent;
-    scrollbar-width: thin;
+  height: 100%;
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  scrollbar-color: #A0AEB2 transparent;
+  scrollbar-width: thin;
+  background-color: #ffffff;
 }
 
-/* Change custom scrollbar appearance */
 body::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: transparent;
+  border-radius: 10px;
+  background-color: transparent;
 }
 
 body::-webkit-scrollbar {
-    background-color: transparent;
-    height: 10px;
-    width: 8px;
+  background-color: transparent;
+  height: 10px;
+  width: 8px;
 }
 
 body::-webkit-scrollbar-thumb {
-    background-color: #A0AEB2;
-    border-radius: 10px;
-    height: 30px;
+  background-color: #A0AEB2;
+  border-radius: 10px;
+  height: 30px;
 }
 
 #wrapper {
-    margin: 0 auto;
-    width: 100%;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
+/* --- Sidebar --- */
+
+#sidebar {
+  width: 220px;
+  background-color: #002f5f; /* dark blue */
+  color: white;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+#sidebar a {
+  padding: 14px 20px;
+  color: white;
+  text-decoration: none;
+  display: block;
+  border-left: 4px solid transparent;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+#sidebar a:hover {
+  background-color: #004080;
+}
+
+#sidebar a.active {
+  font-weight: bold;
+  border-left: 4px solid #ffffff;
+  background-color: #003366;
+}
+
+/* --- Header --- */
+
 #contoso-header {
-    align-items: center;
-    background: #1461F8;
-    display: flex;
-    height: 44px;
-    margin: 0;
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  height: 60px;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #contoso {
-    height: 41px;
-    margin-left: 24px;
-    padding: 5px 0;
-    width: 74px;
+  height: 42px;
+  margin-right: 12px;
+}
+
+#uhc-text {
+  font-weight: 600;
+  font-size: 18px;
+  color: #002f5f;
 }
