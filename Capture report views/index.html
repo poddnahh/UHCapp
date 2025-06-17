@@ -7,8 +7,9 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"/>
-  <link rel="stylesheet" href="https://poddnahh.github.io/UHCapp/Capture report views/css/header_style.css">
-  <link rel="stylesheet" href="https://poddnahh.github.io/UHCapp/Capture report views/css/modal.css">
+  <link rel="stylesheet" href="https://poddnahh.github.io/UHCapp/Capture%20report%20views/css/header_style.css">
+  <link rel="stylesheet" href="https://poddnahh.github.io/UHCapp/Capture%20report%20views/css/modal.css">
+
 
   <style>
     body {
@@ -172,7 +173,7 @@
     let reportRef = null;
 
     $(document).ready(() => {
-      fetch("/UHCapp/reportList.json")
+      fetch("UHCapp/reportList.json")
         .then(res => res.json())
         .then(reports => {
           if (!reports || reports.length === 0) {
