@@ -171,7 +171,6 @@
   const overlay = document.getElementById('overlay');
   let reportRef = null;
 
-  // ✅ Your public embed URL
   const embedUrl = "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9";
 
   $(document).ready(() => {
@@ -179,6 +178,9 @@
   });
 
   function embedReport(url) {
+    // ✅ This is what fixes it!
+    const models = window['powerbi-client'].models;
+
     const config = {
       type: "report",
       embedUrl: url,
@@ -187,8 +189,10 @@
           filters: { visible: true },
           pageNavigation: { visible: true }
         },
-        layoutType: powerbi.models.LayoutType.Custom,
-        customLayout: { displayOption: powerbi.models.DisplayOption.FitToWidth }
+        layoutType: models.LayoutType.Custom,
+        customLayout: {
+          displayOption: models.DisplayOption.FitToWidth
+        }
       }
     };
 
