@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     // Load and embed the first report from reportList.json
-    fetch("UHCapp/reportList.json")
+    fetch("reportList.json")
         .then(response => response.json())
         .then(reports => {
             if (!reports || reports.length === 0) return;
