@@ -173,7 +173,7 @@
     let reportRef = null;
 
     $(document).ready(() => {
-      fetch("UHCapp/reportList.json")
+      fetch("reportList.json")
         .then(res => res.json())
         .then(reports => {
           if (!reports || reports.length === 0) {
