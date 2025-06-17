@@ -164,65 +164,61 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
-  <script>
-    const reportContainer = document.getElementById('report-container');
-    const overlay = document.getElementById('overlay');
-    let reportRef = null;
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+<script>
+  const reportContainer = document.getElementById('report-container');
+  const overlay = document.getElementById('overlay');
+  let reportRef = null;
 
-    // ✅ Your working public embed URL
-    const embedUrl = "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9";
+  // ✅ Your public embed URL
+  const embedUrl = "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9";
 
-    $(document).ready(() => {
-      embedReport(embedUrl);
+  $(document).ready(() => {
+    embedReport(embedUrl);
+  });
+
+  function embedReport(url) {
+    const config = {
+      type: "report",
+      embedUrl: url,
+      settings: {
+        panes: {
+          filters: { visible: true },
+          pageNavigation: { visible: true }
+        },
+        layoutType: powerbi.models.LayoutType.Custom,
+        customLayout: { displayOption: powerbi.models.DisplayOption.FitToWidth }
+      }
+    };
+
+    powerbi.reset(reportContainer);
+    reportRef = powerbi.embed(reportContainer, config);
+
+    reportRef.on("loaded", () => {
+      overlay.style.display = "none";
+      console.log("✅ Report loaded");
     });
 
-    function embedReport(url) {
-      const models = window['powerbi-client'].models;
+    reportRef.on("error", (event) => {
+      console.error("❌ Power BI Embed Error:", event.detail);
+    });
+  }
 
-      const config = {
-        type: "report",
-        tokenType: models.TokenType.Embed,
-        accessToken: "", // public reports don't need a token
-        embedUrl: url,
-        permissions: models.Permissions.All,
-        settings: {
-          panes: {
-            filters: { visible: true },
-            pageNavigation: { visible: true }
-          },
-          layoutType: models.LayoutType.Custom,
-          customLayout: { displayOption: models.DisplayOption.FitToWidth }
-        }
-      };
+  function toggleBookmarkList() {
+    alert("This would display saved views/bookmarks if implemented.");
+  }
 
-      reportRef = powerbi.embed(reportContainer, config);
+  function captureBookmark() {
+    if (!reportRef) return alert("Report not loaded yet.");
 
-      reportRef.on("loaded", () => {
-        overlay.style.display = "none";
-        console.log("✅ Report loaded");
-      });
-
-      reportRef.on("error", (event) => {
-        console.error("❌ Power BI Embed Error:", event.detail);
-      });
-    }
-
-    function toggleBookmarkList() {
-      alert("This would display saved views/bookmarks if implemented.");
-    }
-
-    function captureBookmark() {
-      if (!reportRef) return alert("Report not loaded yet.");
-
-      reportRef.bookmarksManager.capture({ personalizeVisuals: true })
-        .then(bookmarkState => {
-          console.log("Captured bookmark state", bookmarkState);
-          alert("Bookmark captured. You can implement saving this.");
-        })
-        .catch(err => console.warn("Bookmark capture failed:", err));
-    }
-  </script>
+    reportRef.bookmarksManager.capture({ personalizeVisuals: true })
+      .then(bookmarkState => {
+        console.log("Captured bookmark state", bookmarkState);
+        alert("Bookmark captured. You can implement saving this.");
+      })
+      .catch(err => console.warn("Bookmark capture failed:", err));
+  }
+</script>
 </body>
 </html>
