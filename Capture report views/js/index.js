@@ -1,23 +1,36 @@
-// ----------------------------------------------------------------------------
-// Working index.js for public Power BI embed with reportList.json (no token)
-// ----------------------------------------------------------------------------
-
 $(document).ready(function () {
+    console.log("DOM ready");
+
     $("input:text").focus(function () {
         $(this).select();
     });
 
-    // Load and embed the first report from reportList.json
     fetch("reportList.json")
-        .then(response => response.json())
+        .then(response => {
+            console.log("reportList.json fetched");
+            return response.json();
+        })
         .then(reports => {
-            if (!reports || reports.length === 0) return;
+            if (!reports || reports.length === 0) {
+                console.error("No reports found in reportList.json");
+                return;
+            }
             const report = reports[0];
+            console.log("Embedding report:", report.embedUrl);
             embedReport(report.embedUrl);
+        })
+        .catch(error => {
+            console.error("Error loading reportList.json:", error);
         });
 });
 
 function embedReport(embedUrl) {
+    const reportContainer = document.getElementById("report-container");
+    if (!reportContainer) {
+        console.error("report-container div not found");
+        return;
+    }
+
     const config = {
         type: "report",
         embedUrl: embedUrl,
@@ -33,15 +46,10 @@ function embedReport(embedUrl) {
         }
     };
 
-    const reportContainer = document.getElementById("report-container");
-
-    // Clear any previous embeds
     powerbi.reset(reportContainer);
+    const report = powerbi.embed(reportContainer, config);
+    console.log("Report embed attempted");
 
-    // Embed the public report (view-only)
-    powerbi.embed(reportContainer, config);
-
-    // Hide overlay spinner if present
     const overlay = document.getElementById("overlay");
     if (overlay) overlay.style.display = "none";
 }
