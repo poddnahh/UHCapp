@@ -7,9 +7,8 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"/>
-  <link rel="stylesheet" href="https://poddnahh.github.io/UHCapp/Capture%20report%20views/css/header_style.css">
-  <link rel="stylesheet" href="https://poddnahh.github.io/UHCapp/Capture%20report%20views/css/modal.css">
-
+  <link rel="stylesheet" href="css/header_style.css">
+  <link rel="stylesheet" href="css/modal.css">
 
   <style>
     body {
@@ -172,26 +171,21 @@
     const overlay = document.getElementById('overlay');
     let reportRef = null;
 
+    // ✅ Your working public embed URL
+    const embedUrl = "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9";
+
     $(document).ready(() => {
-      fetch("reportList.json")
-        .then(res => res.json())
-        .then(reports => {
-          if (!reports || reports.length === 0) {
-            console.warn("No reports found in reportList.json");
-            return;
-          }
-          embedReport(reports[0].embedUrl);
-        })
-        .catch(err => console.error("Failed to load reports:", err));
+      embedReport(embedUrl);
     });
 
-    function embedReport(embedUrl) {
+    function embedReport(url) {
       const models = window['powerbi-client'].models;
+
       const config = {
-        type: 'report',
-        embedUrl: embedUrl,
+        type: "report",
         tokenType: models.TokenType.Embed,
-        accessToken: '',
+        accessToken: "", // public reports don't need a token
+        embedUrl: url,
         permissions: models.Permissions.All,
         settings: {
           panes: {
@@ -207,11 +201,11 @@
 
       reportRef.on("loaded", () => {
         overlay.style.display = "none";
-        console.log("Report loaded.");
+        console.log("✅ Report loaded");
       });
 
       reportRef.on("error", (event) => {
-        console.error("Power BI Embed Error:", event.detail);
+        console.error("❌ Power BI Embed Error:", event.detail);
       });
     }
 
