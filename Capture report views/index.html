@@ -178,9 +178,6 @@
   });
 
   function embedReport(url) {
-    // ✅ This is what fixes it!
-    const models = window['powerbi-client'].models;
-
     const config = {
       type: "report",
       embedUrl: url,
@@ -188,10 +185,6 @@
         panes: {
           filters: { visible: true },
           pageNavigation: { visible: true }
-        },
-        layoutType: models.LayoutType.Custom,
-        customLayout: {
-          displayOption: models.DisplayOption.FitToWidth
         }
       }
     };
