@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     // Load and embed the first report from reportList.json
-    fetch("reportList.json")
+    fetch("UHCapp/reportList.json")
         .then(response => response.json())
         .then(reports => {
             if (!reports || reports.length === 0) return;
@@ -18,25 +18,30 @@ $(document).ready(function () {
 });
 
 function embedReport(embedUrl) {
-    const models = window['powerbi-client'].models;
+  const models = window['powerbi-client'].models;
+  const config = {
+    type: "report",
+    tokenType: models.TokenType.Embed,
+    accessToken: "", // Empty for public reports
+    embedUrl: embedUrl,
+    permissions: models.Permissions.All,
+    settings: {
+      panes: {
+        filters: { visible: true },
+        pageNavigation: { visible: true }
+      },
+      layoutType: models.LayoutType.Custom,
+      customLayout: {
+        displayOption: models.DisplayOption.FitToWidth
+      }
+    }
+  };
 
-    const config = {
-        type: "report",
-        tokenType: models.TokenType.Embed, // Use this for public reports
-        accessToken: "", // Leave blank for public embed
-        embedUrl: embedUrl,
-        permissions: models.Permissions.All,
-        settings: {
-            panes: {
-                filters: { visible: true },
-                pageNavigation: { visible: true }
-            },
-            layoutType: models.LayoutType.Custom,
-            customLayout: {
-                displayOption: models.DisplayOption.FitToWidth
-            }
-        }
-    };
+  const reportContainer = document.getElementById("report-container");
+  powerbi.embed(reportContainer, config);
+
+  document.getElementById("overlay").style.display = "none";
+}
 
     const reportContainer = document.getElementById("report-container");
     powerbi.embed(reportContainer, config);
