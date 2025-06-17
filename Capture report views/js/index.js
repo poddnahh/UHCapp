@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// Working index.js for public Power BI embed with reportList.json
+// Working index.js for public Power BI embed with reportList.json (no token)
 // ----------------------------------------------------------------------------
 
 $(document).ready(function () {
@@ -18,32 +18,30 @@ $(document).ready(function () {
 });
 
 function embedReport(embedUrl) {
-  const models = window['powerbi-client'].models;
-  const config = {
-    type: "report",
-    tokenType: models.TokenType.Embed,
-    accessToken: "", // Empty for public reports
-    embedUrl: embedUrl,
-    permissions: models.Permissions.All,
-    settings: {
-      panes: {
-        filters: { visible: true },
-        pageNavigation: { visible: true }
-      },
-      layoutType: models.LayoutType.Custom,
-      customLayout: {
-        displayOption: models.DisplayOption.FitToWidth
-      }
-    }
-  };
-
-  const reportContainer = document.getElementById("report-container");
-  powerbi.embed(reportContainer, config);
-
-  document.getElementById("overlay").style.display = "none";
-}
+    const config = {
+        type: "report",
+        embedUrl: embedUrl,
+        settings: {
+            panes: {
+                filters: { visible: true },
+                pageNavigation: { visible: true }
+            },
+            layoutType: powerbi.models.LayoutType.Custom,
+            customLayout: {
+                displayOption: powerbi.models.DisplayOption.FitToWidth
+            }
+        }
+    };
 
     const reportContainer = document.getElementById("report-container");
+
+    // Clear any previous embeds
+    powerbi.reset(reportContainer);
+
+    // Embed the public report (view-only)
     powerbi.embed(reportContainer, config);
-    document.getElementById("overlay").style.display = "none";
+
+    // Hide overlay spinner if present
+    const overlay = document.getElementById("overlay");
+    if (overlay) overlay.style.display = "none";
 }
