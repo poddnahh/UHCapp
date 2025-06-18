@@ -308,8 +308,10 @@ function renderVisuals() {
             }
         });
 
-    } else if (layoutShowcaseState.span === SpanType.None) {
-        if (layoutShowcaseState.columns === ColumnsNumber.One) {
+         codex/update-columns.one-to-columns.one
+    } else if (layoutShowcaseState.span === SPAN_TYPE.NONE) {
+        if (layoutShowcaseState.columns === COLUMNS.ONE) {
+
             visualHeight /= 2;
         }
 
