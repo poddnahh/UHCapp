@@ -385,7 +385,7 @@ async function renderVisuals() {
         });
 
     } else if (layoutShowcaseState.span === SPAN_TYPE.NONE) {
-        if (layoutShowcaseState.columns === COLUMNS.One) {
+        if (layoutShowcaseState.columns === COLUMNS.ONE) {
             visualHeight /= 2;
         }
 
