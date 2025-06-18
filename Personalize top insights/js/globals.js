@@ -73,5 +73,5 @@ let firstVisualId;
 // Store id for first button
 const firstButtonId = $(".btn-util")[0].id;
 
-// Cache the report containers
+// Cache the report container
 const reportContainer = $("#report-container").get(0);
