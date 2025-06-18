@@ -15,6 +15,6 @@
                 "Quickly create and personalize visuals"
         ],
         "scripts": {
-                "test": "node --test \"tests/share_bookmark.spec.js\""
+                "test": "node --test \"tests/*.spec.js\""
         }
 }
