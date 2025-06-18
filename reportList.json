@@ -1,18 +1,18 @@
 [
   {
     "name": "ProjectSummary",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "url": "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
   },
   {
     "name": "ProjectSummary2",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiNWRjNGY2YjMtNTdkZS00OTI3LWI1YmYtZTAwMWEyMmNkZTAxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "url": "https://app.powerbi.com/view?r=eyJrIjoiNWRjNGY2YjMtNTdkZS00OTI3LWI1YmYtZTAwMWEyMmNkZTAxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
   },
   {
     "name": "ProjectSummary3",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiMWFkOWI5OWEtZjQxMS00YTBlLWFhYWMtN2Q0ZTY5NWMxMTllIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "url": "https://app.powerbi.com/view?r=eyJrIjoiMWFkOWI5OWEtZjQxMS00YTBlLWFhYWMtN2Q0ZTY5NWMxMTllIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
   },
   {
     "name": "ProjectSummary4",
-    "embedUrl": "https://app.powerbi.com/view?r=eyJrIjoiYjkwZmJjMTYtMDAyYS00ZWU1LTliYzQtNTBkMzQ2ZWQ4ODViIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
+    "url": "https://app.powerbi.com/view?r=eyJrIjoiYjkwZmJjMTYtMDAyYS00ZWU1LTliYzQtNTBkMzQ2ZWQ4ODViIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9"
   }
 ]
