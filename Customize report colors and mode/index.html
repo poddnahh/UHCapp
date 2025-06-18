@@ -1,38 +1,239 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Insights to Action</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customize Report Colors and Mode</title>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="css/header_style.css" />
-    <link rel="stylesheet" href="css/embed_area_style.css" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"/>
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/modal.css" />
 
-    <!-- jQuery and Power BI JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #wrapper {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #sidebar {
+      width: 220px;
+      background-color: #003366;
+      color: white;
+      padding: 20px 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #sidebar a {
+      display: block;
+      color: white;
+      padding: 8px 12px;
+      text-decoration: none;
+      margin: 5px 0;
+      border-left: 4px solid transparent;
+    }
+
+    #sidebar a.active {
+      font-weight: bold;
+      border-left: 4px solid #fff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    #main-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #contoso-header {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 10px 20px;
+      height: 60px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #contoso-header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    #report-toolbar {
+      display: flex;
+      padding: 10px 20px;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      gap: 12px;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      background-color: white;
+      border: 1.5px solid #123C66;
+      border-radius: 4px;
+      color: #123C66;
+      font-family: "Segoe UI SemiBold", Tahoma, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 12px;
+      margin-right: 10px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-outline:hover {
+      background-color: #e6f0ff;
+      border-color: #123C66;
+    }
+
+    .btn-outline img {
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
+    }
+
+    #report-container {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #spinner {
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #1f4e79;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 
-<body id="insight-to-action">
-    <!-- Header -->
-    <header id="contoso-header" class="fixed-top">
-        <img src="img/IconUnitedHealthcare.png" id="contoso" alt="United Healthcare logo" />
-        <span id="company-name">United Healthcare</span>
-    </header>
+<body>
+  <div id="wrapper">
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+      <a href="/UHCapp/Go from insights to quick action/">Go from Insights to Quick Action</a>
+      <a href="/UHCapp/Capture report views/">Capture Report Views</a>
+      <a href="/UHCapp/Customize report colors and mode/" class="active">Customize Report Colors and Mode</a>
+      <a href="/UHCapp/Personalize top insights/">Personalize Top Insights</a>
+      <a href="/UHCapp/Quickly create and personalize visuals/">Quickly Create and Personalize Visuals</a>
+    </nav>
 
-    <!-- Report container -->
-    <div id="overlay">
-        <div class="spinner"></div>
+    <!-- Main Content -->
+    <div id="main-section">
+      <!-- Header -->
+      <header id="contoso-header">
+        <img src="../img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" />
+        <span style="font-size: 18px; font-weight: bold; color: #123C66">United Healthcare</span>
+      </header>
+
+      <!-- Toolbar -->
+      <div id="report-toolbar">
+        <button class="btn-outline" onclick="applyTheme('default')">
+          <img src="../img/theme.svg" alt="Theme" />
+          Default Theme
+        </button>
+        <button class="btn-outline" onclick="applyTheme('dark')">
+          <img src="../img/theme.svg" alt="Theme" />
+          Dark Theme
+        </button>
+        <button class="btn-outline" onclick="applyTheme('contrast')">
+          <img src="../img/theme.svg" alt="Theme" />
+          High Contrast
+        </button>
+      </div>
+
+      <!-- Report Container -->
+      <div id="overlay"><div id="spinner"></div></div>
+      <div id="report-container"></div>
     </div>
+  </div>
 
-    <main id="main-div" style="display: none">
-        <div id="report-container" style="height: 100vh;"></div>
-    </main>
+  <!-- Scripts -->
+  <script>
+    function applyTheme(theme) {
+      if (!window.reportRef) return alert("Report not loaded yet.");
 
-    <!-- Scripts -->
-    <script src="js/globals.js"></script>
-    <script src="js/index.js"></script>
+      let themeJson;
+      switch (theme) {
+        case 'dark':
+          themeJson = {
+            name: "Dark Theme",
+            dataColors: ["#00B8AA", "#D9B300"],
+            background: "#2D2D30",
+            foreground: "#F3F2F1",
+            tableAccent: "#00B8AA"
+          };
+          break;
+        case 'contrast':
+          themeJson = {
+            name: "High Contrast",
+            foreground: "#000000",
+            background: "#FFFFFF",
+            tableAccent: "#000000",
+            dataColors: ["#000000", "#777777"]
+          };
+          break;
+        default:
+          themeJson = {};
+      }
+
+      window.reportRef.applyTheme(themeJson)
+        .then(() => console.log(`Applied ${theme} theme`))
+        .catch(err => console.error("Failed to apply theme:", err));
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("https://poddnahh.github.io/UHCapp/reportList.json")
+        .then(response => response.json())
+        .then(reports => {
+          if (!reports || reports.length === 0) {
+            console.error("No reports found in reportList.json");
+            return;
+          }
+
+          const report = reports[0];
+          const iframe = document.createElement("iframe");
+          iframe.src = report.url;
+          iframe.style.border = "none";
+          iframe.style.width = "100%";
+          iframe.style.height = "100%";
+          iframe.allowFullscreen = true;
+
+          const reportContainer = document.getElementById("report-container");
+          reportContainer.innerHTML = "";
+          reportContainer.appendChild(iframe);
+
+          const overlay = document.getElementById("overlay");
+          if (overlay) overlay.style.display = "none";
+        })
+        .catch(err => {
+          console.error("Failed to load reportList.json or embed report:", err);
+        });
+    });
+  </script>
 </body>
 </html>
