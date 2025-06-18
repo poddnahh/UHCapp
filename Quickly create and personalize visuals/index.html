@@ -3,63 +3,147 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <title>Quickly Create & Personalize Visuals</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quickly Create and Personalize Visuals</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="css/header_style.css" />
-    <link rel="stylesheet" href="css/embed_area_style.css" />
-    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" />
+    <link rel="stylesheet" href="../css/header.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    <!-- jQuery & Power BI -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
-    <script src="https://playground.powerbi.com/app/powerbi-report-authoring.min.js"></script>
+        #wrapper {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 220px;
+            background-color: #003366;
+            color: white;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sidebar a {
+            display: block;
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            margin: 5px 0;
+            border-left: 4px solid transparent;
+        }
+
+        #sidebar a.active {
+            font-weight: bold;
+            border-left: 4px solid #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #main-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #contoso-header {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px 20px;
+            height: 60px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #contoso-header img {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        #toolbar {
+            display: flex;
+            padding: 10px 20px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            background-color: white;
+            border: 1.5px solid #123C66;
+            border-radius: 4px;
+            color: #123C66;
+            font-family: "Segoe UI SemiBold", Tahoma, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 12px;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-outline:hover {
+            background-color: #e6f0ff;
+            border-color: #123C66;
+        }
+
+        .btn-outline img {
+            height: 16px;
+            width: 16px;
+            margin-right: 8px;
+        }
+
+        #report-container {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
-<body id="quick-visual-creator">
-    <!-- Header -->
-    <header id="contoso-header" class="fixed-top">
-        <img src="img/IconUnitedHealthcare.png" id="contoso" alt="United Healthcare logo">
-        <span id="company-name">United Healthcare</span>
-    </header>
+<body>
+    <div id="wrapper">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
+            <a href="/UHCapp/Capture%20report%20views/">Capture Report Views</a>
+            <a href="/UHCapp/Customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a>
+            <a href="/UHCapp/Personalize%20top%20insights/">Personalize Top Insights</a>
+            <a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/" class="active">Quickly Create and Personalize Visuals</a>
+        </nav>
 
-    <!-- Overlay -->
-    <div id="overlay">
-        <div class="spinner"></div>
-    </div>
+        <!-- Main Content -->
+        <div id="main-section">
+            <!-- Header -->
+            <header id="contoso-header">
+                <img src="../img/IconUnitedHealthcare.png" alt="United Healthcare logo" />
+                <span style="font-size: 18px; font-weight: bold; color: #123C66">United Healthcare</span>
+            </header>
 
-    <!-- Main Report Container -->
-    <main id="main-div" style="display: none">
-        <div id="report-container" style="height: 100vh;"></div>
-    </main>
-
-    <!-- Modal Visual Creator -->
-    <div class="modal fade" id="visual-creator" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Create Quick Visual</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Select visual type, fields, and formatting options here.</p>
-                    <!-- Additional visual creation UI can be added here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Create</button>
-                </div>
+            <!-- Toolbar -->
+            <div id="toolbar">
+                <button class="btn-outline">
+                    <img src="../img/visuals.svg" alt="Choose Visuals Icon" />
+                    Choose Visual Type
+                </button>
+                <button class="btn-outline">
+                    <img src="../img/layout.svg" alt="Choose Layout Icon" />
+                    Choose Layout
+                </button>
             </div>
+
+            <!-- Report Container -->
+            <div id="report-container"></div>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="js/globals.js"></script>
-    <script src="js/index.js"></script>
 </body>
 
 </html>
