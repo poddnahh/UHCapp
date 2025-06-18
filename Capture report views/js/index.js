@@ -1,40 +1,79 @@
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM loaded");
+document.addEventListener('DOMContentLoaded', async () => {
+  const reports = await fetch('./reportList.json').then(r => r.json());
+  if (!reports || !reports.length) {
+    console.error('No reports found in reportList.json');
+    return;
+  }
 
-  fetch("./reportList.json")
-    .then(response => {
-      console.log("reportList.json fetched");
-      return response.json();
-    })
-    .then(reports => {
-      if (!reports || reports.length === 0) {
-        console.error("No reports found in reportList.json");
-        return;
-      }
+  const cfg = reports[0];
+  setConfig(cfg.accessToken, cfg.embedUrl, cfg.reportId);
 
-      const report = reports[0]; // Load first report
-      console.log("Using report URL:", report.url);
+  await loadSampleReportIntoSession();
 
-      const reportContainer = document.getElementById("report-container");
-      if (!reportContainer) {
-        console.error("report-container not found");
-        return;
-      }
+  const models = window['powerbi-client'].models;
+  const embedConfig = {
+    type: 'report',
+    tokenType: models.TokenType.Embed,
+    accessToken: reportConfig.accessToken,
+    embedUrl: reportConfig.embedUrl,
+    id: reportConfig.reportId,
+    permissions: models.Permissions.View,
+    settings: { panes: { filters: { visible: false }, pageNavigation: { visible: false } } }
+  };
 
-      const iframe = document.createElement("iframe");
-      iframe.src = report.url;
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
-      iframe.style.border = "none";
-      iframe.allowFullscreen = true;
+  const container = document.getElementById('report-container');
+  bookmarkShowcaseState.report = powerbi.embed(container, embedConfig);
 
-      reportContainer.appendChild(iframe);
-
-      // Optional: hide loading overlay
-      const overlay = document.getElementById("overlay");
-      if (overlay) overlay.style.display = "none";
-    })
-    .catch(error => {
-      console.error("Error loading or parsing reportList.json:", error);
-    });
+  const overlay = document.getElementById('overlay');
+  bookmarkShowcaseState.report.on('loaded', () => {
+    if (overlay) overlay.style.display = 'none';
+    bookmarkShowcaseState.report.off('loaded');
+  });
 });
+
+async function saveView() {
+  const name = document.getElementById('viewNameInput').value.trim();
+  if (!name) return alert('Please enter a name.');
+
+  const { screenshot, state } = await bookmarkUtils.captureBookmark(bookmarkShowcaseState.report);
+  const saved = JSON.parse(localStorage.getItem('savedViews') || '[]');
+  const id = `bookmark_${Date.now()}`;
+  saved.push({ id, name, screenshot, state });
+  localStorage.setItem('savedViews', JSON.stringify(saved));
+  closeCaptureModal();
+}
+
+function openCaptureModal() {
+  document.getElementById('viewNameInput').value = '';
+  document.getElementById('captureModal').style.display = 'flex';
+}
+
+function closeCaptureModal() {
+  document.getElementById('captureModal').style.display = 'none';
+}
+
+function openSavedViewsModal() {
+  const list = document.getElementById('savedViewsList');
+  const saved = JSON.parse(localStorage.getItem('savedViews') || '[]');
+  list.innerHTML = '';
+  saved.forEach(view => {
+    const li = document.createElement('li');
+    const link = bookmarkUtils.generateShareLink(view.id);
+    li.innerHTML = `<strong>${view.name}</strong><br><img src="${view.screenshot}"/><br><a href="${link}">${link}</a>`;
+    list.appendChild(li);
+  });
+  document.getElementById('savedViewsModal').style.display = 'flex';
+}
+
+function closeSavedViewsModal() {
+  document.getElementById('savedViewsModal').style.display = 'none';
+}
+
+function copyShareLink() {
+  const name = document.getElementById('viewNameInput').value.trim();
+  if (!name) return alert('Please enter a name to generate the link.');
+  const tempId = `bookmark_${Date.now()}`;
+  const url = bookmarkUtils.generateShareLink(tempId);
+  navigator.clipboard.writeText(url);
+  alert('Link copied to clipboard');
+}
