@@ -130,7 +130,7 @@
 
     // Restore report iframe on load
     document.addEventListener("DOMContentLoaded", function () {
-      fetch("https://poddnahh.github.io/UHCapp/reportList.json")
+      fetch("./reportList.json")
         .then(response => response.json())
         .then(reports => {
           if (!reports || reports.length === 0) {

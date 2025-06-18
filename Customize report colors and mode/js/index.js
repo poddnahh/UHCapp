@@ -22,11 +22,14 @@ async function loadFirstReport() {
         const reportList = await response.json();
         const firstReport = reportList[0];
 
-        if (!firstReport || !firstReport.embedUrl) {
+        // The report list uses the property name "url" for the public
+        // report link. Align with that instead of the older "embedUrl" key
+        // used in some samples.
+        if (!firstReport || !firstReport.url) {
             throw new Error("No valid report URL found.");
         }
 
-        embedReport(firstReport.embedUrl);
+        embedReport(firstReport.url);
     } catch (error) {
         console.error("Failed to load reportList.json:", error);
         overlay.hide();
