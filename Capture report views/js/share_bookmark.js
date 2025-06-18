@@ -78,8 +78,8 @@ async function embedSharedBookmarkReport() {
     bookmarkShowcaseState.report.on("loaded", function () {
 
         // Hide the loader and display the report
-        overlay.addClass(INVISIBLE);
-        $("#share-bookmark").addClass(VISIBLE);
+        overlay.hide();
+        $("#share-bookmark").addClass('visible');
         bookmarkShowcaseState.report.off("loaded");
     });
 }
