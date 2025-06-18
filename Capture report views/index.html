@@ -175,7 +175,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      fetch("reportList.json")
+      fetch("https://poddnahh.github.io/UHCapp/reportList.json")
         .then(response => response.json())
         .then(reports => {
           if (!reports || reports.length === 0) {
