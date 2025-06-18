@@ -186,7 +186,7 @@ async function embedCustomLayoutReport() {
         // Hide the loader
         $("#overlay").hide();
         $("#main-div").children().show();
-        console.log("Report render successfully");
+        console.log("Report rendered successfully");
     });
 
     // Clear any other loaded handler events
