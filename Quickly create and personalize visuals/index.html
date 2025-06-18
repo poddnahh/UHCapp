@@ -1,224 +1,65 @@
-<!-- Copyright (c) Microsoft Corporation.
-Licensed under the MIT license. -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="shortcut icon" href="#" />
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/content.css">
-    <link rel="stylesheet" href="css/report.css">
-    <link rel="stylesheet" href="css/popup.css">
+    <title>Quickly Create & Personalize Visuals</title>
 
-    <!-- TODO: Change font URL in the final environment -->
-    <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-Regular-final.8956d1f5b4190f537497.woff" type="font/woff" crossorigin="anonymous">
-    <link rel="preload" as="font" href="https://content.powerapps.com/resource/powerbiwfe/fonts/SegoeUI-SemiBold-final.83b7261d0e6f3994ed6d.woff" type="font/woff" crossorigin="anonymous">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/header_style.css" />
+    <link rel="stylesheet" href="css/embed_area_style.css" />
+    <link rel="stylesheet" href="css/modal.css" />
 
-    <title>Quick visual creator</title>
+    <!-- jQuery & Power BI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.1/dist/powerbi.min.js"></script>
+    <script src="https://playground.powerbi.com/app/powerbi-report-authoring.min.js"></script>
 </head>
 
-<body>
-    <div class="wrapper">
-        <h1 class="header fixed-top">
-            <img src="img/contoso.svg" class="contoso" alt="Contoso" id="image-btn" aria-label="Contoso logo">
-        </h1>
-        <div id="overlay">
-            <img src="img/spinner.svg" class="rotate" id="spinner" alt="loader" aria-label="Loading report">
-        </div>
-        <main class="content">
-            <div class="report-container"></div>
-        </main>
+<body id="quick-visual-creator">
+    <!-- Header -->
+    <header id="contoso-header" class="fixed-top">
+        <img src="img/IconUnitedHealthcare.png" id="contoso" alt="United Healthcare logo">
+        <span id="company-name">United Healthcare</span>
+    </header>
+
+    <!-- Overlay -->
+    <div id="overlay">
+        <div class="spinner"></div>
     </div>
 
-    <!-- The Modal -->
-    <div class="modal fade" id="visual-creator" data-keyboard="false" data-backdrop="static" role="dialog" aria-labelledby="visualCreatorModal" aria-hidden="true">
-        <div class="modal-dialog modal-container">
-            <div class="modal-content">
+    <!-- Main Report Container -->
+    <main id="main-div" style="display: none">
+        <div id="report-container" style="height: 100vh;"></div>
+    </main>
 
-                <!-- Modal Header -->
+    <!-- Modal Visual Creator -->
+    <div class="modal fade" id="visual-creator" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title">Create quick visual</h2>
-                    <button type="button" class="close" id="close-modal" aria-label="Close dialog">
-                        <img role="presentation" id="close-image" src="img/close.svg" alt="Close">
+                    <h5 class="modal-title">Create Quick Visual</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-
-                <!-- Modal body -->
                 <div class="modal-body">
-                    <div id="visual-creator-options">
-                        <div id="generator-type" class="generator-disabled generator-type-disabled">
-                            <span class="generator-options">Choose the visual type</span>
-                            <div class="select-wrapper">
-                                <div class="styled-select">
-                                    <select id="visual-type">
-                                        <option value="0">Select visual type</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                        <option value="3">Option 3</option>
-                                        <option value="4">Option 4</option>
-                                        <option value="5">Option 5</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="generator-fields" class="generator-disabled generator-fields-disabled">
-                            <span class="generator-options">Set your fields</span>
-                            <div class="visual-props-wrapper">
-
-                                <div class="select-wrapper">
-                                    <span class="inline-select-text">Axis</span>
-                                    <div class="styled-select inline-select">
-                                        <select class="field">
-                                            <option value="0">Select an option</option>
-                                            <option value="1">Option 1</option>
-                                            <option value="2">Option 2</option>
-                                            <option value="3">Option 3</option>
-                                            <option value="4">Option 4</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="select-wrapper">
-                                    <span class="inline-select-text">Legend</span>
-                                    <div class="styled-select inline-select">
-                                        <select class="field">
-                                            <option value="0">Select an option</option>
-                                            <option value="1">Option 1</option>
-                                            <option value="2">Option 2</option>
-                                            <option value="3">Option 3</option>
-                                            <option value="4">Option 4</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="select-wrapper">
-                                    <span class="inline-select-text">Value</span>
-                                    <div class="styled-select inline-select">
-                                        <select class="field">
-                                            <option value="0">Select an option</option>
-                                            <option value="1">Option 1</option>
-                                            <option value="2">Option 2</option>
-                                            <option value="3">Option 3</option>
-                                            <option value="4">Option 4</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="generator-properties" class="generator-disabled generator-properties-disabled">
-                            <span class="generator-options">Format your visual</span>
-                            <div class="visual-props-wrapper">
-
-                                <div id="legend" class="toggle-wrapper">
-                                    <span id="legend-text" class="inline-toggle-text">Legend</span>
-                                    <label class="switch" aria-labelledby="legend-text" onclick="toggleProperty('legend');">
-                                        <input role="switch" type="checkbox" id="legend-toggle" class="property-checkbox" disabled>
-                                        <span class="slider round disabled-sliders"></span>
-                                    </label>
-                                </div>
-
-                                <div id="xAxis" class="toggle-wrapper">
-                                    <span id="xAxis-text" class="inline-toggle-text">Category</span>
-                                    <label class="switch" aria-labelledby="xAxis-text" onclick="toggleProperty('xAxis');">
-                                        <input role="switch" type="checkbox" id="xAxis-toggle" class="property-checkbox" disabled>
-                                        <span class="slider round disabled-sliders"></span>
-                                    </label>
-                                </div>
-
-                                <div id="yAxis" class="toggle-wrapper">
-                                    <span id="yAxis-text" class="inline-toggle-text">Value</span>
-                                    <label class="switch" aria-labelledby="yAxis-text" onclick="toggleProperty('yAxis');">
-                                        <input role="switch" type="checkbox" id="yAxis-toggle" class="property-checkbox" disabled>
-                                        <span class="slider round disabled-sliders"></span>
-                                    </label>
-                                </div>
-
-                                <div class="toggle-wrapper">
-                                    <span id="title-text" class="inline-toggle-text">Title</span>
-                                    <label class="switch" aria-labelledby="title-text" onclick="toggleProperty('title');">
-                                        <input role="switch" type="checkbox" id="title-toggle" class="property-checkbox" disabled>
-                                        <span class="slider round disabled-sliders"></span>
-                                    </label>
-                                </div>
-
-                                <div class="custom-title-wrapper">
-                                    <input type="text" id="visual-title" placeholder="Type your personalized title" oninput="updateTitleText();" disabled>
-                                    <button class="eraser-button" id="erase-tool-disabled" aria-label="Clear the visual title" disabled>
-                                        <img role="presentation" src="img/disabled-images/eraser.svg" alt="disabled-eraser">
-                                    </button>
-                                    <button class="eraser-button" id="erase-tool-enabled" aria-label="Clear the visual title" onclick="onEraseToolClicked();">
-                                        <img class="d-flex" role="presentation" src="img/enabled-images/eraser.svg" alt="enabled-eraser">
-                                    </button>
-                                </div>
-
-                                <div class="title-alignment-wrapper">
-                                    <span class="inline-toggle-text">Title alignment</span>
-                                    <div id="alignment-blocks-wrapper">
-                                        <div id="aligns-disabled">
-                                            <button class="alignment-block" aria-label="left align visual title" disabled>
-                                                <img role="presentation" src="img/disabled-images/left-align.svg" alt="left-align">
-                                            </button>
-                                            <button class="alignment-block" aria-label="center align visual title" disabled>
-                                                <img role="presentation" src="img/disabled-images/center-align.svg" alt="center-align">
-                                            </button>
-                                            <button class="alignment-block" aria-label="right align visual title" disabled>
-                                                <img role="presentation" src="img/disabled-images/right-align.svg" alt="right-align">
-                                            </button>
-                                        </div>
-
-                                        <div id="aligns-enabled">
-                                            <button id="align-left" class="alignment-block cursor selected" onclick="onAlignClicked('left');" aria-label="left align visual title">
-                                                <img role="presentation" class="aligned-enabled-images" src="img/enabled-images/left-align.svg" alt="left-align">
-                                            </button>
-                                            <button id="align-center" class="alignment-block cursor" onclick="onAlignClicked('center');" aria-label="center align visual title">
-                                                <img role="presentation" class="aligned-enabled-images" src="img/enabled-images/center-align.svg" alt="center-align">
-                                            </button>
-                                            <button id="align-right" class="alignment-block cursor" onclick="onAlignClicked('right');" aria-label="right align visual title">
-                                                <img role="presentation" class="aligned-enabled-images" src="img/enabled-images/right-align.svg" alt="right-align">
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="visual-preview">
-                        <div class="authoring-area" id="visual-authoring-container"></div>
-                        <div class="authoring-area" id="edit-area" aria-label="Visual authoring area">
-                            <img role="presentation" src="img/pencil.svg" id="edit-image" class="img-edit" alt="edit-visual">
-                        </div>
-                    </div>
+                    <p>Select visual type, fields, and formatting options here.</p>
+                    <!-- Additional visual creation UI can be added here -->
                 </div>
-
-                <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" id="create-visual-btn" class="btn btn-create" disabled>Create</button>
+                    <button type="button" class="btn btn-primary">Create</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="js/error_listener.js?v=06012021"></script>
-
-    <script src="https://playground.powerbi.com/app/jquery.js?v=06012021"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://playground.powerbi.com/app/powerbi.min.js?v=06012021"></script>
-    <script src="https://playground.powerbi.com/app/powerbi-report-authoring.min.js?v=06012021"></script>
-
-    <script src="js/visuals.js?v=02022021"></script>
-    <script src="js/globals.js?v=19022021"></script>
-    <script src="js/session_utils.js?v=25012021"></script>    
-    <script src="js/themes.js?v=20112020"></script>
-    <script src="js/index.js?v=19022021"></script>
+    <!-- Scripts -->
+    <script src="js/globals.js"></script>
+    <script src="js/index.js"></script>
 </body>
 
 </html>
