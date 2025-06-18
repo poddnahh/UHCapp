@@ -100,7 +100,8 @@
 
     #report-container {
       flex-grow: 1;
-      margin: 0;
+      width: 100%;
+      height: 100%;
     }
 
     #overlay {
@@ -164,58 +165,43 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
   <script>
-    const reportContainer = document.getElementById('report-container');
-    const overlay = document.getElementById('overlay');
-    let reportRef = null;
-
-    const embedUrl = "https://app.powerbi.com/view?r=eyJrIjoiMGY3Mzk5NDQtMDI1OS00YmUxLTgyNDAtODQzN2IzYjQyNGYxIiwidCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyJ9";
-
-    $(document).ready(() => {
-      embedReport(embedUrl);
-    });
-
-    function embedReport(url) {
-      const config = {
-        type: "report",
-        embedUrl: url,
-        settings: {
-          panes: {
-            filters: { visible: true },
-            pageNavigation: { visible: true }
-          }
-        }
-      };
-
-      powerbi.reset(reportContainer);
-      reportRef = powerbi.embed(reportContainer, config);
-
-      reportRef.on("loaded", () => {
-        overlay.style.display = "none";
-        console.log("✅ Report loaded");
-      });
-
-      reportRef.on("error", (event) => {
-        console.error("❌ Power BI Embed Error:", event.detail);
-      });
-    }
-
     function toggleBookmarkList() {
       alert("This would display saved views/bookmarks if implemented.");
     }
 
     function captureBookmark() {
-      if (!reportRef) return alert("Report not loaded yet.");
-
-      reportRef.bookmarksManager.capture({ personalizeVisuals: true })
-        .then(bookmarkState => {
-          console.log("Captured bookmark state", bookmarkState);
-          alert("Bookmark captured. You can implement saving this.");
-        })
-        .catch(err => console.warn("Bookmark capture failed:", err));
+      alert("Bookmark captured. You can implement saving this.");
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("reportList.json")
+        .then(response => response.json())
+        .then(reports => {
+          if (!reports || reports.length === 0) {
+            console.error("No reports found in reportList.json");
+            return;
+          }
+
+          const report = reports[0];
+          const iframe = document.createElement("iframe");
+          iframe.src = report.url;
+          iframe.style.border = "none";
+          iframe.style.width = "100%";
+          iframe.style.height = "100%";
+          iframe.allowFullscreen = true;
+
+          const reportContainer = document.getElementById("report-container");
+          reportContainer.innerHTML = ""; // Clear any existing content
+          reportContainer.appendChild(iframe);
+
+          const overlay = document.getElementById("overlay");
+          if (overlay) overlay.style.display = "none";
+        })
+        .catch(err => {
+          console.error("Failed to load reportList.json or embed report:", err);
+        });
+    });
   </script>
 </body>
 </html>
