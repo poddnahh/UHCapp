@@ -130,7 +130,19 @@ function embedCustomLayoutReport() {
             });
         });
 
-        // Clear any other rendered handler events
+        codex/fix-log-string-typo-in-index.js
+        await createVisualsArray(reportVisuals);
+
+        // Implement phase embedding to first load the report, arrange the visuals and then render
+        layoutShowcaseState.layoutReport.render();
+
+        // Phase-embedding
+        // Hide the loader
+        $("#overlay").hide();
+        $("#main-div").children().show();
+        console.log("Report rendered successfully");
+    });
+
         layoutShowcaseState.layoutReport.off("rendered");
 
         // Triggers when a report is successfully embedded in UI
