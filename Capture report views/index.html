@@ -22,25 +22,28 @@
       overflow: hidden;
     }
 
-    #sidebar {
       width: 220px;
-      background-color: #123C66;
+      background-color: #003366;
       color: white;
       padding: 20px 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
     #sidebar a {
       display: block;
       color: white;
+      padding: 8px 12px;
       text-decoration: none;
-      padding: 10px 15px;
-      margin-bottom: 5px;
+      margin: 5px 0;
+      border-left: 4px solid transparent;
     }
 
     #sidebar a.active {
-      background-color: #0A2C4A;
-      border-left: 4px solid #fff;
       font-weight: bold;
+      border-left: 4px solid #fff;
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     #main-section {
