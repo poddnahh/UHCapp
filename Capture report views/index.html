@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -22,6 +22,7 @@
       overflow: hidden;
     }
 
+    #sidebar {
       width: 220px;
       background-color: #003366;
       color: white;
@@ -127,6 +128,48 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .modal-content button {
+      padding: 8px 16px;
+    }
+
+    .modal .close {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    #savedViewsList a {
+      display: block;
+      margin: 8px 0;
+    }
   </style>
 </head>
 
@@ -151,11 +194,11 @@
 
       <!-- Toolbar -->
       <div id="report-toolbar">
-        <button class="btn-outline" id="display-btn" onclick="toggleBookmarkList()">
+        <button class="btn-outline" id="display-btn" onclick="openSavedViewsModal()">
           <img src="img/allviews.svg" alt="Saved Views" />
           Saved Views
         </button>
-        <button class="btn-outline" id="capture-btn" onclick="captureBookmark()">
+        <button class="btn-outline" id="capture-btn" onclick="openCaptureModal()">
           <img src="img/captureview.svg" alt="Capture View" />
           Capture View
         </button>
@@ -167,14 +210,86 @@
     </div>
   </div>
 
+  <!-- Capture View Modal -->
+  <div id="captureModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCaptureModal()">&times;</span>
+      <h3>Save Current View</h3>
+      <p>Enter a name for this view:</p>
+      <input type="text" id="viewNameInput" placeholder="e.g. Q1 2024 Performance" />
+      <button onclick="saveView()">Save</button>
+    </div>
+  </div>
+
+  <!-- Saved Views Modal -->
+  <div id="savedViewsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeSavedViewsModal()">&times;</span>
+      <h3>Saved Views</h3>
+      <ul id="savedViewsList"></ul>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script>
-    function toggleBookmarkList() {
-      alert("This would display saved views/bookmarks if implemented.");
+    function openCaptureModal() {
+      document.getElementById("captureModal").style.display = "flex";
     }
 
-    function captureBookmark() {
-      alert("Bookmark captured. You can implement saving this.");
+    function closeCaptureModal() {
+      document.getElementById("captureModal").style.display = "none";
+    }
+
+    function openSavedViewsModal() {
+      const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
+      const list = document.getElementById("savedViewsList");
+      list.innerHTML = "";
+
+      saved.forEach(view => {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="#" onclick="loadView('${view.url}')">${view.name}</a>`;
+        list.appendChild(li);
+      });
+
+      document.getElementById("savedViewsModal").style.display = "flex";
+    }
+
+    function closeSavedViewsModal() {
+      document.getElementById("savedViewsModal").style.display = "none";
+    }
+
+    function saveView() {
+      const name = document.getElementById("viewNameInput").value.trim();
+      if (!name) return alert("Please enter a view name.");
+
+      const iframe = document.querySelector("#report-container iframe");
+      if (!iframe) return alert("Report not loaded.");
+
+      const currentUrl = iframe.src;
+      const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
+      saved.push({ name, url: currentUrl });
+      localStorage.setItem("savedViews", JSON.stringify(saved));
+
+      alert("View saved.");
+      closeCaptureModal();
+    }
+
+    function loadView(url) {
+      const iframe = document.createElement("iframe");
+      iframe.src = url;
+      iframe.style.border = "none";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.allowFullscreen = true;
+
+      const reportContainer = document.getElementById("report-container");
+      reportContainer.innerHTML = "";
+      reportContainer.appendChild(iframe);
+
+      const overlay = document.getElementById("overlay");
+      if (overlay) overlay.style.display = "none";
+
+      closeSavedViewsModal();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
