@@ -6,12 +6,15 @@
 		"type": "git",
 		"url": "https://powerbi.visualstudio.com/DefaultCollection/Embedded/_git/playground-showcases"
 	},
-	"author": "Microsoft",
-	"files": [
-		"Personalize top insights",
-		"Capture report views",
-		"Customize report colors and mode",
-		"Go from insights to quick action",
-		"Quickly create and personalize visuals"
-	]
+        "author": "Microsoft",
+        "files": [
+                "Personalize top insights",
+                "Capture report views",
+                "Customize report colors and mode",
+                "Go from insights to quick action",
+                "Quickly create and personalize visuals"
+        ],
+        "scripts": {
+                "test": "node --test \"tests/share_bookmark.spec.js\""
+        }
 }

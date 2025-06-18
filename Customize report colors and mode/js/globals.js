@@ -16,7 +16,11 @@ async function loadReportIntoSession() {
         const reports = await response.json();
 
         if (reports && reports.length > 0) {
-            reportConfig.embedUrl = reports[0].embedUrl;
+            // reportList.json stores the public report under the "url" key
+            // (not "embedUrl" like the original playground examples). Use
+            // that property to populate the configuration so the sample can
+            // locate the report correctly.
+            reportConfig.embedUrl = reports[0].url;
             console.log("Loaded report URL:", reportConfig.embedUrl);
         } else {
             console.error("reportList.json is empty or missing.");
