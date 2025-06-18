@@ -217,7 +217,9 @@
       <ul id="savedViewsList"></ul>
     </div>
   </div>
-
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+ 
   <script>
     function openCaptureModal() {
       document.getElementById("captureModal").style.display = "flex";
@@ -271,17 +273,23 @@
     function saveView() {
       const name = document.getElementById("viewNameInput").value.trim();
       if (!name) return alert("Please enter a view name.");
-
-      const iframe = document.querySelector("#report-container iframe");
-      if (!iframe) return alert("Report not loaded.");
-
-      const currentUrl = iframe.src;
-      const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
-      saved.push({ name, url: currentUrl });
-      localStorage.setItem("savedViews", JSON.stringify(saved));
-
-      alert("View saved.");
-      closeCaptureModal();
+    
+      const container = document.getElementById("report-container");
+      if (!container) return alert("Report container not found.");
+    
+      html2canvas(container).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+    
+        const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
+        saved.push({ name, screenshot: imgData, timestamp: new Date().toISOString() });
+        localStorage.setItem("savedViews", JSON.stringify(saved));
+    
+        alert("Screenshot view saved.");
+        closeCaptureModal();
+      }).catch(err => {
+        console.error("Failed to capture screenshot:", err);
+        alert("An error occurred while saving the view.");
+      });
     }
 
     function loadView(url) {
