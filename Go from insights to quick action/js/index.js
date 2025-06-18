@@ -1,6 +1,6 @@
 // Simple embed: load first report from reportList.json
 $(document).ready(() => {
-  fetch("reportList.json")
+  fetch("https://poddnahh.github.io/UHCapp/reportList.json")
     .then(response => response.json())
     .then(reports => {
       if (!reports || reports.length === 0) {
@@ -8,7 +8,7 @@ $(document).ready(() => {
         return;
       }
 
-      const firstReport = reports[0].embedUrl;
+      const firstReport = reports[0].url;
       const iframe = document.getElementById("reportContainer");
 
       iframe.src = firstReport;
