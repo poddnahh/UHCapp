@@ -1,12 +1,12 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Capture Report Views</title>
 
   <!-- Styles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" />
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/modal.css">
 
@@ -129,7 +129,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Modal Styles */
     .modal {
       position: fixed;
       z-index: 1000;
@@ -167,15 +166,12 @@
     }
 
     #savedViewsList a {
-      display: block;
-      margin: 8px 0;
+      margin-right: 10px;
     }
   </style>
 </head>
-
 <body>
   <div id="wrapper">
-    <!-- Sidebar Navigation -->
     <nav id="sidebar">
       <a href="/UHCapp/Go from insights to quick action/">Go from Insights to Quick Action</a>
       <a href="/UHCapp/Capture report views/" class="active">Capture Report Views</a>
@@ -184,33 +180,26 @@
       <a href="/UHCapp/Quickly create and personalize visuals/">Quickly Create and Personalize Visuals</a>
     </nav>
 
-    <!-- Main Content -->
     <div id="main-section">
-      <!-- Header -->
       <header id="contoso-header">
         <img src="img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" />
         <span style="font-size: 18px; font-weight: bold; color: #123C66">United Healthcare</span>
       </header>
 
-      <!-- Toolbar -->
       <div id="report-toolbar">
-        <button class="btn-outline" id="display-btn" onclick="openSavedViewsModal()">
-          <img src="img/allviews.svg" alt="Saved Views" />
-          Saved Views
+        <button class="btn-outline" onclick="openSavedViewsModal()">
+          <img src="img/allviews.svg" alt="Saved Views" /> Saved Views
         </button>
-        <button class="btn-outline" id="capture-btn" onclick="openCaptureModal()">
-          <img src="img/captureview.svg" alt="Capture View" />
-          Capture View
+        <button class="btn-outline" onclick="openCaptureModal()">
+          <img src="img/captureview.svg" alt="Capture View" /> Capture View
         </button>
       </div>
 
-      <!-- Report Container -->
       <div id="overlay"><div id="spinner"></div></div>
       <div id="report-container"></div>
     </div>
   </div>
 
-  <!-- Capture View Modal -->
   <div id="captureModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeCaptureModal()">&times;</span>
@@ -221,7 +210,6 @@
     </div>
   </div>
 
-  <!-- Saved Views Modal -->
   <div id="savedViewsModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeSavedViewsModal()">&times;</span>
@@ -230,7 +218,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script>
     function openCaptureModal() {
       document.getElementById("captureModal").style.display = "flex";
@@ -245,9 +232,32 @@
       const list = document.getElementById("savedViewsList");
       list.innerHTML = "";
 
-      saved.forEach(view => {
+      saved.forEach((view, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="loadView('${view.url}')">${view.name}</a>`;
+        li.style.display = "flex";
+        li.style.justifyContent = "space-between";
+        li.style.alignItems = "center";
+
+        const link = document.createElement("a");
+        link.href = "#";
+        link.textContent = view.name;
+        link.onclick = () => loadView(view.url);
+
+        const del = document.createElement("button");
+        del.textContent = "❌";
+        del.style.marginLeft = "10px";
+        del.style.border = "none";
+        del.style.background = "transparent";
+        del.style.color = "#c00";
+        del.style.cursor = "pointer";
+        del.title = "Delete this view";
+        del.onclick = (e) => {
+          e.stopPropagation();
+          deleteView(index);
+        };
+
+        li.appendChild(link);
+        li.appendChild(del);
         list.appendChild(li);
       });
 
@@ -289,43 +299,25 @@
       const overlay = document.getElementById("overlay");
       if (overlay) overlay.style.display = "none";
 
-      function openSavedViewsModal() {
-        const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
-        const list = document.getElementById("savedViewsList");
-        list.innerHTML = "";
-      
-        saved.forEach((view, index) => {
-          const li = document.createElement("li");
-          li.style.display = "flex";
-          li.style.justifyContent = "space-between";
-          li.style.alignItems = "center";
-      
-          const link = document.createElement("a");
-          link.href = "#";
-          link.textContent = view.name;
-          link.onclick = () => loadView(view.url);
-      
-          const del = document.createElement("button");
-          del.textContent = "❌";
-          del.style.marginLeft = "10px";
-          del.style.border = "none";
-          del.style.background = "transparent";
-          del.style.color = "#c00";
-          del.style.cursor = "pointer";
-          del.title = "Delete this view";
-          del.onclick = (e) => {
-            e.stopPropagation();
-            deleteView(index);
-          };
-      
-          li.appendChild(link);
-          li.appendChild(del);
-          list.appendChild(li);
-        });
-      
-        document.getElementById("savedViewsModal").style.display = "flex";
-      }
-      
+      closeSavedViewsModal();
+    }
+
+    function deleteView(index) {
+      const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
+      saved.splice(index, 1);
+      localStorage.setItem("savedViews", JSON.stringify(saved));
+      openSavedViewsModal();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("https://poddnahh.github.io/UHCapp/reportList.json")
+        .then(response => response.json())
+        .then(reports => {
+          if (!reports || reports.length === 0) {
+            console.error("No reports found in reportList.json");
+            return;
+          }
+
           const report = reports[0];
           const iframe = document.createElement("iframe");
           iframe.src = report.url;
@@ -335,7 +327,7 @@
           iframe.allowFullscreen = true;
 
           const reportContainer = document.getElementById("report-container");
-          reportContainer.innerHTML = ""; // Clear any existing content
+          reportContainer.innerHTML = "";
           reportContainer.appendChild(iframe);
 
           const overlay = document.getElementById("overlay");
