@@ -124,8 +124,8 @@
 
     <div class="main-content">
       <header id="contoso-header">
-      <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
-      <span id="uhc-text">United Healthcare</span>
+        <img src="/UHCapp/Capture%20report%20views/img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+        <span id="uhc-text">United Healthcare</span>
       </header>
 
       <div id="overlay">
@@ -138,9 +138,31 @@
     </div>
   </div>
 
-  <script src="/UHCapp/js/jquery.min.js"></script>
-  <script src="/UHCapp/js/powerbi.min.js"></script>
-  <script src="/UHCapp/js/index.js"></script>
+  <!-- Inline JS for public Power BI report -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("/UHCapp/reportList.json")
+        .then(response => response.json())
+        .then(reports => {
+          if (!reports || reports.length === 0) {
+            console.error("No reports found in reportList.json");
+            return;
+          }
+
+          const report = reports[0];
+          const iframe = document.getElementById("reportContainer");
+          iframe.src = report.url;
+
+          const overlay = document.getElementById("overlay");
+          iframe.onload = () => {
+            if (overlay) overlay.style.display = "none";
+          };
+        })
+        .catch(error => {
+          console.error("Error loading or parsing reportList.json:", error);
+        });
+    });
+  </script>
 </body>
 
 </html>
