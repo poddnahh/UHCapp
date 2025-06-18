@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded");
 
-  fetch("reportList.json")
+  fetch("https://poddnahh.github.io/UHCapp/reportList.json")
     .then(response => {
       console.log("reportList.json fetched");
       return response.json();
