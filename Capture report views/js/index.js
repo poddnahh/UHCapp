@@ -1,55 +1,40 @@
-$(document).ready(function () {
-    console.log("DOM ready");
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOM loaded");
 
-    $("input:text").focus(function () {
-        $(this).select();
-    });
-
-    fetch("reportList.json")
-        .then(response => {
-            console.log("reportList.json fetched");
-            return response.json();
-        })
-        .then(reports => {
-            if (!reports || reports.length === 0) {
-                console.error("No reports found in reportList.json");
-                return;
-            }
-            const report = reports[0];
-            console.log("Embedding report:", report.embedUrl);
-            embedReport(report.embedUrl);
-        })
-        .catch(error => {
-            console.error("Error loading reportList.json:", error);
-        });
-});
-
-function embedReport(embedUrl) {
-    const reportContainer = document.getElementById("report-container");
-    if (!reportContainer) {
-        console.error("report-container div not found");
+  fetch("reportList.json")
+    .then(response => {
+      console.log("reportList.json fetched");
+      return response.json();
+    })
+    .then(reports => {
+      if (!reports || reports.length === 0) {
+        console.error("No reports found in reportList.json");
         return;
-    }
+      }
 
-    const config = {
-        type: "report",
-        embedUrl: embedUrl,
-        settings: {
-            panes: {
-                filters: { visible: true },
-                pageNavigation: { visible: true }
-            },
-            layoutType: powerbi.models.LayoutType.Custom,
-            customLayout: {
-                displayOption: powerbi.models.DisplayOption.FitToWidth
-            }
-        }
-    };
+      const report = reports[0]; // Load first report
+      console.log("Using report URL:", report.url);
 
-    powerbi.reset(reportContainer);
-    const report = powerbi.embed(reportContainer, config);
-    console.log("Report embed attempted");
+      const reportContainer = document.getElementById("report-container");
+      if (!reportContainer) {
+        console.error("report-container not found");
+        return;
+      }
 
-    const overlay = document.getElementById("overlay");
-    if (overlay) overlay.style.display = "none";
-}
+      const iframe = document.createElement("iframe");
+      iframe.src = report.url;
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.border = "none";
+      iframe.allowFullscreen = true;
+
+      reportContainer.appendChild(iframe);
+
+      // Optional: hide loading overlay
+      const overlay = document.getElementById("overlay");
+      if (overlay) overlay.style.display = "none";
+    })
+    .catch(error => {
+      console.error("Error loading or parsing reportList.json:", error);
+    });
+});
