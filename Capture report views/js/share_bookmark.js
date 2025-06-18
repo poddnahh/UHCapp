@@ -9,13 +9,15 @@ function setReportAccessibilityProps(report) {
     report.setComponentTabIndex(0);
 }
 
-$(document).ready(function () {
+if (typeof window !== "undefined" && window.document && typeof $ !== "undefined") {
+    $(document).ready(function () {
 
-    // Bootstrap the bookmark container
-    powerbi.bootstrap(bookmarkContainer, reportConfig);
+        // Bootstrap the bookmark container
+        powerbi.bootstrap(bookmarkContainer, reportConfig);
 
-    embedSharedBookmarkReport();
-});
+        embedSharedBookmarkReport();
+    });
+}
 
 // Embed shared report with bookmark on load
 async function embedSharedBookmarkReport() {
@@ -100,3 +102,9 @@ function getBookmarkNameFromURL() {
     // Returns the ID of the Bookmark
     return decodeURIComponent(results[2]);
 }
+
+// Export for testing environments
+if (typeof module !== "undefined") {
+    module.exports = { getBookmarkNameFromURL };
+}
+
