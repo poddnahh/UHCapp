@@ -2,63 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Capture Report Views</title>
-  <link rel="stylesheet" href="../css/header.css" />
-  <link rel="stylesheet" href="../css/sidebar.css" />
-  <link rel="stylesheet" href="../css/content.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+    }
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100%;
+      background-color: #003366;
+      color: white;
+      padding-top: 20px;
+    }
+    #sidebar a {
+      display: block;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+    }
+    #sidebar a:hover {
+      background-color: #0055a5;
+    }
+    #main {
+      margin-left: 220px;
+      padding: 20px;
+    }
+    #reportContainer {
+      width: 100%;
+      height: 80vh;
+      border: 1px solid #ccc;
+    }
+  </style>
 </head>
 <body>
-  <div id="wrapper">
-    <div id="sidebar">
-      <img src="../img/IconUnitedHealthcare.png" alt="UHC Logo" style="width: 100%; padding: 10px;" />
-      <a href="../Go from insights to quick action/index.html">Go from Insights to Quick Action</a>
-      <a href="index.html" class="active">Capture Report Views</a>
-      <a href="../Customize report colors and mode/index.html">Customize Report Colors and Mode</a>
-      <a href="../Personalize top insights/index.html">Personalize Top Insights</a>
-      <a href="../Quickly create and personalize visuals/index.html">Quickly Create and Personalize Visuals</a>
-    </div>
+  <div id="sidebar">
+    <h3 style="text-align:center;">United Healthcare</h3>
+    <a href="Go%20from%20insights%20to%20quick%20action/index.html">Go from Insights to Quick Action</a>
+    <a href="Capture%20report%20views.html">Capture Report Views</a>
+    <a href="Customize%20report%20colors%20and%20mode.html">Customize Report Colors and Mode</a>
+    <a href="Personalize%20top%20insights.html">Personalize Top Insights</a>
+    <a href="Quickly%20create%20and%20personalize%20visuals.html">Quickly Create and Personalize Visuals</a>
+  </div>
 
-    <div id="main-content">
-      <div id="header">
-        <h1>United Healthcare</h1>
-      </div>
-
-      <div style="margin: 1rem;">
-        <h2>Capture Report Views</h2>
-        <button id="saveView">Save View</button>
-        <button id="captureView">Capture View</button>
-      </div>
-
-      <div id="reportContainer" style="height: 80vh; border: 1px solid #ccc; margin: 1rem;"></div>
-    </div>
+  <div id="main">
+    <h2>Capture Report Views</h2>
+    <div id="reportContainer"></div>
   </div>
 
   <script>
     const embedConfig = {
-      type: "report",
-      id: "REPLACE_WITH_YOUR_REPORT_ID",
-      embedUrl: "REPLACE_WITH_YOUR_EMBED_URL",
-      accessToken: "REPLACE_WITH_A_VALID_EMBED_TOKEN",
-      tokenType: window["powerbi-client"].models.TokenType.Embed,
+      type: 'report',
+      id: 'YOUR_REPORT_ID', // Replace with actual ID
+      embedUrl: 'https://app.powerbi.com/reportEmbed?reportId=YOUR_REPORT_ID&groupId=YOUR_WORKSPACE_ID', // Replace this with actual URL
+      accessToken: 'PASTE_YOUR_GENERATED_TOKEN_HERE', // Embed token from Azure App
+      tokenType: models.TokenType.Embed,
       settings: {
         panes: {
           filters: { visible: false },
-          pageNavigation: { visible: true },
+          pageNavigation: { visible: true }
         }
       }
     };
 
-    const reportContainer = document.getElementById("reportContainer");
-    const powerbiService = new window["powerbi-client"].service.Service(
-      window["powerbi-client"].factories.hpmFactory,
-      window["powerbi-client"].factories.wpmpFactory,
-      window["powerbi-client"].factories.routerFactory
-    );
-
-    powerbiService.embed(reportContainer, embedConfig);
+    const models = window['powerbi-client'].models;
+    const reportContainer = document.getElementById('reportContainer');
+    powerbi.embed(reportContainer, embedConfig);
   </script>
 </body>
 </html>
