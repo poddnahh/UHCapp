@@ -1,0 +1,29 @@
+#sidebar {
+  width: 220px;
+  background-color: #002f5f;
+  color: white;
+  padding: 10px;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#sidebar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 12px;
+  margin: 4px 0;
+  display: block;
+  border-left: 4px solid transparent;
+}
+
+#sidebar a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#sidebar a.active {
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid #ffffff;
+}
