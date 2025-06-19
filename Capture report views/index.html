@@ -3,87 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Capture Report Views – United Healthcare</title>
-
-  <!-- Styling -->
-  <link rel="stylesheet" href="../css/header.css">
-  <link rel="stylesheet" href="../css/sidebar.css">
-
-  <!-- Power BI & jQuery -->
+  <title>Capture Report Views</title>
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/sidebar.css" />
+  <link rel="stylesheet" href="../css/content.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.js"></script>
-
-  <style>
-    #reportContainer {
-      width: 100%;
-      height: calc(100vh - 120px);
-      border: none;
-    }
-  </style>
 </head>
 <body>
+  <div id="wrapper">
+    <div id="sidebar">
+      <img src="../img/IconUnitedHealthcare.png" alt="UHC Logo" style="width: 100%; padding: 10px;" />
+      <a href="../Go from insights to quick action/index.html">Go from Insights to Quick Action</a>
+      <a href="index.html" class="active">Capture Report Views</a>
+      <a href="../Customize report colors and mode/index.html">Customize Report Colors and Mode</a>
+      <a href="../Personalize top insights/index.html">Personalize Top Insights</a>
+      <a href="../Quickly create and personalize visuals/index.html">Quickly Create and Personalize Visuals</a>
+    </div>
 
-  <!-- Header -->
-  <header class="header">
-    <img src="../img/IconUnitedHealthcare.png" alt="UHC Logo" class="header-logo" />
-    <h1>United Healthcare</h1>
-  </header>
+    <div id="main-content">
+      <div id="header">
+        <h1>United Healthcare</h1>
+      </div>
 
-  <!-- Layout with Sidebar and Content -->
-  <div class="main-layout">
-    <!-- Sidebar -->
-    <nav class="sidebar">
-      <a href="../Go from Insights to Quick Action/">Go from Insights to Quick Action</a>
-      <a href="./">Capture Report Views</a>
-      <a href="../Customize Report Colors and Mode/">Customize Report Colors and Mode</a>
-      <a href="../Personalize Top Insights/">Personalize Top Insights</a>
-      <a href="../Quickly Create and Personalize Visuals/">Quickly Create and Personalize Visuals</a>
-    </nav>
+      <div style="margin: 1rem;">
+        <h2>Capture Report Views</h2>
+        <button id="saveView">Save View</button>
+        <button id="captureView">Capture View</button>
+      </div>
 
-    <!-- Main Content -->
-    <section class="content">
-      <h2>Capture Report Views</h2>
-      <div id="reportContainer"></div>
-    </section>
+      <div id="reportContainer" style="height: 80vh; border: 1px solid #ccc; margin: 1rem;"></div>
+    </div>
   </div>
 
-  <!-- Embed Power BI Report -->
   <script>
-    $(async () => {
-      try {
-        const res = await fetch('https://YOUR-DEPLOYED-API-URL/api/token');
-        if (!res.ok) throw new Error('Token fetch failed');
-        const { accessToken } = await res.json();
-
-        const embedConfig = {
-          type: 'report',
-          id: 'YOUR_REPORT_ID',
-          embedUrl: 'YOUR_EMBED_URL',
-          accessToken: accessToken,
-          tokenType: window.powerbi.models.TokenType.Embed,
-          settings: {
-            panes: {
-              filters: { visible: false },
-              pageNavigation: { visible: false }
-            }
-          }
-        };
-
-        const reportContainer = document.getElementById('reportContainer');
-        const powerbiService = new powerbi.service.Service(
-          powerbi.factories.hpmFactory,
-          powerbi.factories.wpmpFactory,
-          powerbi.factories.routerFactory
-        );
-
-        powerbiService.embed(reportContainer, embedConfig);
-
-      } catch (error) {
-        console.error('Embed error:', error);
-        document.getElementById('reportContainer').innerHTML =
-          '<p style="color:red;">Failed to load Power BI report. Check token or URL.</p>';
+    const embedConfig = {
+      type: "report",
+      id: "REPLACE_WITH_YOUR_REPORT_ID",
+      embedUrl: "REPLACE_WITH_YOUR_EMBED_URL",
+      accessToken: "REPLACE_WITH_A_VALID_EMBED_TOKEN",
+      tokenType: window["powerbi-client"].models.TokenType.Embed,
+      settings: {
+        panes: {
+          filters: { visible: false },
+          pageNavigation: { visible: true },
+        }
       }
-    });
+    };
+
+    const reportContainer = document.getElementById("reportContainer");
+    const powerbiService = new window["powerbi-client"].service.Service(
+      window["powerbi-client"].factories.hpmFactory,
+      window["powerbi-client"].factories.wpmpFactory,
+      window["powerbi-client"].factories.routerFactory
+    );
+
+    powerbiService.embed(reportContainer, embedConfig);
   </script>
 </body>
 </html>
