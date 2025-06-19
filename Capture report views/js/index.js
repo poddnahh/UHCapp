@@ -1,7 +1,6 @@
 const models = window['powerbi-client'].models;
-let report;
+let report = null;
 
-// Load report on page load
 document.addEventListener("DOMContentLoaded", async function () {
   const overlay = document.getElementById("overlay");
   overlay.style.display = "flex";
@@ -10,19 +9,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     const response = await fetch("./reportList.json");
     const reports = await response.json();
 
-    if (!reports || reports.length === 0) {
-      throw new Error("No reports found in reportList.json");
-    }
+    if (!reports || reports.length === 0) throw new Error("No reports found");
 
-    const reportData = reports[0]; // load the first report for now
-    const embedUrl = reportData.url;
-    const token = reportData.token || "PASTE_YOUR_TOKEN_HERE"; // fallback if not in JSON
-
+    const reportData = reports[0];
     const embedConfig = {
       type: 'report',
+      id: reportData.reportId,
+      embedUrl: reportData.embedUrl,
+      accessToken: reportData.accessToken,
       tokenType: models.TokenType.Embed,
-      accessToken: token,
-      embedUrl: embedUrl,
       settings: {
         panes: {
           filters: { visible: false },
@@ -32,60 +27,46 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     };
 
-    const reportContainer = document.getElementById("report-container");
-    powerbi.reset(reportContainer);
-    report = powerbi.embed(reportContainer, embedConfig);
+    const container = document.getElementById("report-container");
+    powerbi.reset(container);
+    report = powerbi.embed(container, embedConfig);
 
-    report.on("loaded", () => {
-      overlay.style.display = "none";
-      console.log("Power BI report loaded successfully");
-    });
-
-    report.on("error", (event) => {
-      console.error("Power BI report error:", event.detail);
-      alert("Failed to load Power BI report.");
+    report.on("loaded", () => overlay.style.display = "none");
+    report.on("error", e => {
+      console.error("Power BI Error:", e.detail);
+      alert("Failed to load report.");
     });
 
   } catch (error) {
-    console.error("Error embedding report:", error);
+    console.error("Embedding error:", error);
     overlay.style.display = "none";
   }
 });
 
-// Capture View using Bookmark state (Power BI API)
 async function saveView() {
   if (!report) return;
-
-  const viewName = document.getElementById("viewNameInput").value.trim();
-  if (!viewName) return alert("Please enter a name.");
+  const name = document.getElementById("viewNameInput").value.trim();
+  if (!name) return alert("Please enter a name.");
 
   try {
     const state = await report.bookmarksManager.capture();
     const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
-
-    saved.push({
-      name: viewName,
-      bookmarkState: state.state,
-      timestamp: new Date().toISOString()
-    });
-
+    saved.push({ name, bookmarkState: state.state, timestamp: new Date().toISOString() });
     localStorage.setItem("savedViews", JSON.stringify(saved));
     closeCaptureModal();
-    alert("View saved successfully.");
+    alert("View saved.");
   } catch (err) {
-    console.error("Failed to capture view:", err);
+    console.error("Capture failed:", err);
   }
 }
 
 function applyBookmark(state) {
   if (!report || !state) return;
-
   report.bookmarksManager.applyState(state)
     .then(() => console.log("Bookmark applied."))
-    .catch(err => console.error("Failed to apply bookmark:", err));
+    .catch(err => console.error("Apply failed:", err));
 }
 
-// Modal controls
 function openCaptureModal() {
   document.getElementById("viewNameInput").value = "";
   document.getElementById("captureModal").style.display = "flex";
@@ -98,15 +79,15 @@ function closeCaptureModal() {
 function openSavedViewsModal() {
   const list = document.getElementById("savedViewsList");
   const saved = JSON.parse(localStorage.getItem("savedViews") || "[]");
-
   list.innerHTML = "";
+
   saved.forEach((view, i) => {
     const li = document.createElement("li");
     li.innerHTML = `
       <strong>${view.name}</strong><br>
       <small>${new Date(view.timestamp).toLocaleString()}</small><br>
-      <button onclick="applyBookmark('${view.bookmarkState.replace(/"/g, '&quot;')}')">Apply</button>
-      <button onclick="deleteView(${i})">Delete</button><br><br>
+      <button onclick='applyBookmark(${JSON.stringify(view.bookmarkState)})'>Apply</button>
+      <button onclick='deleteView(${i})'>Delete</button><br><br>
     `;
     list.appendChild(li);
   });
@@ -125,11 +106,8 @@ function deleteView(index) {
   openSavedViewsModal();
 }
 
-// Optional: share view link (not tied to Power BI)
 function copyShareLink() {
   const name = document.getElementById("viewNameInput").value.trim();
   const link = `${window.location.href}#${encodeURIComponent(name)}`;
-  navigator.clipboard.writeText(link).then(() => {
-    alert("Link copied to clipboard.");
-  });
+  navigator.clipboard.writeText(link).then(() => alert("Link copied to clipboard."));
 }
