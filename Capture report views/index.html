@@ -6,45 +6,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Capture Report Views</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/UHCapp/css/header.css">
-  <link rel="stylesheet" href="/UHCapp/css/content.css">
-  <link rel="stylesheet" href="/UHCapp/css/report.css">
-  <link rel="stylesheet" href="/UHCapp/css/modal.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/content.css">
+  <link rel="stylesheet" href="css/report.css">
+  <link rel="stylesheet" href="css/modal.css">
 </head>
 
 <body>
   <div id="wrapper">
     <header id="contoso-header">
-      <img src="/UHCapp/img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+      <img src="img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
       <span id="uhc-text">United Healthcare</span>
     </header>
 
     <nav id="sidebar">
-      <a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
-      <a href="/UHCapp/Capture%20report%20views/" class="active">Capture Report Views</a>
-      <a href="/UHCapp/Customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a>
-      <a href="/UHCapp/Personalize%20top%20insights/">Personalize Top Insights</a>
-      <a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/">Quickly Create and Personalize Visuals</a>
+      <a href="../Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
+      <a href="#" class="active">Capture Report Views</a>
+      <a href="../Customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a>
+      <a href="../Personalize%20top%20insights/">Personalize Top Insights</a>
+      <a href="../Quickly%20create%20and%20personalize%20visuals/">Quickly Create and Personalize Visuals</a>
     </nav>
 
     <main id="main-div">
       <div class="interactive-buttons">
         <div class="bookmarks-dropdown">
           <button class="btn btn-action" type="button" id="display-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img class="btn-img" src="/UHCapp/img/allviews.svg" alt="My views">Saved Views
+            <img class="btn-img" src="img/allviews.svg" alt="My views">Saved Views
           </button>
           <ul class="dropdown-menu checkbox-menu allow-focus" role="menu" id="bookmarks-list"></ul>
         </div>
         <div>
           <button class="btn btn-action" type="button" id="capture-btn" data-toggle="modal" data-target="#modal-action">
-            <img class="btn-img" src="/UHCapp/img/captureview.svg" alt="Capture View">Capture View
+            <img class="btn-img" src="img/captureview.svg" alt="Capture View">Capture View
           </button>
         </div>
       </div>
 
       <div role="separator" class="line"></div>
       <div id="overlay">
-        <img src="/UHCapp/img/spinner.svg" id="spinner" class="rotate" alt="Loading report">
+        <img src="img/spinner.svg" id="spinner" class="rotate" alt="Loading report">
       </div>
 
       <div id="report-container"></div>
@@ -58,7 +58,7 @@
         <div class="modal-header">
           <h5 class="modal-title">What would you like to do with this view?</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <img src="/UHCapp/img/cross.svg" alt="Close">
+            <img src="img/cross.svg" alt="Close">
           </button>
         </div>
         <div class="modal-body">
@@ -84,9 +84,9 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.min.js"></script>
 
-  <script src="/UHCapp/js/globals.js"></script>
-  <script src="/UHCapp/js/session_utils.js"></script>
-  <script src="/UHCapp/js/index.js"></script>
+  <script src="js/globals.js"></script>
+  <script src="js/session_utils.js"></script>
+  <script src="js/index.js"></script>
 </body>
 
 </html>
