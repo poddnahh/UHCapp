@@ -2,105 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Capture Report View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capture Report Views – United Healthcare</title>
 
-  <!-- STYLES -->
-  <link rel="stylesheet" href="../css/header.css" />
-  <link rel="stylesheet" href="../css/sidebar.css" />
-  <link rel="stylesheet" href="../css/content.css" />
+  <!-- Navigation + Styling -->
+  <link rel="stylesheet" href="../css/header.css">
+  <link rel="stylesheet" href="../css/sidebar.css">
 
+  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.js"></script>
+
+  <style>
+    /* Optional styling for the Power BI container */
+    #reportContainer {
+      width: 100%;
+      height: calc(100vh - 120px);
+      margin-top: 20px;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-  <div id="wrapper">
-    <!-- SIDEBAR -->
-    <div id="sidebar">
-      <div class="logo-container">
-        <img src="../assets/IconUnitedHealthcare.png" alt="UHC Logo" class="logo" />
-        <h1 class="title">United Healthcare</h1>
-      </div>
-      <ul class="nav">
-        <li><a href="../Go from insights to quick action/index.html">Go from Insights to Quick Action</a></li>
-        <li class="active"><a href="#">Capture Report Views</a></li>
-        <li><a href="../Customize report colors and mode/index.html">Customize Report Colors and Mode</a></li>
-        <li><a href="../Personalize top insights/index.html">Personalize Top Insights</a></li>
-        <li><a href="../Quickly create and personalize visuals/index.html">Quickly Create and Personalize Visuals</a></li>
-      </ul>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main">
-      <div class="header">
-        <h2>Capture Report Views</h2>
-      </div>
+  <!-- 1. Header -->
+  <header class="header">
+    <img src="../assets/LogoUnitedHealthcare.png" alt="UHC Logo" class="header-logo">
+    <h1>United Healthcare</h1>
+  </header>
 
-      <!-- BUTTONS -->
-      <div class="controls">
-        <button id="saveView">Save View</button>
-        <button id="captureView">Capture View</button>
-      </div>
+  <div class="main-layout">
+    <!-- 2. Sidebar Navigation -->
+    <nav class="sidebar">
+      <a href="../Go from Insights to Quick Action/">Go from Insights to Quick Action</a>
+      <a href="./">Capture Report Views</a>
+      <a href="../Customize Report Colors and Mode/">Customize Report Colors and Mode</a>
+      <a href="../Personalize Top Insights/">Personalize Top Insights</a>
+      <a href="../Quickly Create and Personalize Visuals/">Quickly Create and Personalize Visuals</a>
+    </nav>
 
-      <!-- REPORT CONTAINER -->
+    <!-- 3. Main Content Area -->
+    <section class="content">
+      <h2>Power BI Report Embed</h2>
       <div id="reportContainer"></div>
-    </div>
+    </section>
   </div>
 
-  <!-- SCRIPT -->
-  <script type="module">
-    import { getToken } from "../tools/generateToken.js";
+  <!-- 4. Embed Script: Fetches token and renders the report -->
+  <script>
+    $(async () => {
+      try {
+        const res = await fetch('https://YOUR_DEPLOYED_API/app/api/token');
+        if (!res.ok) throw new Error('Token API failed');
+        const { accessToken } = await res.json();
 
-    let report;
-
-    async function loadReport() {
-      const accessToken = await getToken();
-
-      const embedConfig = {
-        type: "report",
-        id: "YOUR_REPORT_ID",
-        embedUrl: "YOUR_EMBED_URL",
-        accessToken: accessToken,
-        tokenType: window["powerbi-client"].models.TokenType.Embed,
-        settings: {
-          panes: {
-            filters: { visible: false },
-            pageNavigation: { visible: false }
+        const embedConfig = {
+          type: 'report',
+          id: 'YOUR_REPORT_ID',
+          embedUrl: 'YOUR_EMBED_URL',
+          accessToken,
+          tokenType: window.powerbi.models.TokenType.Embed,
+          settings: {
+            panes: {
+              filters: { visible: false },
+              pageNavigation: { visible: false }
+            }
           }
-        }
-      };
+        };
 
-      const reportContainer = document.getElementById("reportContainer");
-      const powerbi = new window["powerbi-client"].service.Service(
-        window["powerbi-client"].factories.hpmFactory,
-        window["powerbi-client"].factories.wpmpFactory,
-        window["powerbi-client"].factories.routerFactory
-      );
+        const reportContainer = document.getElementById('reportContainer');
+        window.powerbi.embed(reportContainer, embedConfig);
 
-      report = powerbi.embed(reportContainer, embedConfig);
-    }
-
-    // Button features
-    document.getElementById("saveView").addEventListener("click", async () => {
-      const bookmarks = await report.bookmarksManager.getBookmarks();
-      const current = await report.bookmarksManager.capture();
-
-      const name = prompt("Enter a name for your view:");
-      if (name) {
-        current.name = name;
-        await report.bookmarksManager.applyState(current.state);
-        alert("View captured!");
+      } catch (e) {
+        console.error('Embed error:', e);
+        $('#reportContainer').html('<p style="color:red;">Failed to load report. Check console for details.</p>');
       }
     });
-
-    document.getElementById("captureView").addEventListener("click", async () => {
-      const current = await report.bookmarksManager.capture();
-      console.log("Captured Bookmark State:", current);
-      alert("Bookmark captured in console.");
-    });
-
-    // Load report on page load
-    loadReport();
   </script>
 </body>
 </html>
