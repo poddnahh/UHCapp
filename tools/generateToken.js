@@ -1,5 +1,8 @@
-require('dotenv').config();
-const axios = require('axios');
+// tools/generateToken.js
+import dotenv from 'dotenv';
+import axios from 'axios';
+
+dotenv.config();
 
 const tenantId = process.env.TENANT_ID;
 const clientId = process.env.CLIENT_ID;
@@ -7,7 +10,7 @@ const clientSecret = process.env.CLIENT_SECRET;
 
 const tokenUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
 
-const getAccessToken = async () => {
+export async function getToken() {
   try {
     const response = await axios.post(tokenUrl, new URLSearchParams({
       grant_type: 'client_credentials',
@@ -18,12 +21,11 @@ const getAccessToken = async () => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
 
-    console.log('Access token:', response.data.access_token);
+    return response.data.access_token;
   } catch (error) {
     console.error('Failed to get access token');
     console.error('HTTP Error:', error.response?.status);
     console.error('Details:', error.response?.data || error.message);
+    return null;
   }
-};
-
-getAccessToken();
+}
