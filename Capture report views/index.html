@@ -3,120 +3,22 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Capture Report Views</title>
-
-  <link rel="shortcut icon" href="#" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
-
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-    }
-
-    #wrapper {
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    #sidebar {
-      width: 220px;
-      background-color: #003366;
-      color: white;
-      padding: 20px 10px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #sidebar a {
-      display: block;
-      color: white;
-      padding: 8px 12px;
-      text-decoration: none;
-      margin: 5px 0;
-      border-left: 4px solid transparent;
-    }
-
-    #sidebar a.active {
-      background-color: #0A2C4A;
-      border-left: 4px solid #fff;
-      font-weight: bold;
-    }
-
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #contoso-header {
-      align-items: center;
-      background: #ffffff;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      height: 60px;
-      padding: 0 20px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    #contoso {
-      height: 42px;
-      margin-right: 12px;
-    }
-
-    #uhc-text {
-      font-weight: 600;
-      font-size: 18px;
-      color: #002f5f;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-    }
-
-    #overlay {
-      position: absolute;
-      top: 60px;
-      left: 220px;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      z-index: 10;
-    }
-
-    #spinner {
-      width: 40px;
-      height: 40px;
-      border: 5px solid #ccc;
-      border-top: 5px solid #1f4e79;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    iframe#reportContainer {
-      flex: 1;
-      border: none;
-      width: 100%;
-      height: calc(100vh - 60px);
-    }
-  </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/UHCapp/css/header.css">
+  <link rel="stylesheet" href="/UHCapp/css/content.css">
+  <link rel="stylesheet" href="/UHCapp/css/report.css">
+  <link rel="stylesheet" href="/UHCapp/css/modal.css">
 </head>
 
 <body>
   <div id="wrapper">
-    <!-- Sidebar Navigation -->
+    <header id="contoso-header">
+      <img src="/UHCapp/img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+      <span id="uhc-text">United Healthcare</span>
+    </header>
+
     <nav id="sidebar">
       <a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
       <a href="/UHCapp/Capture%20report%20views/" class="active">Capture Report Views</a>
@@ -125,50 +27,66 @@
       <a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/">Quickly Create and Personalize Visuals</a>
     </nav>
 
-    <div class="main-content">
-      <!-- Header with logo -->
-      <header id="contoso-header">
-        <img src="/UHCapp/Capture%20report%20views/img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
-        <span id="uhc-text">United Healthcare</span>
-      </header>
-
-      <!-- Spinner overlay -->
-      <div id="overlay">
-        <div id="spinner" aria-label="Loading report"></div>
+    <main id="main-div">
+      <div class="interactive-buttons">
+        <div class="bookmarks-dropdown">
+          <button class="btn btn-action" type="button" id="display-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img class="btn-img" src="/UHCapp/img/allviews.svg" alt="My views">Saved Views
+          </button>
+          <ul class="dropdown-menu checkbox-menu allow-focus" role="menu" id="bookmarks-list"></ul>
+        </div>
+        <div>
+          <button class="btn btn-action" type="button" id="capture-btn" data-toggle="modal" data-target="#modal-action">
+            <img class="btn-img" src="/UHCapp/img/captureview.svg" alt="Capture View">Capture View
+          </button>
+        </div>
       </div>
 
-      <!-- Main embedded report view -->
-      <main id="main-div">
-        <iframe id="reportContainer" allowfullscreen="true"></iframe>
-      </main>
+      <div role="separator" class="line"></div>
+      <div id="overlay">
+        <img src="/UHCapp/img/spinner.svg" id="spinner" class="rotate" alt="Loading report">
+      </div>
+
+      <div id="report-container"></div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modal-action" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">What would you like to do with this view?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <img src="/UHCapp/img/cross.svg" alt="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <button class="btn-modal btn-links btn-active" id="save-view-btn">Save to 'My Views'</button>
+          <button class="btn-modal btn-links" id="copy-link-btn">Copy Link</button>
+          <div id="save-view-div">
+            <label for="viewname">Enter a name for this view:</label>
+            <input type="text" id="viewname" placeholder="Example: Sales Report Q1">
+            <button id="save-bookmark-btn">Save</button>
+          </div>
+          <div id="capture-view-div">
+            <label>Use this link to share the view with colleagues</label>
+            <input type="text" id="copy-link-text" readonly>
+            <button id="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Load Power BI Report -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      fetch("/UHCapp/reportList.json")
-        .then(response => response.json())
-        .then(reports => {
-          if (!reports || reports.length === 0) {
-            console.error("No reports found in reportList.json");
-            return;
-          }
+  <!-- Scripts -->
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.min.js"></script>
 
-          const report = reports[0]; // Load the first one
-          const iframe = document.getElementById("reportContainer");
-          iframe.src = report.url;
-
-          const overlay = document.getElementById("overlay");
-          iframe.onload = () => {
-            if (overlay) overlay.style.display = "none";
-          };
-        })
-        .catch(error => {
-          console.error("Error loading or parsing reportList.json:", error);
-        });
-    });
-  </script>
+  <script src="/UHCapp/js/globals.js"></script>
+  <script src="/UHCapp/js/session_utils.js"></script>
+  <script src="/UHCapp/js/index.js"></script>
 </body>
 
 </html>
