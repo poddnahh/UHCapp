@@ -1,16 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Capture Report Views</title>
 
+  <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
   <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/sidebar.css">
   <link rel="stylesheet" href="css/modal.css">
-  <link rel="stylesheet" href="css/sidebar.css"> <!-- ✅ Add this line -->
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #contoso-header {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      padding: 10px 20px;
+      height: 60px;
+      border-bottom: 1px solid #ccc;
+      font-size: 18px;
+      font-weight: bold;
+      color: #123C66;
+    }
+
+    #contoso-header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    #wrapper {
+      display: flex;
+      flex-direction: row;
+      height: calc(100vh - 60px); /* subtract header height */
+      width: 100%;
+    }
+
+    #main-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #report-toolbar {
+      display: flex;
+      padding: 10px 20px;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      gap: 12px;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      background-color: white;
+      border: 1.5px solid #123C66;
+      border-radius: 4px;
+      color: #123C66;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      background-color: #e6f0ff;
+      border-color: #123C66;
+    }
+
+    #report-container {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #spinner {
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #1f4e79;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+
+  <header id="contoso-header">
+    <img src="img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" />
+    <span>United Healthcare</span>
+  </header>
+
   <div id="wrapper">
     <nav id="sidebar">
       <a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
@@ -21,16 +122,10 @@
     </nav>
 
     <div id="main-section">
-      <header id="contoso-header">
-        <img src="img/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" />
-        <span>United Healthcare</span>
-      </header>
-
       <div id="report-toolbar">
         <button class="btn-outline" onclick="openSavedViewsModal()">Saved Views</button>
         <button class="btn-outline" onclick="openCaptureModal()">Capture View</button>
       </div>
-
       <div id="overlay"><div id="spinner"></div></div>
       <div id="report-container"></div>
     </div>
@@ -41,10 +136,10 @@
     <div class="modal-content">
       <span class="close" onclick="closeCaptureModal()">&times;</span>
       <h3>Save Current View</h3>
-      <input type="text" id="viewNameInput" placeholder="e.g. Weekly Progress" />
+      <input type="text" id="viewNameInput" placeholder="e.g. Q1 2024 Performance" />
       <div class="interactive-buttons">
-        <button onclick="saveView()">Save to 'My Views'</button>
-        <button onclick="copyShareLink()">Copy Link</button>
+        <button class="btn-outline" onclick="saveView()">Save to 'My Views'</button>
+        <button class="btn-outline" onclick="copyShareLink()">Copy Link</button>
       </div>
     </div>
   </div>
