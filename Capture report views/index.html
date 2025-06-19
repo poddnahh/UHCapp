@@ -5,34 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Capture Report Views – United Healthcare</title>
 
-  <!-- Navigation + Styling -->
+  <!-- Styling -->
   <link rel="stylesheet" href="../css/header.css">
   <link rel="stylesheet" href="../css/sidebar.css">
 
-  <!-- Libraries -->
+  <!-- Power BI & jQuery -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.js"></script>
 
   <style>
-    /* Optional styling for the Power BI container */
     #reportContainer {
       width: 100%;
       height: calc(100vh - 120px);
-      margin-top: 20px;
       border: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. Header -->
+  <!-- Header -->
   <header class="header">
-    <img src="../assets/LogoUnitedHealthcare.png" alt="UHC Logo" class="header-logo">
+    <img src="../img/IconUnitedHealthcare.png" alt="UHC Logo" class="header-logo" />
     <h1>United Healthcare</h1>
   </header>
 
+  <!-- Layout with Sidebar and Content -->
   <div class="main-layout">
-    <!-- 2. Sidebar Navigation -->
+    <!-- Sidebar -->
     <nav class="sidebar">
       <a href="../Go from Insights to Quick Action/">Go from Insights to Quick Action</a>
       <a href="./">Capture Report Views</a>
@@ -41,26 +40,26 @@
       <a href="../Quickly Create and Personalize Visuals/">Quickly Create and Personalize Visuals</a>
     </nav>
 
-    <!-- 3. Main Content Area -->
+    <!-- Main Content -->
     <section class="content">
-      <h2>Power BI Report Embed</h2>
+      <h2>Capture Report Views</h2>
       <div id="reportContainer"></div>
     </section>
   </div>
 
-  <!-- 4. Embed Script: Fetches token and renders the report -->
+  <!-- Embed Power BI Report -->
   <script>
     $(async () => {
       try {
-        const res = await fetch('https://YOUR_DEPLOYED_API/app/api/token');
-        if (!res.ok) throw new Error('Token API failed');
+        const res = await fetch('https://YOUR-DEPLOYED-API-URL/api/token');
+        if (!res.ok) throw new Error('Token fetch failed');
         const { accessToken } = await res.json();
 
         const embedConfig = {
           type: 'report',
           id: 'YOUR_REPORT_ID',
           embedUrl: 'YOUR_EMBED_URL',
-          accessToken,
+          accessToken: accessToken,
           tokenType: window.powerbi.models.TokenType.Embed,
           settings: {
             panes: {
@@ -71,11 +70,18 @@
         };
 
         const reportContainer = document.getElementById('reportContainer');
-        window.powerbi.embed(reportContainer, embedConfig);
+        const powerbiService = new powerbi.service.Service(
+          powerbi.factories.hpmFactory,
+          powerbi.factories.wpmpFactory,
+          powerbi.factories.routerFactory
+        );
 
-      } catch (e) {
-        console.error('Embed error:', e);
-        $('#reportContainer').html('<p style="color:red;">Failed to load report. Check console for details.</p>');
+        powerbiService.embed(reportContainer, embedConfig);
+
+      } catch (error) {
+        console.error('Embed error:', error);
+        document.getElementById('reportContainer').innerHTML =
+          '<p style="color:red;">Failed to load Power BI report. Check token or URL.</p>';
       }
     });
   </script>
