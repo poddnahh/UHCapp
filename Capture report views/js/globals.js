@@ -1,3 +1,5 @@
+// Minimal globals for capture report views sample
+
 let reportConfig = {
   accessToken: null,
   embedUrl: null,
@@ -11,24 +13,29 @@ let bookmarkShowcaseState = {
   bookmarkCounter: 1
 };
 
-// DOM elements
 const overlay = $('#overlay');
 const reportContainer = $('#report-container').get(0);
-const bookmarksList = $('#bookmarks-list');
-const viewName = $('#viewname');
-const copyLinkText = $('#copy-link-text');
-const copyBtn = $('#copy-btn');
-const saveViewBtn = $('#save-view-btn');
-const copyLinkBtn = $('#copy-link-btn');
-const saveBtn = $('#save-bookmark-btn');
-const captureViewDiv = $('#capture-view-div');
-const saveViewDiv = $('#save-view-div');
-const captureModal = $('#modal-action');
+const bookmarkContainer = $('#bookmark-container')?.get(0);  // for share_bookmark.html
 
-// Style helpers
-const VISIBLE = "visible";
-const INVISIBLE = "invisible";
-const COPY_BOOKMARK = "copy-bookmark";
-const SELECTED_BUTTON = "selected-button";
-const ACTIVE_BUTTON = "btn-active";
-const INVALID_FIELD = "is-invalid";
+// Used for parsing shared bookmark ID from URL
+const regex = new RegExp('[?&]id(=([^&#]*)|&|#|$)');
+
+// Load report settings from reportList.json on page load
+async function loadSampleReportIntoSession() {
+  try {
+    const response = await fetch("reportList.json");
+    const reports = await response.json();
+
+    if (Array.isArray(reports) && reports.length > 0) {
+      const selectedReport = reports[0];
+
+      reportConfig.accessToken = selectedReport.accessToken;
+      reportConfig.embedUrl = selectedReport.embedUrl;
+      reportConfig.reportId = selectedReport.reportId;
+    } else {
+      console.error("No reports found in reportList.json.");
+    }
+  } catch (error) {
+    console.error("Error loading reportList.json:", error);
+  }
+}
