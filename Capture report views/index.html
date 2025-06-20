@@ -1,60 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Capture Report Views</title>
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/content.css">
-    <link rel="stylesheet" href="css/report.css">
-    <link rel="stylesheet" href="css/modal.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capture Report Views</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/header.css">
+  <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/content.css">
+  <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/report.css">
+  <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/modal.css">
+  <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/sidebar.css">
 </head>
+
 <body>
-    <div id="wrapper">
-        <!-- Sidebar -->
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <img src="images/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" class="logo" />
-                <span>United Healthcare</span>
-            </div>
-            <ul class="nav">
-                <li><a href="../Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a></li>
-                <li class="active"><a href="#">Capture Report Views</a></li>
-                <li><a href="../Customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a></li>
-                <li><a href="../Personalize%20Top%20Insights/">Personalize Top Insights</a></li>
-                <li><a href="../Quickly%20Create%20and%20Personalize%20Visuals/">Quickly Create and Personalize Visuals</a></li>
-            </ul>
-        </nav>
-        <!-- Main Content -->
-        <div id="main-content">
-            <header>
-                <img src="images/IconUnitedHealthcare.png" alt="UnitedHealthcare logo" class="header-logo" />
-                <h1>Capture Report Views</h1>
-            </header>
-            <section id="views-section">
-                <div class="views-header">
-                    <img src="images/allviews.svg" alt="My views" />
-                    <span>Saved Views</span>
-                </div>
-                <div class="capture-header">
-                    <img src="images/captureview.svg" alt="Capture View" />
-                    <span>Capture View</span>
-                </div>
-            </section>
-            <section id="report-section">
-                <div id="loading">
-                    <img src="images/spinner.svg" alt="Loading" />
-                    <span>Loading report</span>
-                </div>
-                <div id="reportContainer"></div>
-            </section>
+  <div id="wrapper">
+    <header id="contoso-header">
+      <img src="/UHCapp/Capture%20report%20views/img/IconUnitedHealthcare.png" id="contoso" alt="UnitedHealthcare logo" />
+      <span id="uhc-text">United Healthcare</span>
+    </header>
+
+    <nav id="sidebar">
+      <a href="/UHCapp/Go%20from%20insights%20to%20quick%20action/">Go from Insights to Quick Action</a>
+      <a href="/UHCapp/Capture%20report%20views/" class="active">Capture Report Views</a>
+      <a href="/UHCapp/Customize%20report%20colors%20and%20mode/">Customize Report Colors and Mode</a>
+      <a href="/UHCapp/Personalize%20top%20insights/">Personalize Top Insights</a>
+      <a href="/UHCapp/Quickly%20create%20and%20personalize%20visuals/">Quickly Create and Personalize Visuals</a>
+    </nav>
+
+    <main id="main-div">
+      <div class="interactive-buttons">
+        <div class="bookmarks-dropdown">
+          <button class="btn btn-action" type="button" id="display-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img class="btn-img" src="/UHCapp/Capture%20report%20views/img/allviews.svg" alt="My views">Saved Views
+          </button>
+          <ul class="dropdown-menu checkbox-menu allow-focus" role="menu" id="bookmarks-list"></ul>
         </div>
+        <div>
+          <button class="btn btn-action" type="button" id="capture-btn" data-toggle="modal" data-target="#modal-action">
+            <img class="btn-img" src="/UHCapp/Capture%20report%20views/img/captureview.svg" alt="Capture View">Capture View
+          </button>
+        </div>
+      </div>
+
+      <div role="separator" class="line"></div>
+      <div id="overlay">
+        <img src="/UHCapp/Capture%20report%20views/img/spinner.svg" id="spinner" class="rotate" alt="Loading report">
+      </div>
+
+      <div id="report-container"></div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modal-action" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">What would you like to do with this view?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <img src="/UHCapp/Capture%20report%20views/img/cross.svg" alt="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <button class="btn-modal btn-links btn-active" id="save-view-btn">Save to 'My Views'</button>
+          <button class="btn-modal btn-links" id="copy-link-btn">Copy Link</button>
+          <div id="save-view-div">
+            <label for="viewname">Enter a name for this view:</label>
+            <input type="text" id="viewname" placeholder="Example: Sales Report Q1">
+            <button id="save-bookmark-btn">Save</button>
+          </div>
+          <div id="capture-view-div">
+            <label>Use this link to share the view with colleagues</label>
+            <input type="text" id="copy-link-text" readonly>
+            <button id="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- JS -->
-    <script src="js/globals.js"></script>
-    <script src="js/session_utils.js"></script>
-    <script src="js/error_listener.js"></script>
-    <script src="js/index.js"></script>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.min.js"></script>
+
+  <script src="/UHCapp/Capture%20report%20views/js/globals.js"></script>
+  <script src="/UHCapp/Capture%20report%20views/js/session_utils.js"></script>
+  <script src="/UHCapp/Capture%20report%20views/js/index.js"></script>
 </body>
 </html>
