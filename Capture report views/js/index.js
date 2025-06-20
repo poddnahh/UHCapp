@@ -62,6 +62,7 @@ async function embedSecurePowerBIReport() {
     }
   };
 
+  console.log("Embedding report with config:", config); 
   const report = powerbi.embed(reportContainer, config);
   bookmarkShowcaseState.report = report;
 
