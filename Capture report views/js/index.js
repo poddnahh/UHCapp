@@ -2,6 +2,12 @@
 // Capture Report Views with Embed Token (App Owns Data) - Using reportList.json
 // -----------------------------------------------------------------------------
 
+//Added to removed later
+function onBookmarkCaptureClicked() {
+  console.warn("Bookmark feature not ready yet.");
+}
+//Removed later end
+
 $(document).ready(function () {
   $("input:text").focus(function () {
     $(this).select();
