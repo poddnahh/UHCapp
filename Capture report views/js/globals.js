@@ -6,37 +6,29 @@ let reportConfig = {
 };
 
 let bookmarkShowcaseState = {
-  bookmarks: [],
   report: null,
+  bookmarks: [],
   bookmarkCounter: 1
 };
 
-const overlay = $("#overlay");
-const reportContainer = $("#report-container").get(0);
-const bookmarksList = $("#bookmarks-list");
-const copyBtn = $("#copy-btn");
-const copyLinkText = $("#copy-link-text");
-const viewName = $("#viewname");
-const saveViewBtn = $("#save-view-btn");
-const copyLinkBtn = $("#copy-link-btn");
-const captureViewDiv = $("#capture-view-div");
-const saveViewDiv = $("#save-view-div");
-const captureModal = $("#modal-action");
-const tickBtn = $("#tick-btn");
-const tickIcon = $("#tick-icon");
+// DOM elements
+const overlay = $('#overlay');
+const reportContainer = $('#report-container').get(0);
+const bookmarksList = $('#bookmarks-list');
+const viewName = $('#viewname');
+const copyLinkText = $('#copy-link-text');
+const copyBtn = $('#copy-btn');
+const saveViewBtn = $('#save-view-btn');
+const copyLinkBtn = $('#copy-link-btn');
+const saveBtn = $('#save-bookmark-btn');
+const captureViewDiv = $('#capture-view-div');
+const saveViewDiv = $('#save-view-div');
+const captureModal = $('#modal-action');
 
-const DISPLAY = "show";
+// Style helpers
 const VISIBLE = "visible";
 const INVISIBLE = "invisible";
-const ACTIVE_BUTTON = "btn-active";
 const COPY_BOOKMARK = "copy-bookmark";
 const SELECTED_BUTTON = "selected-button";
+const ACTIVE_BUTTON = "btn-active";
 const INVALID_FIELD = "is-invalid";
-const ACTIVE_BOOKMARK = "active-bookmark";
-const INACTIVE_BOOKMARK = "inactive-bookmark";
-const CHECKBOX = "input[type=checkbox]";
-const SAVE_VIEW_BUTTON_ID = "save-view-btn";
-const COPY_LINK_BUTTON_ID = "copy-link-btn";
-const listViewsBtn = $("#display-btn");
-const bookmarksDropdown = $(".bookmarks-dropdown");
-const closeModal = $(".close");
