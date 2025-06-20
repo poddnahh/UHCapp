@@ -4,7 +4,6 @@
 
 $(document).ready(function () {
   powerbi.bootstrap(reportContainer, reportConfig);
-  embedBookmarksReport();
 
   $("input:text").focus(function () {
     $(this).select();
