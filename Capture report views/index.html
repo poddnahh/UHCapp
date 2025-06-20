@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Capture Report Views</title>
 
-  <!-- Styles -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/header.css">
   <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/content.css">
@@ -13,7 +12,6 @@
   <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/modal.css">
   <link rel="stylesheet" href="/UHCapp/Capture%20report%20views/css/sidebar.css">
 </head>
-
 <body>
   <div id="wrapper">
     <header id="contoso-header">
@@ -45,7 +43,6 @@
       </div>
 
       <div role="separator" class="line"></div>
-
       <div id="overlay">
         <img src="/UHCapp/Capture%20report%20views/img/spinner.svg" id="spinner" class="rotate" alt="Loading report">
       </div>
@@ -87,33 +84,26 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.min.js"></script>
 
-  <script src="/UHCapp/Capture%20report%20views/js/globals.js"></script>
-  <script src="/UHCapp/Capture%20report%20views/js/session_utils.js"></script>
-  <script src="/UHCapp/Capture%20report%20views/js/index.js"></script>
-
-  <!-- Custom Embed Script -->
   <script>
-    async function embedBookmarksReport() {
+    $(document).ready(async function () {
       const models = window["powerbi-client"].models;
 
-      // 🔐 Use a valid access token (replace this with your actual token)
-      const accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkNOdjBPSTNSd3FsSEZFVm5hb01Bc2hDSDJYRSIsImtpZCI6IkNOdjBPSTNSd3FsSEZFVm5hb01Bc2hDSDJYRSJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvYWIxOTRlMDEtNmRjNy00YzZhLWJiYjEtNjhjMTJjNzQ0Yjk3LyIsImlhdCI6MTc1MDQ1MTg4MywibmJmIjoxNzUwNDUxODgzLCJleHAiOjE3NTA0NTU5MTEsImFjY3QiOjAsImFjciI6IjEiLCJhaW8iOiJBWFFBaS84WkFBQUFqQTcwSXNLRXlwUStXci9YSHFvdm5HcmplbGM1eGI1bkNVclQvakYzQ0NwRkx3RThqT1pTZ215NEdlSE9qbkFqbldCenNSdjVjSUNuR05IaTU0d241KzFzTzBleldXSTVVN0pHWnVuU1lyT1Erck5tTkJUNjhHQVM1d3VCUzE1a0hFNjlqYndPTGIyV2I0UnlxL3I2QlE9PSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiJhODhhMTlhNC0yY2RhLTQ1NmMtOWZkYy05MjE4ZDAwMjdlZTIiLCJhcHBpZGFjciI6IjEiLCJmYW1pbHlfbmFtZSI6IkJpbGxpb3QiLCJnaXZlbl9uYW1lIjoiS2lyYnkiLCJpZHR5cCI6InVzZXIiLCJpcGFkZHIiOiI1NC44Ni41MC4xMzkiLCJuYW1lIjoiS2lyYnkgQmlsbGlvdCIsIm9pZCI6IjVhNzdjMGI3LTI4ZjAtNGFmMy04MGIxLWFjNmQwMTAxYzc2ZCIsInB1aWQiOiIxMDAzMjAwMDQ3NDhFNUZEIiwicmgiOiIxLkFUWUFBVTRacThkdGFreTdzV2pCTEhSTGx3a0FBQUFBQUFBQXdBQUFBQUFBQUFBMkFDODJBQS4iLCJzY3AiOiJEYXRhc2V0LlJlYWQuQWxsIFJlcG9ydC5SZWFkLkFsbCBUZW5hbnQuUmVhZC5BbGwgV29ya3NwYWNlLlJlYWQuQWxsIiwic2lkIjoiMDA1ZWEyYTktZWExYy0yNjU3LWMxODUtMWNiNmI4NTU3NzE4Iiwic3ViIjoiRVViaFVXSDBVdG9SeUU3WFBLYVY5NkZXd1FWcEtZTl9XUjBXdk01R3k4VSIsInRpZCI6ImFiMTk0ZTAxLTZkYzctNGM2YS1iYmIxLTY4YzEyYzc0NGI5NyIsInVuaXF1ZV9uYW1lIjoiS2lyYnkuQmlsbGlvdEBzaGVsbGtleS5jb21wYW55IiwidXBuIjoiS2lyYnkuQmlsbGlvdEBzaGVsbGtleS5jb21wYW55IiwidXRpIjoiNzlmMk5yQVBlMEs4ejBwUTBXdzFBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIiwiM2EyYzYyZGItNTMxOC00MjBkLThkNzQtMjNhZmZlZTVkOWQ1IiwiYTllYTg5OTYtMTIyZi00Yzc0LTk1MjAtOGVkY2QxOTI4MjZjIiwiYmUyZjQ1YTEtNDU3ZC00MmFmLWEwNjctNmVjMWZhNjNiYzQ1IiwiZTg2MTFhYjgtYzE4OS00NmU4LTk0ZTEtNjAyMTNhYjFmODE0IiwiYWMxNmU0M2QtN2IyZC00MGUwLWFjMDUtMjQzZmYzNTZhYjViIiwiMDk2NGJiNWUtOWJkYi00ZDdiLWFjMjktNThlNzk0ODYyYTQwIiwiMTE2NDg1OTctOTI2Yy00Y2YzLTljMzYtYmNlYmIwYmE4ZGNjIiwiNGE1ZDhmNjUtNDFkYS00ZGU0LTg5NjgtZTAzNWI2NTMzOWNmIiwiNWYyMjIyYjEtNTdjMy00OGJhLThhZDUtZDQ3NTlmMWZkZTZmIiwiNzkwYzFmYjktN2Y3ZC00Zjg4LTg2YTEtZWYxZjk1YzA1YzFiIiwiNzI5ODI3ZTMtOWMxNC00OWY3LWJiMWItOTYwOGYxNTZiYmI4IiwiMTU4YzA0N2EtYzkwNy00NTU2LWI3ZWYtNDQ2NTUxYTZiNWY3IiwiOTY2NzA3ZDAtMzI2OS00NzI3LTliZTItOGMzYTEwZjE5YjlkIiwiNWM0ZjlkY2QtNDdkYy00Y2Y3LThjOWEtOWU0MjA3Y2JmYzkxIiwiZjI4YTFmNTAtZjZlNy00NTcxLTgxOGItNmExMmYyYWY2YjZjIiwiN2JlNDRjOGEtYWRhZi00ZTJhLTg0ZDYtYWIyNjQ5ZTA4YTEzIiwiZmNmOTEwOTgtMDNlMy00MWE5LWI1YmEtNmYwZWM4MTg4YTEyIiwiMjkyMzJjZGYtOTMyMy00MmZkLWFkZTItMWQwOTdhZjNlNGRlIiwiNzU5NDEwMDktOTE1YS00ODY5LWFiZTctNjkxYmZmMTgyNzllIiwiNGQ2YWMxNGYtMzQ1My00MWQwLWJlZjktYTNlMGM1Njk3NzNhIiwiMmI3NDViZGYtMDgwMy00ZDgwLWFhNjUtODIyYzQ0OTNkYWFjIiwiOWI4OTVkOTItMmNkMy00NGM3LTlkMDItYTZhYzJkNWVhNWMzIiwiNzY5OGE3NzItNzg3Yi00YWM4LTkwMWYtNjBkNmIwOGFmZmQyIiwiNWQ2YjZiYjctZGU3MS00NjIzLWI0YWYtOTYzODBhMzUyNTA5IiwiNzQ5NWZkYzQtMzRjNC00ZDE1LWEyODktOTg3ODhjZTM5OWZkIiwiNjkwOTEyNDYtMjBlOC00YTU2LWFhNGQtMDY2MDc1YjJhN2E4IiwiNzRlZjk3NWItNjYwNS00MGFmLWE1ZDItYjk1MzlkODM2MzUzIiwiZjAyM2ZkODEtYTYzNy00YjU2LTk1ZmQtNzkxYWMwMjI2MDMzIiwiNDQzNjcxNjMtZWJhMS00NGMzLTk4YWYtZjU3ODc4NzlmOTZhIiwiY2YxYzM4ZTUtMzYyMS00MDA0LWE3Y2ItODc5NjI0ZGNlZDdjIiwiYjFiZTFjM2UtYjY1ZC00ZjE5LTg0MjctZjZmYTBkOTdmZWI5IiwiODgzNTI5MWEtOTE4Yy00ZmQ3LWE5Y2UtZmFhNDlmMGNmN2Q5IiwiYmFmMzdiM2EtNjEwZS00NWRhLTllNjItZDlkMWU1ZTg5MTRiIiwiMTk0YWU0Y2ItYjEyNi00MGIyLWJkNWItNjA5MWIzODA5NzdkIiwiZjcwOTM4YTAtZmMxMC00MTc3LTllOTAtMjE3OGY4NzY1NzM3IiwiMzhhOTY0MzEtMmJkZi00YjRjLThiNmUtNWQzZDhhYmFjMWE0IiwiYjBmNTQ2NjEtMmQ3NC00YzUwLWFmYTMtMWVjODAzZjEyZWZlIiwiZTZkMWEyM2EtZGExMS00YmU0LTk1NzAtYmVmYzg2ZDA2N2E3IiwiYzRlMzliZDktMTEwMC00NmQzLThjNjUtZmIxNjBkYTAwNzFmIiwiMTczMTU3OTctMTAyZC00MGI0LTkzZTAtNDMyMDYyY2FjYTE4IiwiZmRkN2E3NTEtYjYwYi00NDRhLTk4NGMtMDI2NTJmZThmYTFjIiwiZmU5MzBiZTctNWU2Mi00N2RiLTkxYWYtOThjM2E0OWEzOGIxIiwiOTVlNzkxMDktOTVjMC00ZDhlLWFlZTMtZDAxYWNjZjJkNDdiIiwiYjc5ZmJmNGQtM2VmOS00Njg5LTgxNDMtNzZiMTk0ZTg1NTA5Il0sInhtc19mdGQiOiJ1OUFjeWhZdEkxUzA3eWVNeVUzVFZEeDNBRWJmWXFVUU1aWHA2WmNUUTEwQmRYTjNaWE4wTXkxa2MyMXoiLCJ4bXNfaWRyZWwiOiIxMiAxIiwieG1zX3BsIjoiZW4tVVMifQ.My4Bafh_7BO9qjfvKYHQsCw_3NriiqhQAIGdxh7JKKjpsU82dlcBGS8rtafKNLKFPPqjHktXIAoOCxwTg_5yC1vqfxmJ5P7dD62_7yX6nSCG_uorE_gtu69Sko_4LedqqiHhPTwA0yQmSDPuQJN2lYckcxqg4pIlQyl0EG5TCFpCdhIkOR6PIyRO5kjic8z1Fn_3Th2vAbKOUz2jFuTaWspV4GAn6HsYU0vk1-CKR_3NGj2KTBdNoDTx0xGDOJSAge-aH_YPhipeG2oQxWpEGp0OWtLmMGTp8S6hG3Ki0te8U2JNx8ORUzoF14PfWEUkugf6KBLYooxR396dwtgY_Q";
-      const reportId = "69efae40-1fb2-4f69-936d-4e6d9c6d40fd"; // Replace with your report ID
-      const groupId = "1c4340de-2a85-40e5-8eb0-4f295368978b"; // Replace with your workspace ID
+      // Replace these with real values
+      const accessToken = "YOUR_TOKEN_HERE"; // ⚠️ Insert a valid Power BI token
+      const reportId = "YOUR_REPORT_ID";
+      const groupId = "YOUR_GROUP_ID";
+
       const embedUrl = `https://app.powerbi.com/reportEmbed?reportId=${reportId}&groupId=${groupId}`;
 
       const config = {
-        type: "report",
+        type: 'report',
         tokenType: models.TokenType.Aad,
         accessToken: accessToken,
         embedUrl: embedUrl,
         id: reportId,
         permissions: models.Permissions.All,
         settings: {
-          panes: {
-            filters: { visible: true, expanded: false },
-            pageNavigation: { visible: false }
-          },
+          panes: { filters: { visible: true }, pageNavigation: { visible: false } },
           layoutType: models.LayoutType.Custom,
           customLayout: {
             displayOption: models.DisplayOption.FitToWidth
@@ -121,26 +111,28 @@
         }
       };
 
+      // Clear container before embedding to avoid double embed
       const container = document.getElementById("report-container");
-      bookmarkShowcaseState.report = powerbi.embed(container, config);
+      powerbi.reset(container);
 
-      setReportAccessibilityProps(bookmarkShowcaseState.report);
+      const report = powerbi.embed(container, config);
 
-      bookmarkShowcaseState.report.on("loaded", async () => {
-        const bookmarks = await bookmarkShowcaseState.report.bookmarksManager.getBookmarks();
-        createBookmarksList(bookmarks);
+      report.on("loaded", async () => {
         $("#overlay").addClass("invisible");
         $("#main-div").addClass("visible");
+        try {
+          const bookmarks = await report.bookmarksManager.getBookmarks();
+          createBookmarksList(bookmarks);
+        } catch (error) {
+          console.error("Bookmark error", error);
+        }
       });
 
-      bookmarkShowcaseState.report.on("error", (event) => {
+      report.on("error", event => {
         console.error("Power BI Report Error:", event.detail);
       });
-    }
-
-    window.onload = () => {
-      embedBookmarksReport();
-    };
+    });
   </script>
+
 </body>
 </html>
